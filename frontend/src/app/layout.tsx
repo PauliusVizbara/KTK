@@ -31,7 +31,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
       </head>
       <body>
-        <section className="min-h-screen pt-24">
+        <section className="min-h-screen">
           {/* The <Toaster> component is responsible for rendering toast notifications used in /app/client-utils.ts and /app/components/DraftModeToast.tsx */}
           <Toaster />
           {isDraftMode && (
