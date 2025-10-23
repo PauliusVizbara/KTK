@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import {settingsQuery} from '@/sanity/lib/queries'
-import {sanityFetch} from '@/sanity/lib/live'
+import {settingsQuery} from '@/sanity/queries'
+import {sanityFetch} from '@/sanity/live'
 
 export default async function Header() {
   const {data: settings} = await sanityFetch({

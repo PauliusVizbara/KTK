@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import {linkResolver} from '@/sanity/lib/utils'
+import {linkResolver} from '@/sanity/utils'
 
 interface ResolvedLinkProps {
   link: any

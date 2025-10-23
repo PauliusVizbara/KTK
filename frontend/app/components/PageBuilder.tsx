@@ -6,8 +6,8 @@ import Link from 'next/link'
 
 import BlockRenderer from '@/app/components/BlockRenderer'
 import {GetPageQueryResult} from '@/sanity.types'
-import {dataAttr} from '@/sanity/lib/utils'
-import {studioUrl} from '@/sanity/lib/api'
+import {dataAttr} from '@/sanity/utils'
+import {studioUrl} from '@/sanity/api'
 
 type PageBuilderPageProps = {
   page: GetPageQueryResult

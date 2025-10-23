@@ -5,8 +5,8 @@ import {PortableText} from '@portabletext/react'
 import {AllPosts} from '@/app/components/Posts'
 import GetStartedCode from '@/app/components/GetStartedCode'
 import SideBySideIcons from '@/app/components/SideBySideIcons'
-import {settingsQuery} from '@/sanity/lib/queries'
-import {sanityFetch} from '@/sanity/lib/live'
+import {settingsQuery} from '@/sanity/queries'
+import {sanityFetch} from '@/sanity/live'
 
 export default async function Page() {
   const {data: settings} = await sanityFetch({

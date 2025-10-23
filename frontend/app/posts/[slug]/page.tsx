@@ -7,9 +7,9 @@ import Avatar from '@/app/components/Avatar'
 import CoverImage from '@/app/components/CoverImage'
 import {MorePosts} from '@/app/components/Posts'
 import PortableText from '@/app/components/PortableText'
-import {sanityFetch} from '@/sanity/lib/live'
-import {postPagesSlugs, postQuery} from '@/sanity/lib/queries'
-import {resolveOpenGraphImage} from '@/sanity/lib/utils'
+import {sanityFetch} from '@/sanity/live'
+import {postPagesSlugs, postQuery} from '@/sanity/queries'
+import {resolveOpenGraphImage} from '@/sanity/utils'
 
 type Props = {
   params: Promise<{slug: string}>

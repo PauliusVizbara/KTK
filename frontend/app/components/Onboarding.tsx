@@ -10,7 +10,7 @@ import {useIsPresentationTool} from 'next-sanity/hooks'
 import {createDataAttribute} from 'next-sanity'
 import {uuid} from '@sanity/uuid'
 
-import {studioUrl} from '@/sanity/lib/api'
+import {studioUrl} from '@/sanity/api'
 
 type OnboardingMessageProps = {
   message: {

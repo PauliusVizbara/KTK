@@ -2,7 +2,7 @@ import React from 'react'
 
 import Cta from '@/app/components/Cta'
 import Info from '@/app/components/InfoSection'
-import {dataAttr} from '@/sanity/lib/utils'
+import {dataAttr} from '@/sanity/utils'
 
 type BlocksType = {
   [key: string]: React.FC<any>

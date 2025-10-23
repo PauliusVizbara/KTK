@@ -1,7 +1,7 @@
 import {stegaClean} from '@sanity/client/stega'
 import {Image} from 'next-sanity/image'
 import {getImageDimensions} from '@sanity/asset-utils'
-import {urlForImage} from '@/sanity/lib/utils'
+import {urlForImage} from '@/sanity/utils'
 
 interface CoverImageProps {
   image: any
