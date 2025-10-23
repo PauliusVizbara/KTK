@@ -82,6 +82,11 @@ export const post = defineType({
       type: 'reference',
       to: [{type: 'person'}],
     }),
+    defineField({
+      name: 'Operatives',
+      type: 'array',
+      of: [{type: 'operative'}],
+    }),
   ],
   // List preview configuration. https://www.sanity.io/docs/previews-list-views
   preview: {
