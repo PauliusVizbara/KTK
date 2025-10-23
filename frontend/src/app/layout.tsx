@@ -1,7 +1,6 @@
 import '@/styles/tailwind.css'
 import type {Metadata} from 'next'
 import {draftMode} from 'next/headers'
-import './globals.css'
 
 import {SpeedInsights} from '@vercel/speed-insights/next'
 import {VisualEditing} from 'next-sanity'
