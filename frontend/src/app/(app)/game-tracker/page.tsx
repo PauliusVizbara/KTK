@@ -42,6 +42,9 @@ export default function GameTracker() {
         </div>
       </div>
       <div className=" mt-6 grid grid-cols-[1fr_2fr_2fr_2fr_2fr_2fr_2fr_2fr_2fr_1fr] gap-6 text-center">
+        <div className="font-bold col-span-5 flex justify-start">Player 1 </div>
+        <div className="font-bold col-span-5 flex justify-end">Player 2</div>
+
         <div className="font-bold"></div>
         <div className="font-bold ">TP1</div>
         <div className="font-bold ">TP2</div>
