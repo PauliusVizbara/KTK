@@ -1,5 +1,5 @@
 'use client'
-import {Button} from '@/components/button'
+import {Button} from '@/components'
 import {Dropdown, DropdownButton, DropdownItem, DropdownMenu} from '@/components/dropdown'
 import {ChevronDownIcon} from '@heroicons/react/16/solid'
 import {useState} from 'react'

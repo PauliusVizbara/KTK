@@ -1,8 +1,8 @@
 import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
-import React, { forwardRef } from 'react'
-import { TouchTarget } from './button'
-import { Link } from './link'
+import React, {forwardRef} from 'react'
+import {TouchTarget} from '@/components'
+import {Link} from './link'
 
 const colors = {
   red: 'bg-red-500/15 text-red-700 group-data-hover:bg-red-500/25 dark:bg-red-500/10 dark:text-red-400 dark:group-data-hover:bg-red-500/20',
@@ -34,16 +34,20 @@ const colors = {
   zinc: 'bg-zinc-600/10 text-zinc-700 group-data-hover:bg-zinc-600/20 dark:bg-white/5 dark:text-zinc-400 dark:group-data-hover:bg-white/10',
 }
 
-type BadgeProps = { color?: keyof typeof colors }
+type BadgeProps = {color?: keyof typeof colors}
 
-export function Badge({ color = 'zinc', className, ...props }: BadgeProps & React.ComponentPropsWithoutRef<'span'>) {
+export function Badge({
+  color = 'zinc',
+  className,
+  ...props
+}: BadgeProps & React.ComponentPropsWithoutRef<'span'>) {
   return (
     <span
       {...props}
       className={clsx(
         className,
         'inline-flex items-center gap-x-1.5 rounded-md px-1.5 py-0.5 text-sm/5 font-medium sm:text-xs/5 forced-colors:outline',
-        colors[color]
+        colors[color],
       )}
     />
   )
@@ -55,15 +59,15 @@ export const BadgeButton = forwardRef(function BadgeButton(
     className,
     children,
     ...props
-  }: BadgeProps & { className?: string; children: React.ReactNode } & (
-      | ({ href?: never } & Omit<Headless.ButtonProps, 'as' | 'className'>)
-      | ({ href: string } & Omit<React.ComponentPropsWithoutRef<typeof Link>, 'className'>)
+  }: BadgeProps & {className?: string; children: React.ReactNode} & (
+      | ({href?: never} & Omit<Headless.ButtonProps, 'as' | 'className'>)
+      | ({href: string} & Omit<React.ComponentPropsWithoutRef<typeof Link>, 'className'>)
     ),
-  ref: React.ForwardedRef<HTMLElement>
+  ref: React.ForwardedRef<HTMLElement>,
 ) {
   let classes = clsx(
     className,
-    'group relative inline-flex rounded-md focus:not-data-focus:outline-hidden data-focus:outline-2 data-focus:outline-offset-2 data-focus:outline-blue-500'
+    'group relative inline-flex rounded-md focus:not-data-focus:outline-hidden data-focus:outline-2 data-focus:outline-offset-2 data-focus:outline-blue-500',
   )
 
   return typeof props.href === 'string' ? (
