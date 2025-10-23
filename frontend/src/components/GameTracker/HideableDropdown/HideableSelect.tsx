@@ -3,11 +3,11 @@ import {Text} from '@/components/text'
 import {ChevronDownIcon} from '@heroicons/react/16/solid'
 import React from 'react'
 
-type HideableDropdownProps = {
+type HideableSelectProps = {
   options: string[]
 }
 
-export const HideableDropdown = (props: HideableDropdownProps) => {
+export const HideableSelect = (props: HideableSelectProps) => {
   const {options} = props
   const [selectedOption, setSelectedOption] = React.useState<string | null>(null)
   const [isRevealed, setIsRevealed] = React.useState(false)
