@@ -8,8 +8,6 @@ import {VisualEditing, toPlainText} from 'next-sanity'
 import {Toaster} from 'sonner'
 
 import DraftModeToast from '@/app/components/DraftModeToast'
-import Footer from '@/app/components/Footer'
-import Header from '@/app/components/Header'
 import * as demo from '@/sanity/demo'
 import {sanityFetch, SanityLive} from '@/sanity/live'
 import {settingsQuery} from '@/sanity/queries'
@@ -75,9 +73,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
           )}
           {/* The <SanityLive> component is responsible for making all sanityFetch calls in your application live, so should always be rendered. */}
           <SanityLive onError={handleError} />
-          <Header />
           <main className="">{children}</main>
-          <Footer />
         </section>
         <SpeedInsights />
       </body>
