@@ -87,6 +87,10 @@ const styles = {
       'text-white [--btn-hover-overlay:var(--color-white)]/10 [--btn-bg:var(--color-primary)] [--btn-border:var(--color-primary)]/90',
       '[--btn-icon:var(--color-white)] data-active:[--btn-icon:var(--color-white)] data-hover:[--btn-icon:var(--color-white)]',
     ],
+    'secondary': [
+      'text-white [--btn-hover-overlay:var(--color-white)]/10 [--btn-bg:var(--color-secondary)] [--btn-border:var(--color-secondary)]/90',
+      '[--btn-icon:var(--color-white)] data-active:[--btn-icon:var(--color-white)] data-hover:[--btn-icon:var(--color-white)]',
+    ],
   },
 }
 

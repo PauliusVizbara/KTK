@@ -21,6 +21,7 @@ export default function GameTracker() {
         <div>
           {[0, 1, 2, 3, 4].map((t) => (
             <Button
+              color={turn === t ? 'primary' : 'secondary'}
               key={t}
               onClick={() => setTurn(t)}
               className={`rounded-sm cursor-pointer px-3 py-2 m-2 font-bold ${turn === t ? 'bg-primary text-white' : 'bg-gray-200'}`}
@@ -29,6 +30,7 @@ export default function GameTracker() {
             </Button>
           ))}
           <Button
+            color="secondary"
             onClick={() => {}}
             className={`rounded-sm cursor-pointer px-3 py-2 m-2 bg-gray-200 text-black font-bold`}
           >
