@@ -9,6 +9,7 @@ import {
   DropdownLabel,
   DropdownMenu,
 } from '@/components/dropdown'
+import {Heading} from '@/components/heading'
 import {
   Navbar,
   NavbarDivider,
@@ -43,9 +44,9 @@ import {usePathname} from 'next/navigation'
 const navItems = [
   {label: 'Home', url: '/'},
   {label: 'Game Tracker', url: '/game-tracker'},
-  {label: 'Orders', url: '/orders'},
-  {label: 'Broadcasts', url: '/broadcasts'},
-  {label: 'Settings', url: '/settings'},
+  {label: 'Game Rules', url: '/game-rules'},
+  {label: 'Team Rules', url: '/team-rules'},
+  {label: 'Approved Ops', url: '/approved-ops'},
 ]
 
 function TeamDropdownMenu() {
@@ -86,14 +87,7 @@ export function ApplicationLayout({
     <StackedLayout
       navbar={
         <Navbar>
-          <Dropdown>
-            <DropdownButton as={NavbarItem} className="max-lg:hidden">
-              <Avatar src="/tailwind-logo.svg" />
-              <NavbarLabel>Tailwind Labs</NavbarLabel>
-              <ChevronDownIcon />
-            </DropdownButton>
-            <TeamDropdownMenu />
-          </Dropdown>
+          <Heading level={2}>Kill Team Kaunas</Heading>
           <NavbarDivider className="max-lg:hidden" />
           <NavbarSection className="max-lg:hidden">
             {navItems.map(({label, url}) => (
@@ -103,7 +97,7 @@ export function ApplicationLayout({
             ))}
           </NavbarSection>
           <NavbarSpacer />
-          <NavbarSection>
+          {/* <NavbarSection>
             <NavbarItem href="/search" aria-label="Search">
               <MagnifyingGlassIcon />
             </NavbarItem>
@@ -139,7 +133,7 @@ export function ApplicationLayout({
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
-          </NavbarSection>
+          </NavbarSection> */}
         </Navbar>
       }
       sidebar={
