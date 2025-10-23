@@ -1,5 +1,6 @@
 import {Stat} from '@/app/stat'
 import {Avatar} from '@/components/avatar'
+import {Button} from '@/components/button'
 import {Heading, Subheading} from '@/components/heading'
 import {Select} from '@/components/select'
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/table'
