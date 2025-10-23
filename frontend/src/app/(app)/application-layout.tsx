@@ -139,14 +139,7 @@ export function ApplicationLayout({
       sidebar={
         <Sidebar>
           <SidebarHeader>
-            <Dropdown>
-              <DropdownButton as={SidebarItem} className="lg:mb-2.5">
-                <Avatar src="/tailwind-logo.svg" />
-                <SidebarLabel>Tailwind Labs</SidebarLabel>
-                <ChevronDownIcon />
-              </DropdownButton>
-              <TeamDropdownMenu />
-            </Dropdown>
+            <Heading level={2}>Kill Team Kaunas</Heading>
           </SidebarHeader>
           <SidebarBody>
             <SidebarSection>
