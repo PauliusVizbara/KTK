@@ -12,7 +12,7 @@ export const HideableDropdown = (props: HideableDropdownProps) => {
   const [selectedOption, setSelectedOption] = React.useState<string | null>(null)
   const [isRevealed, setIsRevealed] = React.useState(false)
 
-  const containerClass = ' min-h-[35px] min-w-20 flex justify-center'
+  const containerClass = 'min-w-20 flex justify-center'
   if (selectedOption) {
     return (
       <Button
