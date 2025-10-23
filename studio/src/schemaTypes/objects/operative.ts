@@ -28,5 +28,11 @@ export const operative = defineType({
       title: 'Wounds',
       type: 'number',
     }),
+    defineField({
+      name: 'weapons',
+      title: 'Weapons',
+      type: 'array',
+      of: [{type: 'weapon'}],
+    }),
   ],
 })
