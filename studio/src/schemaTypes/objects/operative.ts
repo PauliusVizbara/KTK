@@ -23,6 +23,22 @@ export const operative = defineType({
       title: 'Portrait',
       type: 'image',
     }),
+
+    defineField({
+      name: 'apl',
+      title: 'APL',
+      type: 'number',
+    }),
+    defineField({
+      name: 'move',
+      title: 'Move',
+      type: 'number',
+    }),
+    defineField({
+      name: 'save',
+      title: 'Save',
+      type: 'number',
+    }),
     defineField({
       name: 'wounds',
       title: 'Wounds',
