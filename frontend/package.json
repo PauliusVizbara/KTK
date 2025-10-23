@@ -9,7 +9,9 @@
     "lint": "next lint",
     "start": "next start",
     "type-check": "tsc --noEmit",
-    "typegen": "sanity typegen generate"
+    "typegen": "sanity typegen generate",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
@@ -34,11 +36,28 @@
     "tailwindcss": "^4.1.12"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^4.1.1",
+    "@storybook/addon-a11y": "^9.1.13",
+    "@storybook/addon-docs": "^9.1.13",
+    "@storybook/addon-onboarding": "^9.1.13",
+    "@storybook/addon-vitest": "^9.1.13",
     "@types/node": "^20.19.11",
     "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.7",
     "eslint": "^9.34.0",
     "eslint-config-next": "^15.5.0",
-    "typescript": "5.9.2"
+    "eslint-plugin-storybook": "^9.1.13",
+    "storybook": "^9.1.13",
+    "typescript": "5.9.2",
+    "@storybook/nextjs-vite": "^9.1.13",
+    "vitest": "^4.0.2",
+    "@vitest/browser": "^4.0.2",
+    "playwright": "^1.56.1",
+    "@vitest/coverage-v8": "^4.0.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:storybook/recommended"
+    ]
   }
 }
