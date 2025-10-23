@@ -1,15 +1,20 @@
-import { Stat } from '@/app/stat'
-import { Avatar } from '@/components/avatar'
-import { Heading, Subheading } from '@/components/heading'
-import { Select } from '@/components/select'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
-import { getRecentOrders } from '@/data'
+import {Stat} from '@/app/stat'
+import {Avatar} from '@/components/avatar'
+import {Heading, Subheading} from '@/components/heading'
+import {Select} from '@/components/select'
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/table'
+import {getRecentOrders} from '@/data'
+import {sanityFetch} from '@/sanity/live'
+import {postQuery} from '@/sanity/queries'
 
 export default async function Home() {
   let orders = await getRecentOrders()
 
+  const params = {slug: 'sample-post'}
+  const {data: post} = await sanityFetch({query: postQuery, params})
   return (
     <>
+      <pre>{JSON.stringify(post, null, 2)}</pre>
       <Heading>Good afternoon, Erica</Heading>
       <div className="mt-8 flex items-end justify-between">
         <Subheading>Overview</Subheading>
