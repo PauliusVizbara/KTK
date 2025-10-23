@@ -20,43 +20,29 @@ import {
 import {
   Sidebar,
   SidebarBody,
-  SidebarFooter,
   SidebarHeader,
-  SidebarHeading,
   SidebarItem,
   SidebarLabel,
   SidebarSection,
-  SidebarSpacer,
 } from '@/components/sidebar'
-import {SidebarLayout} from '@/components/sidebar-layout'
 import {StackedLayout} from '@/components/stacked-layout'
 import {getEvents} from '@/data'
 import {
   ArrowRightStartOnRectangleIcon,
   ChevronDownIcon,
-  ChevronUpIcon,
   Cog8ToothIcon,
   InboxIcon,
   LightBulbIcon,
   MagnifyingGlassIcon,
   PlusIcon,
   ShieldCheckIcon,
-  UserCircleIcon,
   UserIcon,
 } from '@heroicons/react/16/solid'
-import {
-  Cog6ToothIcon,
-  HomeIcon,
-  QuestionMarkCircleIcon,
-  SparklesIcon,
-  Square2StackIcon,
-  TicketIcon,
-} from '@heroicons/react/20/solid'
 import {usePathname} from 'next/navigation'
 
 const navItems = [
   {label: 'Home', url: '/'},
-  {label: 'Events', url: '/events'},
+  {label: 'Game Tracker', url: '/game-tracker'},
   {label: 'Orders', url: '/orders'},
   {label: 'Broadcasts', url: '/broadcasts'},
   {label: 'Settings', url: '/settings'},
@@ -82,31 +68,6 @@ function TeamDropdownMenu() {
       <DropdownItem href="/teams/create">
         <PlusIcon />
         <DropdownLabel>New team&hellip;</DropdownLabel>
-      </DropdownItem>
-    </DropdownMenu>
-  )
-}
-
-function AccountDropdownMenu({anchor}: {anchor: 'top start' | 'bottom end'}) {
-  return (
-    <DropdownMenu className="min-w-64" anchor={anchor}>
-      <DropdownItem href="#">
-        <UserCircleIcon />
-        <DropdownLabel>My account</DropdownLabel>
-      </DropdownItem>
-      <DropdownDivider />
-      <DropdownItem href="#">
-        <ShieldCheckIcon />
-        <DropdownLabel>Privacy policy</DropdownLabel>
-      </DropdownItem>
-      <DropdownItem href="#">
-        <LightBulbIcon />
-        <DropdownLabel>Share feedback</DropdownLabel>
-      </DropdownItem>
-      <DropdownDivider />
-      <DropdownItem href="/login">
-        <ArrowRightStartOnRectangleIcon />
-        <DropdownLabel>Sign out</DropdownLabel>
       </DropdownItem>
     </DropdownMenu>
   )
