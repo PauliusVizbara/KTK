@@ -14,7 +14,6 @@ export default async function Home() {
   const {data: post} = await sanityFetch({query: postQuery, params})
   return (
     <>
-      <pre>{JSON.stringify(post, null, 2)}</pre>
       <Heading>Good afternoon, Erica</Heading>
       <div className="mt-8 flex items-end justify-between">
         <Subheading>Overview</Subheading>

@@ -3,4 +3,6 @@
 @theme {
   --font-sans: Inter, sans-serif;
   --font-sans--font-feature-settings: 'cv11';
+  --color-primary: #c54c21;
+  --color-secondary: #1a1a1a;
 }
