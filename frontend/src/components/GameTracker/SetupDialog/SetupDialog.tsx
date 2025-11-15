@@ -8,7 +8,7 @@ import {Select, Button} from '@headlessui/react'
 
 export const SetupDialog = () => {
   const [step, setStep] = React.useState(0)
-  const [isSetupOpen, setIsSetupOpen] = React.useState(true)
+  const [isSetupOpen, setIsSetupOpen] = React.useState(false)
 
   return (
     <Dialog
