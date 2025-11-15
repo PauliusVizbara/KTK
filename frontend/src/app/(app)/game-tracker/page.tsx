@@ -28,7 +28,7 @@ export default function GameTracker() {
               color={turn === t ? 'primary' : 'secondary'}
               key={t}
               onClick={() => setTurn(t)}
-              className={`rounded-sm cursor-pointer px-3 py-2 m-2 font-bold ${turn === t ? 'bg-primary text-white' : 'bg-gray-200'}`}
+              className={`cursor-pointer px-3 py-2 m-2 font-bold ${turn === t ? 'bg-primary text-white' : 'bg-gray-200'}`}
             >
               {t == 0 ? 'Setup' : `${t}`}
             </Button>
@@ -38,7 +38,7 @@ export default function GameTracker() {
             onClick={() => {
               setIsOpen(true)
             }}
-            className={`rounded-sm cursor-pointer px-3 py-2 m-2 bg-gray-200 text-black font-bold`}
+            className={`cursor-pointer px-3 py-2 m-2 bg-gray-200 text-black font-bold`}
           >
             End game
           </Button>
