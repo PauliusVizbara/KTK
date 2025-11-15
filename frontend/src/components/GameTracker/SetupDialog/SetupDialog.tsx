@@ -1,54 +1,87 @@
 'use client'
-import {Checkbox, CheckboxField} from '@/components/checkbox'
+import {Checkbox, CheckboxField, CheckboxGroup} from '@/components/checkbox'
 import {DialogBody, DialogActions} from '@/components/dialog'
 import {Description, Field, FieldGroup, Label} from '@/components/fieldset'
 import {Dialog, DialogTitle, DialogDescription} from '@/components/dialog'
-import React, {useContext} from 'react'
-import {Select, Button} from '@headlessui/react'
+import React from 'react'
+import {useGameTrackerStore} from '@/app/store'
+import {Heading} from '@/components/heading'
+import {Combobox, ComboboxLabel, ComboboxOption} from '@/components/combobox'
+import {Button} from '@/components'
 
+const STEP_TITLES = ['1. Set up the Battle', '1. Set up the Battle', 'Confirm Setup']
+const STEP_DESCRIPTIONS = [
+  'Select the Kill Teams',
+  'Select the Kill Zone',
+  'Review and confirm your setup.',
+]
+const STEP_SIZES = ['5xl', '5xl', '3xl'] as const
+
+const TEAM_OPTIONS = [
+  {id: 'team-1', name: 'Team Alpha'},
+  {id: 'team-2', name: 'Team Bravo'},
+  {id: 'team-3', name: 'Team Charlie'},
+]
+
+const SelectTeamsStep = () => {
+  const {player1, player2} = useGameTrackerStore()
+  return (
+    <>
+      <Heading className="mt-6" level={6}>
+        1. Each player selects a kill team for the battle.
+      </Heading>
+      <div className="flex">
+        <Field className="flex-1 mr-4">
+          <Label>Player 1 Team</Label>
+          <Combobox
+            name="user"
+            options={TEAM_OPTIONS}
+            onChange={(team) => player1.setTeamId(team?.id ?? null)}
+            displayValue={(user) => user?.name}
+          >
+            {(user) => (
+              <ComboboxOption value={user}>
+                <ComboboxLabel>{user.name}</ComboboxLabel>
+              </ComboboxOption>
+            )}
+          </Combobox>
+        </Field>
+        <Field className="flex-1 ml-4">
+          <Label>Player 2 Team</Label>
+          <Combobox
+            name="user"
+            options={TEAM_OPTIONS}
+            onChange={(team) => player2.setTeamId(team?.id ?? null)}
+            displayValue={(user) => user?.name}
+          >
+            {(user) => (
+              <ComboboxOption value={user}>
+                <ComboboxLabel>{user.name}</ComboboxLabel>
+              </ComboboxOption>
+            )}
+          </Combobox>
+        </Field>
+      </div>
+    </>
+  )
+}
+
+const SelectKillzoneStep = () => {
+  return <div>Select Killzone Step</div>
+}
+
+const STEP_COMPONENTS = [SelectTeamsStep, SelectKillzoneStep]
 export const SetupDialog = () => {
   const [step, setStep] = React.useState(0)
-  const [isSetupOpen, setIsSetupOpen] = React.useState(false)
 
+  const {isSetupOpen, setIsSetupOpen} = useGameTrackerStore()
   return (
-    <Dialog
-      size={step === 0 ? 'screen' : '5xl'}
-      open={isSetupOpen}
-      onClose={() => setIsSetupOpen(false)}
-    >
-      <DialogTitle>Refund payment</DialogTitle>
-      <DialogDescription>
-        The refund will be reflected in the customer’s bank account 2 to 3 business days after
-        processing.
-      </DialogDescription>
-      <DialogBody>
-        <FieldGroup>
-          <Field>
-            <Label>Amount</Label>
-          </Field>
-          <Field>
-            <Label>Reason</Label>
-            <Select name="reason" defaultValue="">
-              <option value="" disabled>
-                Select a reason&hellip;
-              </option>
-              <option value="duplicate">Duplicate</option>
-              <option value="fraudulent">Fraudulent</option>
-              <option value="requested_by_customer">Requested by customer</option>
-              <option value="other">Other</option>
-            </Select>
-          </Field>
-          <CheckboxField>
-            <Checkbox name="notify" />
-            <Label>Notify customer</Label>
-            <Description>An email notification will be sent to this customer.</Description>
-          </CheckboxField>
-        </FieldGroup>
-      </DialogBody>
+    <Dialog size={STEP_SIZES[step]} open={isSetupOpen} onClose={() => setIsSetupOpen(false)}>
+      <DialogTitle className="text-4xl uppercase bold">{STEP_TITLES[step]}</DialogTitle>
+      <DialogDescription>{STEP_DESCRIPTIONS[step]}</DialogDescription>
+      <DialogBody>{React.createElement(STEP_COMPONENTS[step])}</DialogBody>
       <DialogActions>
-        <Button onClick={() => setStep(step + 1)}>Increase {step}</Button>
-        <Button onClick={() => setIsSetupOpen(false)}>Cancel</Button>
-        <Button onClick={() => setIsSetupOpen(false)}>Refund</Button>
+        <Button onClick={() => setStep(step + 1)}>Next</Button>
       </DialogActions>
     </Dialog>
   )

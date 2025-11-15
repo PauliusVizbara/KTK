@@ -1,12 +1,23 @@
 'use client'
-import {Button, SetupDialog} from '@/components'
-import React, {useContext} from 'react'
+import {useGameTrackerStore} from '@/app/store'
+import {Button} from '@/components'
+import React from 'react'
 
 export const StateTracker = () => {
   const [turn, setTurn] = React.useState(0)
 
+  const {isSetupDone, setIsSetupOpen} = useGameTrackerStore()
+
+  if (!isSetupDone) {
+    return (
+      <div className="flex justify-center items-center">
+        <Button onClick={() => setIsSetupOpen(true)}>New Game Setup</Button>
+      </div>
+    )
+  }
+
   return (
-    <div className="flex justify-between items-center border p-2 border-gray-300">
+    <div className="flex justify-between items-center">
       <div className="uppercase font-bold">
         <h1>SCORE 1</h1>
       </div>

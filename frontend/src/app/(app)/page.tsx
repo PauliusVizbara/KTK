@@ -1,6 +1,5 @@
-'use client'
 import {ResourceTracker, ScoreTracker, StateTracker, SetupDialog} from '@/components'
-import React, {createContext} from 'react'
+import React from 'react'
 
 export default function Home() {
   const params = {slug: 'sample-post'}
