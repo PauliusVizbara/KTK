@@ -17,36 +17,6 @@ export default function GameTracker() {
 
   return (
     <div className="flex flex-col">
-      <div className="flex justify-between items-center h-12">
-        <div className="uppercase font-bold">
-          <h1>SCORE {score.PLAYER1}</h1>
-        </div>
-        <SetupDialog isOpen={isOpen} setIsOpen={setIsOpen} />
-        <div>
-          {[0, 1, 2, 3, 4].map((t) => (
-            <Button
-              color={turn === t ? 'primary' : 'secondary'}
-              key={t}
-              onClick={() => setTurn(t)}
-              className={`cursor-pointer px-3 py-2 m-2 font-bold ${turn === t ? 'bg-primary text-white' : 'bg-gray-200'}`}
-            >
-              {t == 0 ? 'Setup' : `${t}`}
-            </Button>
-          ))}
-          <Button
-            color="secondary"
-            onClick={() => {
-              setIsOpen(true)
-            }}
-            className={`cursor-pointer px-3 py-2 m-2 bg-gray-200 text-black font-bold`}
-          >
-            End game
-          </Button>
-        </div>
-        <div className="uppercase font-bold">
-          <h1>SCORE {score.PLAYER2}</h1>
-        </div>
-      </div>
       <div className=" mt-6 grid grid-cols-[1fr_2fr_2fr_2fr_2fr_2fr_2fr_2fr_2fr_1fr] gap-6 text-center">
         <div className="font-bold col-span-5 flex justify-start">Player 1 </div>
         <div className="font-bold col-span-5 flex justify-end">Player 2</div>

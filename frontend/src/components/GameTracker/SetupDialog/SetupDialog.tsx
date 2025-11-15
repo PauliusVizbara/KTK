@@ -1,21 +1,21 @@
+'use client'
 import {Checkbox, CheckboxField} from '@/components/checkbox'
 import {DialogBody, DialogActions} from '@/components/dialog'
 import {Description, Field, FieldGroup, Label} from '@/components/fieldset'
 import {Dialog, DialogTitle, DialogDescription} from '@/components/dialog'
-import React from 'react'
+import React, {useContext} from 'react'
 import {Select, Button} from '@headlessui/react'
 
-export const SetupDialog = ({
-  isOpen,
-  setIsOpen,
-}: {
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
-}) => {
+export const SetupDialog = () => {
   const [step, setStep] = React.useState(0)
+  const [isSetupOpen, setIsSetupOpen] = React.useState(true)
 
   return (
-    <Dialog size={step === 0 ? 'screen' : '5xl'} open={isOpen} onClose={() => setIsOpen(false)}>
+    <Dialog
+      size={step === 0 ? 'screen' : '5xl'}
+      open={isSetupOpen}
+      onClose={() => setIsSetupOpen(false)}
+    >
       <DialogTitle>Refund payment</DialogTitle>
       <DialogDescription>
         The refund will be reflected in the customer’s bank account 2 to 3 business days after
@@ -47,8 +47,8 @@ export const SetupDialog = ({
       </DialogBody>
       <DialogActions>
         <Button onClick={() => setStep(step + 1)}>Increase {step}</Button>
-        <Button onClick={() => setIsOpen(false)}>Cancel</Button>
-        <Button onClick={() => setIsOpen(false)}>Refund</Button>
+        <Button onClick={() => setIsSetupOpen(false)}>Cancel</Button>
+        <Button onClick={() => setIsSetupOpen(false)}>Refund</Button>
       </DialogActions>
     </Dialog>
   )

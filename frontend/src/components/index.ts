@@ -13,6 +13,10 @@ import {
   DropdownShortcut,
 } from '@/components/Common/Dropdown/Dropdown'
 import {Link} from '@/components/Common/Link/Link'
+import {ScoreTracker} from '@/components/GameTracker/ScoreTracker/ScoreTracker'
+import {ResourceTracker} from '@/components/GameTracker/ResourceTracker/ResourceTracker'
+import {StateTracker} from '@/components/GameTracker/StateTracker/StateTracker'
+import {SetupDialog} from '@/components/GameTracker/SetupDialog/SetupDialog'
 export {
   Button,
   Link,
@@ -28,4 +32,8 @@ export {
   DropdownMenu,
   DropdownSection,
   DropdownShortcut,
+  ScoreTracker,
+  ResourceTracker,
+  StateTracker,
+  SetupDialog,
 }
