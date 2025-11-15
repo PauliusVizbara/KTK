@@ -1,6 +1,7 @@
 'use client'
 import {Button} from '@/components'
 import {Dropdown, DropdownButton, DropdownItem, DropdownMenu} from '@/components/dropdown'
+import {SetupDialog} from '@/components/GameTracker/SetupDialog/SetupDialog'
 import {ChevronDownIcon} from '@heroicons/react/16/solid'
 import {useState} from 'react'
 
@@ -12,12 +13,15 @@ export default function GameTracker() {
   const [player1Cp, setPlayer1Cp] = useState(0)
   const [player2Cp, setPlayer2Cp] = useState(0)
 
+  const [isOpen, setIsOpen] = useState(false)
+
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center h-12">
         <div className="uppercase font-bold">
           <h1>SCORE {score.PLAYER1}</h1>
         </div>
+        <SetupDialog isOpen={isOpen} setIsOpen={setIsOpen} />
         <div>
           {[0, 1, 2, 3, 4].map((t) => (
             <Button
@@ -31,7 +35,9 @@ export default function GameTracker() {
           ))}
           <Button
             color="secondary"
-            onClick={() => {}}
+            onClick={() => {
+              setIsOpen(true)
+            }}
             className={`rounded-sm cursor-pointer px-3 py-2 m-2 bg-gray-200 text-black font-bold`}
           >
             End game
