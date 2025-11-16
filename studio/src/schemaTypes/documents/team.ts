@@ -1,5 +1,4 @@
 import {DocumentTextIcon} from '@sanity/icons'
-import {format, parseISO} from 'date-fns'
 import {defineField, defineType} from 'sanity'
 
 /**
@@ -16,6 +15,12 @@ export const team = defineType({
     defineField({
       name: 'name',
       title: 'Team Name',
+      type: 'string',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'id',
+      title: 'Team ID',
       type: 'string',
       validation: (rule) => rule.required(),
     }),

@@ -95,3 +95,11 @@ export const pagesSlugs = defineQuery(`
   *[_type == "page" && defined(slug.current)]
   {"slug": slug.current}
 `)
+
+export const teamListQuery = defineQuery(`
+  *[_type == "team"] | order(name asc) {
+    _id,
+    name,
+    id,
+  }
+`)

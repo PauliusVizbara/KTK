@@ -1,7 +1,6 @@
 'use client'
-import {Checkbox, CheckboxField, CheckboxGroup} from '@/components/checkbox'
 import {DialogBody, DialogActions} from '@/components/dialog'
-import {Description, Field, FieldGroup, Label} from '@/components/fieldset'
+import {Field, Label} from '@/components/fieldset'
 import {Dialog, DialogTitle, DialogDescription} from '@/components/dialog'
 import React from 'react'
 import {useGameTrackerStore} from '@/app/store'
@@ -10,14 +9,20 @@ import {Combobox, ComboboxLabel, ComboboxOption} from '@/components/combobox'
 import {Button} from '@/components'
 import Image from 'next/image'
 import {Select} from '@/components/select'
+import EmblaCarousel from '@/components/Common/Carousel/Carousel'
+import {Divider} from '@/components/divider'
+import ReactDOM from 'react-dom'
+import {teamListQuery} from '@/sanity/queries'
+import {sanityFetch} from '@/sanity/live'
 
-const STEP_TITLES = ['1. Set up the Battle', '1. Set up the Battle', 'Confirm Setup']
+const STEP_TITLES = ['1. Set up the Battle', '1. Set up the Battle', '1. Set up the Battle']
 const STEP_DESCRIPTIONS = [
   'Select the Kill Teams',
   'Select the Kill Zone',
-  'Review and confirm your setup.',
+  'Roll-off for initiative',
 ]
-const STEP_SIZES = ['5xl', 'screen', '3xl'] as const
+
+const STEP_SIZES = ['5xl', '5xl', '3xl'] as const
 
 const TEAMS = [
   {id: 'team-1', name: 'Team Alpha'},
@@ -25,7 +30,7 @@ const TEAMS = [
   {id: 'team-3', name: 'Team Charlie'},
 ]
 
-const SelectTeamsStep = () => {
+const SelectTeamsStep = async () => {
   const {player1, player2} = useGameTrackerStore()
   return (
     <>
@@ -68,34 +73,63 @@ const SelectTeamsStep = () => {
   )
 }
 
-const maps = [
-  '/images/maps/volkus-1.png',
-  '/images/maps/volkus-2.png',
-  '/images/maps/volkus-3.png',
-  '/images/maps/volkus-4.png',
-  '/images/maps/volkus-5.png',
-  '/images/maps/volkus-6.png',
-  '/images/maps/volkus-7.png',
-  '/images/maps/volkus-8.png',
-  '/images/maps/volkus-9.png',
-  '/images/maps/volkus-10.png',
-  '/images/maps/volkus-11.png',
-  '/images/maps/volkus-12.png',
+const maps = {
+  'volkus': [
+    '/images/maps/volkus-1.png',
+    '/images/maps/volkus-2.png',
+    '/images/maps/volkus-3.png',
+    '/images/maps/volkus-4.png',
+    '/images/maps/volkus-5.png',
+    '/images/maps/volkus-6.png',
+    '/images/maps/volkus-7.png',
+    '/images/maps/volkus-8.png',
+    '/images/maps/volkus-9.png',
+    '/images/maps/volkus-10.png',
+    '/images/maps/volkus-11.png',
+    '/images/maps/volkus-12.png',
+  ],
+  'tomb-world': [
+    '/images/maps/tomb-world-1.png',
+    '/images/maps/tomb-world-2.png',
+    '/images/maps/tomb-world-3.png',
+    '/images/maps/tomb-world-4.png',
+    '/images/maps/tomb-world-5.png',
+    '/images/maps/tomb-world-6.png',
+  ],
+}
+const KILLZONES = [
+  {id: 'volkus', name: 'Volkus'},
+  {id: 'tomb-world', name: 'Tomb World'},
 ]
 
-const KILLZONES = [
-  {id: 'killzone-1', name: 'Killzone Alpha'},
-  {id: 'killzone-2', name: 'Killzone Bravo'},
-]
+export function MapZoomModal() {
+  const selectedMap = useGameTrackerStore((s) => s.selectedMap)
+  const clearSelection = useGameTrackerStore((s) => s.clearSelection)
+
+  if (!selectedMap) return null
+
+  return (
+    <div
+      className="fixed left-0 w-screen h-screen top-0 inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-20"
+      onClick={clearSelection}
+    >
+      <img
+        onClick={(e) => e.stopPropagation()}
+        src={selectedMap}
+        className="max-h-[90vh] max-w-[90vw] rounded-xl shadow-2xl transition-transform"
+      />
+    </div>
+  )
+}
 
 const SelectKillzoneStep = () => {
-  const [selectedMap, setSelectedMap] = React.useState<string | null>(null)
-  const [killzone, setKillzone] = React.useState<string | null>(null)
+  const setSelectedMap = useGameTrackerStore((s) => s.setSelectedMap)
+  const [killzone, setKillzone] = React.useState(KILLZONES[0].id)
   return (
     <>
       <Field className="w-1/4">
         <Label>Kill Zone</Label>
-        <Select name="killzone">
+        <Select value={killzone} onChange={(e) => setKillzone(e.target.value)} name="killzone">
           {KILLZONES.map((killzone) => (
             <option key={killzone.id} value={killzone.id}>
               {killzone.name}
@@ -103,50 +137,90 @@ const SelectKillzoneStep = () => {
           ))}
         </Select>
       </Field>
+      <Divider className="my-6" />
+      {ReactDOM.createPortal(<MapZoomModal />, document.body)}
+      <EmblaCarousel
+        slides={maps[killzone as keyof typeof maps].map((map) => (
+          <Image
+            src={map}
+            onClick={() => setSelectedMap(map)}
+            className="w-full h-auto rounded-lg"
+            width={600}
+            height={600}
+            alt={''}
+            style={{objectFit: 'fill'}}
+          />
+        ))}
+        options={{loop: true}}
+      />
+    </>
+  )
+}
 
-      <div className="overflow-y-auto">
-        <div className="grid grid-cols-6 gap-4 ">
-          {maps.map((map) => (
-            <div
-              key={map}
-              className={`border-4 rounded-lg cursor-pointer transition
-            ${selectedMap === map ? 'border-blue-500' : 'border-transparent'}
-          `}
-              onClick={() => setSelectedMap(map)}
-            >
-              <Image
-                src={map}
-                className="w-full h-auto rounded-lg"
-                width={600}
-                height={100}
-                alt={''}
-              />
-            </div>
-          ))}
-        </div>
+const SelectCritOpStep = () => {
+  return (
+    <Heading className="mt-6" level={6}>
+      3. Select any critical operation rules for the battle.
+    </Heading>
+  )
+}
+
+const SelectInitiativeStep = () => {
+  const gameTrackerStore = useGameTrackerStore()
+
+  const [setupInitiative, setSetupInitiative] = React.useState<'player1' | 'player2' | null>(null)
+
+  return (
+    <>
+      <Heading className="mt-6" level={6}>
+        Roll-off: the winner decides who has initiative:
+      </Heading>
+      <div className="mt-4 flex">
+        <Button
+          color={setupInitiative === 'player1' ? 'primary' : 'secondary'}
+          onClick={() => setSetupInitiative('player1')}
+          className="flex-1 m-4"
+        >
+          {gameTrackerStore.player1.teamId}
+        </Button>
+        <Button
+          color={setupInitiative === 'player2' ? 'primary' : 'secondary'}
+          onClick={() => setSetupInitiative('player2')}
+          className="flex-1 m-4"
+        >
+          {gameTrackerStore.player2.teamId}
+        </Button>
       </div>
     </>
   )
 }
 
-const STEP_COMPONENTS = [SelectTeamsStep, SelectKillzoneStep, SelectTeamsStep]
+const STEP_COMPONENTS = [
+  SelectTeamsStep,
+  SelectKillzoneStep,
+  SelectCritOpStep,
+  SelectInitiativeStep,
+]
 export const SetupDialog = () => {
   const [step, setStep] = React.useState(0)
 
   const {isSetupOpen, setIsSetupOpen} = useGameTrackerStore()
+
   return (
-    <Dialog
-      className="h-[80vh]"
-      size={STEP_SIZES[step]}
-      open={isSetupOpen}
-      onClose={() => setIsSetupOpen(false)}
-    >
-      <DialogTitle className="text-4xl uppercase bold">{STEP_TITLES[step]}</DialogTitle>
-      <DialogDescription>{STEP_DESCRIPTIONS[step]}</DialogDescription>
-      <DialogBody>{React.createElement(STEP_COMPONENTS[step])}</DialogBody>
-      <DialogActions>
-        <Button onClick={() => setStep(step + 1)}>Next</Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      <Dialog size={STEP_SIZES[step]} open={isSetupOpen} onClose={() => setIsSetupOpen(false)}>
+        <DialogTitle className="text-4xl uppercase bold">{STEP_TITLES[step]}</DialogTitle>
+        <DialogDescription>{STEP_DESCRIPTIONS[step]}</DialogDescription>
+        <DialogBody>{React.createElement(STEP_COMPONENTS[step])}</DialogBody>
+        <DialogActions>
+          <Button disabled={step === 0} onClick={() => setStep(step - 1)}>
+            Previous
+          </Button>
+          <Button disabled={step === STEP_COMPONENTS.length - 1} onClick={() => setStep(step + 1)}>
+            Next
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   )
 }
