@@ -2,8 +2,8 @@
 import {DialogBody, DialogActions} from '@/components/dialog'
 import {Field, Label} from '@/components/fieldset'
 import {Dialog, DialogTitle, DialogDescription} from '@/components/dialog'
-import React from 'react'
-import {useGameTrackerStore} from '@/app/store'
+import React, {useEffect} from 'react'
+import {useGameTrackerStore, useTeamStore} from '@/app/store'
 import {Heading} from '@/components/heading'
 import {Combobox, ComboboxLabel, ComboboxOption} from '@/components/combobox'
 import {Button} from '@/components'
@@ -22,14 +22,10 @@ const STEP_DESCRIPTIONS = [
 
 const STEP_SIZES = ['5xl', '5xl', '3xl'] as const
 
-const TEAMS = [
-  {id: 'team-1', name: 'Team Alpha'},
-  {id: 'team-2', name: 'Team Bravo'},
-  {id: 'team-3', name: 'Team Charlie'},
-]
-
 const SelectTeamsStep = () => {
   const {player1, player2} = useGameTrackerStore()
+  const {teamSelectOptions} = useTeamStore()
+
   return (
     <>
       <Heading className="mt-6" level={6}>
@@ -40,7 +36,7 @@ const SelectTeamsStep = () => {
           <Label>Player 1 Team</Label>
           <Combobox
             name="user"
-            options={TEAMS}
+            options={teamSelectOptions}
             onChange={(team) => player1.setTeamId(team?.id ?? null)}
             displayValue={(user) => user?.name}
           >
@@ -55,7 +51,7 @@ const SelectTeamsStep = () => {
           <Label>Player 2 Team</Label>
           <Combobox
             name="user"
-            options={TEAMS}
+            options={teamSelectOptions}
             onChange={(team) => player2.setTeamId(team?.id ?? null)}
             displayValue={(user) => user?.name}
           >
@@ -199,10 +195,20 @@ const STEP_COMPONENTS = [
   SelectCritOpStep,
   SelectInitiativeStep,
 ]
-export const SetupDialog = () => {
+
+interface Props {
+  initialTeams: {id: string; name: string}[]
+}
+
+export const SetupDialog = ({initialTeams}: Props) => {
   const [step, setStep] = React.useState(0)
 
   const {isSetupOpen, setIsSetupOpen} = useGameTrackerStore()
+  const {setTeamSelectOptions} = useTeamStore()
+
+  useEffect(() => {
+    setTeamSelectOptions(initialTeams)
+  }, [initialTeams])
 
   return (
     <>

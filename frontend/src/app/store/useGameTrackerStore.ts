@@ -6,8 +6,6 @@ interface PlayerState {
 }
 
 interface GameTrackerState {
-  teams: {id: string; name: string}[]
-  setTeams: (teams: {id: string; name: string}[]) => void
   isSetupOpen: boolean
   setIsSetupOpen: (isOpen: boolean) => void
   isSetupDone: boolean
@@ -20,8 +18,6 @@ interface GameTrackerState {
 }
 
 export const useGameTrackerStore = create<GameTrackerState>((set) => ({
-  teams: [],
-  setTeams: (teams) => set({teams}),
   isSetupOpen: false,
   setIsSetupOpen: (isOpen) => set({isSetupOpen: isOpen}),
   isSetupDone: false,

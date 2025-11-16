@@ -1,3 +1,4 @@
 import {useGameTrackerStore} from './useGameTrackerStore'
+import {useTeamStore} from './useTeamStore'
 
-export {useGameTrackerStore}
+export {useGameTrackerStore, useTeamStore}
