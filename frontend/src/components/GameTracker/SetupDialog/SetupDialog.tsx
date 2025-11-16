@@ -12,8 +12,6 @@ import {Select} from '@/components/select'
 import EmblaCarousel from '@/components/Common/Carousel/Carousel'
 import {Divider} from '@/components/divider'
 import ReactDOM from 'react-dom'
-import {teamListQuery} from '@/sanity/queries'
-import {sanityFetch} from '@/sanity/live'
 
 const STEP_TITLES = ['1. Set up the Battle', '1. Set up the Battle', '1. Set up the Battle']
 const STEP_DESCRIPTIONS = [
@@ -30,7 +28,7 @@ const TEAMS = [
   {id: 'team-3', name: 'Team Charlie'},
 ]
 
-const SelectTeamsStep = async () => {
+const SelectTeamsStep = () => {
   const {player1, player2} = useGameTrackerStore()
   return (
     <>

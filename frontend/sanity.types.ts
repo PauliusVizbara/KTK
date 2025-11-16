@@ -13,9 +13,48 @@
  */
 
 // Source: schema.json
+export type Weapon = {
+  _type: 'weapon'
+  type?: 'ranged' | 'melee'
+  name?: string
+  atk?: number
+  hit?: number
+  dmg_normal?: number
+  dmg_critical?: number
+  severe?: boolean
+  range?: number
+  rending?: boolean
+}
+
+export type Operative = {
+  _type: 'operative'
+  name?: string
+  portrait?: {
+    asset?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+    }
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  apl?: number
+  move?: number
+  save?: number
+  wounds?: number
+  weapons?: Array<
+    {
+      _key: string
+    } & Weapon
+  >
+}
+
 export type CallToAction = {
   _type: 'callToAction'
-  heading: string
+  heading?: string
   text?: string
   buttonText?: string
   link?: Link
@@ -111,13 +150,29 @@ export type BlockContent = Array<{
   _key: string
 }>
 
+export type Team = {
+  _id: string
+  _type: 'team'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name?: string
+  dummy?: string
+  id?: string
+  operatives?: Array<
+    {
+      _key: string
+    } & Operative
+  >
+}
+
 export type Settings = {
   _id: string
   _type: 'settings'
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
+  title?: string
   description?: Array<{
     children?: Array<{
       marks?: Array<string>
@@ -172,9 +227,9 @@ export type Page = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  name: string
-  slug: Slug
-  heading: string
+  name?: string
+  slug?: Slug
+  heading?: string
   subheading?: string
   pageBuilder?: Array<
     | ({
@@ -192,11 +247,11 @@ export type Post = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
-  slug: Slug
+  title?: string
+  slug?: Slug
   content?: BlockContent
   excerpt?: string
-  coverImage: {
+  coverImage?: {
     asset?: {
       _ref: string
       _type: 'reference'
@@ -216,6 +271,11 @@ export type Post = {
     _weak?: boolean
     [internalGroqTypeReferenceTo]?: 'person'
   }
+  Operatives?: Array<
+    {
+      _key: string
+    } & Operative
+  >
 }
 
 export type Person = {
@@ -224,9 +284,9 @@ export type Person = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  firstName: string
-  lastName: string
-  picture: {
+  firstName?: string
+  lastName?: string
+  picture?: {
     asset?: {
       _ref: string
       _type: 'reference'
@@ -281,7 +341,7 @@ export type SanityAssistOutputField = {
 
 export type SanityAssistInstructionContext = {
   _type: 'sanity.assist.instruction.context'
-  reference: {
+  reference?: {
     _ref: string
     _type: 'reference'
     _weak?: boolean
@@ -314,7 +374,7 @@ export type AssistInstructionContext = {
 
 export type SanityAssistInstructionUserInput = {
   _type: 'sanity.assist.instruction.userInput'
-  message: string
+  message?: string
   description?: string
 }
 
@@ -483,7 +543,7 @@ export type Geopoint = {
 
 export type Slug = {
   _type: 'slug'
-  current: string
+  current?: string
   source?: string
 }
 
@@ -495,10 +555,13 @@ export type SanityAssetSourceData = {
 }
 
 export type AllSanitySchemaTypes =
+  | Weapon
+  | Operative
   | CallToAction
   | Link
   | InfoSection
   | BlockContent
+  | Team
   | Settings
   | Page
   | Post
@@ -536,7 +599,7 @@ export type SettingsQueryResult = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
+  title?: string
   description?: Array<{
     children?: Array<{
       marks?: Array<string>
@@ -589,15 +652,15 @@ export type SettingsQueryResult = {
 export type GetPageQueryResult = {
   _id: string
   _type: 'page'
-  name: string
-  slug: Slug
-  heading: string
+  name: string | null
+  slug: Slug | null
+  heading: string | null
   subheading: string | null
   pageBuilder: Array<
     | {
         _key: string
         _type: 'callToAction'
-        heading: string
+        heading?: string
         text?: string
         buttonText?: string
         link: {
@@ -643,12 +706,12 @@ export type GetPageQueryResult = {
 // Query: *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {    "slug": slug.current,    _type,    _updatedAt,  }
 export type SitemapDataResult = Array<
   | {
-      slug: string
+      slug: string | null
       _type: 'page'
       _updatedAt: string
     }
   | {
-      slug: string
+      slug: string | null
       _type: 'post'
       _updatedAt: string
     }
@@ -658,8 +721,8 @@ export type SitemapDataResult = Array<
 export type AllPostsQueryResult = Array<{
   _id: string
   status: 'draft' | 'published'
-  title: string
-  slug: string
+  title: string | 'Untitled'
+  slug: string | null
   excerpt: string | null
   coverImage: {
     asset?: {
@@ -673,11 +736,11 @@ export type AllPostsQueryResult = Array<{
     crop?: SanityImageCrop
     alt?: string
     _type: 'image'
-  }
+  } | null
   date: string
   author: {
-    firstName: string
-    lastName: string
+    firstName: string | null
+    lastName: string | null
     picture: {
       asset?: {
         _ref: string
@@ -690,7 +753,7 @@ export type AllPostsQueryResult = Array<{
       crop?: SanityImageCrop
       alt?: string
       _type: 'image'
-    }
+    } | null
   } | null
 }>
 // Variable: morePostsQuery
@@ -698,8 +761,8 @@ export type AllPostsQueryResult = Array<{
 export type MorePostsQueryResult = Array<{
   _id: string
   status: 'draft' | 'published'
-  title: string
-  slug: string
+  title: string | 'Untitled'
+  slug: string | null
   excerpt: string | null
   coverImage: {
     asset?: {
@@ -713,11 +776,11 @@ export type MorePostsQueryResult = Array<{
     crop?: SanityImageCrop
     alt?: string
     _type: 'image'
-  }
+  } | null
   date: string
   author: {
-    firstName: string
-    lastName: string
+    firstName: string | null
+    lastName: string | null
     picture: {
       asset?: {
         _ref: string
@@ -730,7 +793,7 @@ export type MorePostsQueryResult = Array<{
       crop?: SanityImageCrop
       alt?: string
       _type: 'image'
-    }
+    } | null
   } | null
 }>
 // Variable: postQuery
@@ -760,8 +823,8 @@ export type PostQueryResult = {
   }> | null
   _id: string
   status: 'draft' | 'published'
-  title: string
-  slug: string
+  title: string | 'Untitled'
+  slug: string | null
   excerpt: string | null
   coverImage: {
     asset?: {
@@ -775,11 +838,11 @@ export type PostQueryResult = {
     crop?: SanityImageCrop
     alt?: string
     _type: 'image'
-  }
+  } | null
   date: string
   author: {
-    firstName: string
-    lastName: string
+    firstName: string | null
+    lastName: string | null
     picture: {
       asset?: {
         _ref: string
@@ -792,18 +855,24 @@ export type PostQueryResult = {
       crop?: SanityImageCrop
       alt?: string
       _type: 'image'
-    }
+    } | null
   } | null
 } | null
 // Variable: postPagesSlugs
 // Query: *[_type == "post" && defined(slug.current)]  {"slug": slug.current}
 export type PostPagesSlugsResult = Array<{
-  slug: string
+  slug: string | null
 }>
 // Variable: pagesSlugs
 // Query: *[_type == "page" && defined(slug.current)]  {"slug": slug.current}
 export type PagesSlugsResult = Array<{
-  slug: string
+  slug: string | null
+}>
+// Variable: teamListQuery
+// Query: *[_type == "team"] {    "id": _id,    name  }
+export type TeamListQueryResult = Array<{
+  id: string
+  name: string | null
 }>
 
 // Query TypeMap
@@ -818,5 +887,6 @@ declare module '@sanity/client' {
     '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
     '\n  *[_type == "post" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
+    '\n  *[_type == "team"] {\n    "id": _id,\n    name\n  }\n': TeamListQueryResult
   }
 }

@@ -97,9 +97,8 @@ export const pagesSlugs = defineQuery(`
 `)
 
 export const teamListQuery = defineQuery(`
-  *[_type == "team"] | order(name asc) {
-    _id,
-    name,
-    id,
+  *[_type == "team"] {
+    "id": _id,
+    name
   }
 `)
