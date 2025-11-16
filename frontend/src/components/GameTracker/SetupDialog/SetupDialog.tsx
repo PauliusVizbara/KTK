@@ -8,6 +8,7 @@ import {useGameTrackerStore} from '@/app/store'
 import {Heading} from '@/components/heading'
 import {Combobox, ComboboxLabel, ComboboxOption} from '@/components/combobox'
 import {Button} from '@/components'
+import Image from 'next/image'
 
 const STEP_TITLES = ['1. Set up the Battle', '1. Set up the Battle', 'Confirm Setup']
 const STEP_DESCRIPTIONS = [
@@ -15,7 +16,7 @@ const STEP_DESCRIPTIONS = [
   'Select the Kill Zone',
   'Review and confirm your setup.',
 ]
-const STEP_SIZES = ['5xl', '5xl', '3xl'] as const
+const STEP_SIZES = ['5xl', 'screen', '3xl'] as const
 
 const TEAM_OPTIONS = [
   {id: 'team-1', name: 'Team Alpha'},
@@ -66,11 +67,69 @@ const SelectTeamsStep = () => {
   )
 }
 
-const SelectKillzoneStep = () => {
-  return <div>Select Killzone Step</div>
+const maps = [
+  '/images/maps/volkus-1.png',
+  '/images/maps/volkus-2.png',
+  '/images/maps/volkus-3.png',
+  '/images/maps/volkus-4.png',
+  '/images/maps/volkus-5.png',
+  '/images/maps/volkus-6.png',
+  '/images/maps/volkus-7.png',
+  '/images/maps/volkus-8.png',
+  '/images/maps/volkus-9.png',
+  '/images/maps/volkus-10.png',
+  '/images/maps/volkus-11.png',
+  '/images/maps/volkus-12.png',
+]
+
+export function MapZoomModal() {
+  const selectedMap = useGameTrackerStore((s) => s.selectedMap)
+  const clearSelection = useGameTrackerStore((s) => s.setSelectedMap)
+
+  if (!selectedMap) return null
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+      onClick={() => clearSelection(null)}
+    >
+      <img
+        src={selectedMap}
+        className="max-h-[90vh] max-w-[90vw] rounded-xl shadow-2xl transition-transform"
+      />
+    </div>
+  )
 }
 
-const STEP_COMPONENTS = [SelectTeamsStep, SelectKillzoneStep]
+const SelectKillzoneStep = () => {
+  const selectedMap = useGameTrackerStore((s) => s.selectedMap)
+  const selectMap = useGameTrackerStore((s) => s.setSelectedMap)
+  return (
+    <div className="overflow-y-auto">
+      <div className="grid grid-cols-6 gap-4 ">
+        {maps.map((map) => (
+          <div
+            key={map}
+            className={`border-4 rounded-lg cursor-pointer transition
+            ${selectedMap === map ? 'border-blue-500' : 'border-transparent'}
+          `}
+            onClick={() => selectMap(map)}
+          >
+            <Image
+              src={map}
+              className="w-full h-auto rounded-lg"
+              width={600}
+              height={100}
+              alt={''}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+const STEP_COMPONENTS = [SelectTeamsStep, SelectKillzoneStep, SelectTeamsStep]
 export const SetupDialog = () => {
   const [step, setStep] = React.useState(0)
 

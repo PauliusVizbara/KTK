@@ -10,6 +10,8 @@ interface GameTrackerState {
   setIsSetupOpen: (isOpen: boolean) => void
   isSetupDone: boolean
   setIsSetupDone: (isDone: boolean) => void
+  selectedMap: string | null
+  setSelectedMap: (map: string | null) => void
   player1: PlayerState
   player2: PlayerState
 }
@@ -19,6 +21,8 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
   setIsSetupOpen: (isOpen) => set({isSetupOpen: isOpen}),
   isSetupDone: false,
   setIsSetupDone: (isDone) => set({isSetupDone: isDone}),
+  selectedMap: null,
+  setSelectedMap: (map) => set({selectedMap: map}),
   player1: {
     teamId: null,
     setTeamId: (teamId) => set((state) => ({player1: {...state.player1, teamId}})),
