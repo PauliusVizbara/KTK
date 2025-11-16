@@ -1,44 +1,19 @@
 'use client'
 
 import {Avatar} from '@/components/avatar'
-import {
-  Dropdown,
-  DropdownButton,
-  DropdownDivider,
-  DropdownItem,
-  DropdownLabel,
-  DropdownMenu,
-} from '@/components/dropdown'
+import {DropdownDivider, DropdownItem, DropdownLabel, DropdownMenu} from '@/components/dropdown'
 import {Heading} from '@/components/heading'
-import {
-  Navbar,
-  NavbarDivider,
-  NavbarItem,
-  NavbarLabel,
-  NavbarSection,
-  NavbarSpacer,
-} from '@/components/navbar'
+import {Navbar, NavbarDivider, NavbarItem, NavbarSection, NavbarSpacer} from '@/components/navbar'
 import {
   Sidebar,
   SidebarBody,
   SidebarHeader,
   SidebarItem,
-  SidebarLabel,
   SidebarSection,
 } from '@/components/sidebar'
 import {StackedLayout} from '@/components/stacked-layout'
 import {getEvents} from '@/data'
-import {
-  ArrowRightStartOnRectangleIcon,
-  ChevronDownIcon,
-  Cog8ToothIcon,
-  InboxIcon,
-  LightBulbIcon,
-  MagnifyingGlassIcon,
-  PlusIcon,
-  ShieldCheckIcon,
-  UserIcon,
-} from '@heroicons/react/16/solid'
+import {Cog8ToothIcon, PlusIcon} from '@heroicons/react/16/solid'
 import {usePathname} from 'next/navigation'
 
 const navItems = [

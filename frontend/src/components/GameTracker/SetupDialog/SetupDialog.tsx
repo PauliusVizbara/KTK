@@ -13,6 +13,8 @@ import EmblaCarousel from '@/components/Common/Carousel/Carousel'
 import {Divider} from '@/components/divider'
 import ReactDOM from 'react-dom'
 
+import {ArrowUturnLeftIcon, ArrowUturnRightIcon, XMarkIcon} from '@heroicons/react/16/solid'
+
 const STEP_TITLES = ['1. Set up the Battle', '1. Set up the Battle', '1. Set up the Battle']
 const STEP_DESCRIPTIONS = [
   'Select the Kill Teams',
@@ -100,17 +102,43 @@ export function MapZoomModal() {
   const selectedMap = useGameTrackerStore((s) => s.selectedMap)
   const clearSelection = useGameTrackerStore((s) => s.clearSelection)
 
+  const [rotation, setRotation] = React.useState(0)
+
   if (!selectedMap) return null
 
   return (
-    <div
-      className="fixed left-0 w-screen h-screen top-0 inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-20"
-      onClick={clearSelection}
-    >
+    <div className="fixed left-0 w-screen h-screen top-0 inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-20">
+      <div className="fixed left-12 top-12 ">
+        <div className="fixed top-24 right-12">
+          <XMarkIcon className="w-16 h-16 p-4 cursor-pointer text-white" onClick={clearSelection} />
+        </div>
+
+        <ArrowUturnLeftIcon
+          className="w-16 h-16 p-4 cursor-pointer text-white"
+          onClick={(e) => {
+            setRotation((r) => r - 90)
+            e.stopPropagation()
+          }}
+        />
+      </div>
+      <div className="fixed right-12 top-12 ">
+        <ArrowUturnRightIcon
+          className="w-16 h-16 p-4 cursor-pointer text-white"
+          onClick={(e) => {
+            setRotation((r) => r + 90)
+            e.stopPropagation()
+          }}
+        />
+      </div>
+
       <img
         onClick={(e) => e.stopPropagation()}
         src={selectedMap}
-        className="max-h-[90vh] max-w-[90vw] rounded-xl shadow-2xl transition-transform"
+        className={`max-h-[90vh]  rounded-xl shadow-2xl transition-transform`}
+        style={{
+          transform: `rotate(${rotation}deg)`,
+          maxWidth: `90v${rotation % 180 === 0 ? 'w' : 'h'}`,
+        }}
       />
     </div>
   )
