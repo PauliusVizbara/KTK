@@ -9,6 +9,7 @@ import {Heading} from '@/components/heading'
 import {Combobox, ComboboxLabel, ComboboxOption} from '@/components/combobox'
 import {Button} from '@/components'
 import Image from 'next/image'
+import {Select} from '@/components/select'
 
 const STEP_TITLES = ['1. Set up the Battle', '1. Set up the Battle', 'Confirm Setup']
 const STEP_DESCRIPTIONS = [
@@ -18,7 +19,7 @@ const STEP_DESCRIPTIONS = [
 ]
 const STEP_SIZES = ['5xl', 'screen', '3xl'] as const
 
-const TEAM_OPTIONS = [
+const TEAMS = [
   {id: 'team-1', name: 'Team Alpha'},
   {id: 'team-2', name: 'Team Bravo'},
   {id: 'team-3', name: 'Team Charlie'},
@@ -36,7 +37,7 @@ const SelectTeamsStep = () => {
           <Label>Player 1 Team</Label>
           <Combobox
             name="user"
-            options={TEAM_OPTIONS}
+            options={TEAMS}
             onChange={(team) => player1.setTeamId(team?.id ?? null)}
             displayValue={(user) => user?.name}
           >
@@ -51,7 +52,7 @@ const SelectTeamsStep = () => {
           <Label>Player 2 Team</Label>
           <Combobox
             name="user"
-            options={TEAM_OPTIONS}
+            options={TEAMS}
             onChange={(team) => player2.setTeamId(team?.id ?? null)}
             displayValue={(user) => user?.name}
           >
@@ -82,50 +83,49 @@ const maps = [
   '/images/maps/volkus-12.png',
 ]
 
-export function MapZoomModal() {
-  const selectedMap = useGameTrackerStore((s) => s.selectedMap)
-  const clearSelection = useGameTrackerStore((s) => s.setSelectedMap)
-
-  if (!selectedMap) return null
-
-  return (
-    <div
-      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-      onClick={() => clearSelection(null)}
-    >
-      <img
-        src={selectedMap}
-        className="max-h-[90vh] max-w-[90vw] rounded-xl shadow-2xl transition-transform"
-      />
-    </div>
-  )
-}
+const KILLZONES = [
+  {id: 'killzone-1', name: 'Killzone Alpha'},
+  {id: 'killzone-2', name: 'Killzone Bravo'},
+]
 
 const SelectKillzoneStep = () => {
-  const selectedMap = useGameTrackerStore((s) => s.selectedMap)
-  const selectMap = useGameTrackerStore((s) => s.setSelectedMap)
+  const [selectedMap, setSelectedMap] = React.useState<string | null>(null)
+  const [killzone, setKillzone] = React.useState<string | null>(null)
   return (
-    <div className="overflow-y-auto">
-      <div className="grid grid-cols-6 gap-4 ">
-        {maps.map((map) => (
-          <div
-            key={map}
-            className={`border-4 rounded-lg cursor-pointer transition
+    <>
+      <Field className="w-1/4">
+        <Label>Kill Zone</Label>
+        <Select name="killzone">
+          {KILLZONES.map((killzone) => (
+            <option key={killzone.id} value={killzone.id}>
+              {killzone.name}
+            </option>
+          ))}
+        </Select>
+      </Field>
+
+      <div className="overflow-y-auto">
+        <div className="grid grid-cols-6 gap-4 ">
+          {maps.map((map) => (
+            <div
+              key={map}
+              className={`border-4 rounded-lg cursor-pointer transition
             ${selectedMap === map ? 'border-blue-500' : 'border-transparent'}
           `}
-            onClick={() => selectMap(map)}
-          >
-            <Image
-              src={map}
-              className="w-full h-auto rounded-lg"
-              width={600}
-              height={100}
-              alt={''}
-            />
-          </div>
-        ))}
+              onClick={() => setSelectedMap(map)}
+            >
+              <Image
+                src={map}
+                className="w-full h-auto rounded-lg"
+                width={600}
+                height={100}
+                alt={''}
+              />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -135,7 +135,12 @@ export const SetupDialog = () => {
 
   const {isSetupOpen, setIsSetupOpen} = useGameTrackerStore()
   return (
-    <Dialog size={STEP_SIZES[step]} open={isSetupOpen} onClose={() => setIsSetupOpen(false)}>
+    <Dialog
+      className="h-[80vh]"
+      size={STEP_SIZES[step]}
+      open={isSetupOpen}
+      onClose={() => setIsSetupOpen(false)}
+    >
       <DialogTitle className="text-4xl uppercase bold">{STEP_TITLES[step]}</DialogTitle>
       <DialogDescription>{STEP_DESCRIPTIONS[step]}</DialogDescription>
       <DialogBody>{React.createElement(STEP_COMPONENTS[step])}</DialogBody>
