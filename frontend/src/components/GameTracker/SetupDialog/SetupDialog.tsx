@@ -107,12 +107,11 @@ export function MapZoomModal() {
   if (!selectedMap) return null
 
   return (
-    <div className="fixed left-0 w-screen h-screen top-0 inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-20">
-      <div className="fixed left-12 top-12 ">
-        <div className="fixed top-24 right-12">
-          <XMarkIcon className="w-16 h-16 p-4 cursor-pointer text-white" onClick={clearSelection} />
-        </div>
-
+    <div
+      onClick={clearSelection}
+      className="fixed left-0 w-screen h-screen top-0 inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-20"
+    >
+      <div className="fixed left-6 top-12 ">
         <ArrowUturnLeftIcon
           className="w-16 h-16 p-4 cursor-pointer text-white"
           onClick={(e) => {
@@ -121,7 +120,7 @@ export function MapZoomModal() {
           }}
         />
       </div>
-      <div className="fixed right-12 top-12 ">
+      <div className="fixed right-6 top-24 ">
         <ArrowUturnRightIcon
           className="w-16 h-16 p-4 cursor-pointer text-white"
           onClick={(e) => {
@@ -130,14 +129,16 @@ export function MapZoomModal() {
           }}
         />
       </div>
-
+      <div className="fixed top-6 right-6">
+        <XMarkIcon className="w-16 h-16 p-4 cursor-pointer text-white" onClick={clearSelection} />
+      </div>
       <img
-        onClick={(e) => e.stopPropagation()}
         src={selectedMap}
-        className={`max-h-[90vh]  rounded-xl shadow-2xl transition-transform`}
+        className={`rounded-xl shadow-2xl transition-transform`}
         style={{
           transform: `rotate(${rotation}deg)`,
           maxWidth: `90v${rotation % 180 === 0 ? 'w' : 'h'}`,
+          maxHeight: `90v${rotation % 180 === 0 ? 'h' : 'w'}`,
         }}
       />
     </div>
