@@ -102,3 +102,10 @@ export const teamListQuery = defineQuery(`
     name
   }
 `)
+
+export const critOpQuery = defineQuery(`
+  *[_type == "critOp"] {
+    ...,
+    "id": _id,
+  }
+`)
