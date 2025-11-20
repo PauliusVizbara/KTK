@@ -16,21 +16,30 @@ import ReactDOM from 'react-dom'
 
 import {ArrowUturnLeftIcon, ArrowUturnRightIcon, XMarkIcon} from '@heroicons/react/16/solid'
 import {CritOp} from '../../../../sanity.types'
-
 const STEP_TITLES = [
   '1. Set up the Battle',
   '1. Set up the Battle',
   '1. Set up the Battle',
   '1. Set up the Battle',
+  '2. Select Operatives',
+  '2. Select Operatives',
+  '2. Select Operatives',
+  '3. Set Up Operatives',
+  '3. Set Up Operatives',
 ]
 const STEP_DESCRIPTIONS = [
   'Select the Kill Teams',
   'Select the Kill Zone',
   'Select any critical operation rules for the battle.',
   'Roll-off for initiative',
+  'Select Operatives',
+  'Select Equipment',
+  'Select Tac Ops',
+  'Set Up Equipment',
+  'Set Up Operatives',
 ]
 
-const STEP_SIZES = ['5xl', '5xl', '5xl', '3xl'] as const
+const STEP_SIZES = ['5xl', '5xl', '5xl', '3xl', '5xl', '5xl', '5xl', '5xl', '5xl'] as const
 
 interface StepProps {
   onNext: () => void
@@ -314,11 +323,111 @@ const SelectInitiativeStep = ({onBack, onFinish}: StepProps) => {
   )
 }
 
+const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
+  return (
+    <>
+      <DialogBody>
+        <Heading className="mt-6" level={6}>
+          Select Operatives
+        </Heading>
+        <div className="mt-4">
+          <p>Content for selecting operatives goes here.</p>
+        </div>
+      </DialogBody>
+      <DialogActions>
+        <Button onClick={onBack}>Previous</Button>
+        <Button onClick={onNext}>Next</Button>
+      </DialogActions>
+    </>
+  )
+}
+
+const SelectEquipmentStep = ({onNext, onBack}: StepProps) => {
+  return (
+    <>
+      <DialogBody>
+        <Heading className="mt-6" level={6}>
+          Select Equipment
+        </Heading>
+        <div className="mt-4">
+          <p>Content for selecting equipment goes here.</p>
+        </div>
+      </DialogBody>
+      <DialogActions>
+        <Button onClick={onBack}>Previous</Button>
+        <Button onClick={onNext}>Next</Button>
+      </DialogActions>
+    </>
+  )
+}
+
+const SelectTacOpStep = ({onNext, onBack}: StepProps) => {
+  return (
+    <>
+      <DialogBody>
+        <Heading className="mt-6" level={6}>
+          Select Tac Ops
+        </Heading>
+        <div className="mt-4">
+          <p>Content for selecting Tac Ops goes here.</p>
+        </div>
+      </DialogBody>
+      <DialogActions>
+        <Button onClick={onBack}>Previous</Button>
+        <Button onClick={onNext}>Next</Button>
+      </DialogActions>
+    </>
+  )
+}
+
+const SetupEquipmentStep = ({onNext, onBack}: StepProps) => {
+  return (
+    <>
+      <DialogBody>
+        <Heading className="mt-6" level={6}>
+          Set Up Equipment
+        </Heading>
+        <div className="mt-4">
+          <p>Content for setting up equipment goes here.</p>
+        </div>
+      </DialogBody>
+      <DialogActions>
+        <Button onClick={onBack}>Previous</Button>
+        <Button onClick={onNext}>Next</Button>
+      </DialogActions>
+    </>
+  )
+}
+
+const SetupOperativesStep = ({onNext, onBack}: StepProps) => {
+  return (
+    <>
+      <DialogBody>
+        <Heading className="mt-6" level={6}>
+          Set Up Operatives
+        </Heading>
+        <div className="mt-4">
+          <p>Content for setting up operatives goes here.</p>
+        </div>
+      </DialogBody>
+      <DialogActions>
+        <Button onClick={onBack}>Previous</Button>
+        <Button onClick={onNext}>Next</Button>
+      </DialogActions>
+    </>
+  )
+}
+
 const STEP_COMPONENTS = [
   SelectTeamsStep,
   SelectKillzoneStep,
   SelectCritOpStep,
   SelectInitiativeStep,
+  SelectOperativesStep,
+  SelectEquipmentStep,
+  SelectTacOpStep,
+  SetupEquipmentStep,
+  SetupOperativesStep,
 ]
 
 interface Props {

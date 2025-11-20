@@ -13,9 +13,12 @@ export const CritOpCard = ({critOp}: {critOp: CritOp}) => {
       <div className="p-4">
         <div className="bg-primary text-white font-bold px-3 py-1 rounded mb-4">{name}</div>
         {additionalRulesText && (
-          <div className="text-sm text-gray-700 mb-2 list-item">
-            <PortableText value={additionalRulesText} />
-          </div>
+          <>
+            <h3 className="text-primary font-bold mb-2">ADDITIONAL RULES</h3>
+            <div className="text-sm text-gray-700 mb-2">
+              <PortableText value={additionalRulesText} />
+            </div>
+          </>
         )}
       </div>
       <div className="p-4">

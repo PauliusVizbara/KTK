@@ -19,12 +19,6 @@ export const team = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'id',
-      title: 'Team ID',
-      type: 'string',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
       name: 'operatives',
       title: 'Operatives',
       type: 'array',
