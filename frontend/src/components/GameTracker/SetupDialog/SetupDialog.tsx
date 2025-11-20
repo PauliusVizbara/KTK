@@ -253,7 +253,7 @@ interface Props {
 export const SetupDialog = ({initialTeams, critOps}: Props) => {
   const [step, setStep] = React.useState(0)
 
-  const {isSetupOpen, setIsSetupOpen} = useGameTrackerStore()
+  const {isSetupOpen, setIsSetupOpen, setIsSetupDone} = useGameTrackerStore()
   const {setTeamSelectOptions} = useTeamStore()
   const {setCritOps} = useCritOpStore()
 
@@ -272,9 +272,19 @@ export const SetupDialog = ({initialTeams, critOps}: Props) => {
           <Button disabled={step === 0} onClick={() => setStep(step - 1)}>
             Previous
           </Button>
-          <Button disabled={step === STEP_COMPONENTS.length - 1} onClick={() => setStep(step + 1)}>
-            Next
-          </Button>
+          {step < STEP_COMPONENTS.length - 1 && (
+            <Button onClick={() => setStep(step + 1)}>Next</Button>
+          )}
+          {step === STEP_COMPONENTS.length - 1 && (
+            <Button
+              onClick={() => {
+                setIsSetupDone(true)
+                setIsSetupOpen(false)
+              }}
+            >
+              Finish
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </>
