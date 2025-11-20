@@ -47,7 +47,9 @@ const SelectTeamsStep = () => {
           <Combobox
             name="user"
             options={teamSelectOptions}
-            onChange={(team) => player1.setTeamId(team?.id ?? null)}
+            onChange={(team) =>
+              player1.setTeamSelection({name: team?.name ?? null, id: team?.id ?? null})
+            }
             displayValue={(user) => user?.name}
           >
             {(user) => (
@@ -62,7 +64,9 @@ const SelectTeamsStep = () => {
           <Combobox
             name="user"
             options={teamSelectOptions}
-            onChange={(team) => player2.setTeamId(team?.id ?? null)}
+            onChange={(team) =>
+              player2.setTeamSelection({name: team?.name ?? null, id: team?.id ?? null})
+            }
             displayValue={(user) => user?.name}
           >
             {(user) => (
@@ -106,10 +110,13 @@ const KILLZONES = [
   {id: 'tomb-world', name: 'Tomb World'},
 ]
 
-export function MapZoomModal() {
-  const selectedMap = useGameTrackerStore((s) => s.selectedMap)
-  const clearSelection = useGameTrackerStore((s) => s.clearSelection)
-
+export function MapZoomModal({
+  selectedMap,
+  clearSelection,
+}: {
+  selectedMap: string | null
+  clearSelection: () => void
+}) {
   const [rotation, setRotation] = React.useState(0)
 
   if (!selectedMap) return null
@@ -154,8 +161,8 @@ export function MapZoomModal() {
 }
 
 const SelectKillzoneStep = () => {
-  const setSelectedMap = useGameTrackerStore((s) => s.setSelectedMap)
   const [killzone, setKillzone] = React.useState(KILLZONES[0].id)
+  const [zoomedInMap, setZoomedInMap] = React.useState<string | null>(null)
   const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
   return (
     <>
@@ -170,14 +177,17 @@ const SelectKillzoneStep = () => {
         </Select>
       </Field>
       <Divider className="my-6" />
-      {ReactDOM.createPortal(<MapZoomModal />, document.body)}
+      {ReactDOM.createPortal(
+        <MapZoomModal selectedMap={zoomedInMap} clearSelection={() => setZoomedInMap(null)} />,
+        document.body,
+      )}
       <EmblaCarousel
         emblaRef={emblaRef}
         emblaApi={emblaApi}
         slides={maps[killzone as keyof typeof maps].map((map) => (
           <Image
             src={map}
-            onClick={() => setSelectedMap(map)}
+            onClick={() => setZoomedInMap(map)}
             className="w-full h-auto rounded-lg"
             width={600}
             height={600}
@@ -224,16 +234,33 @@ const SelectInitiativeStep = () => {
           onClick={() => setSetupInitiative('player1')}
           className="flex-1 m-4"
         >
-          {gameTrackerStore.player1.teamId}
+          {gameTrackerStore.player1.teamSelection.name}
         </Button>
         <Button
           color={setupInitiative === 'player2' ? 'primary' : 'secondary'}
           onClick={() => setSetupInitiative('player2')}
           className="flex-1 m-4"
         >
-          {gameTrackerStore.player2.teamId}
+          {gameTrackerStore.player2.teamSelection.name}
         </Button>
       </div>
+
+      {setupInitiative && (
+        <ul className="list-disc list-inside">
+          <li>
+            {setupInitiative === 'player1'
+              ? gameTrackerStore.player1.teamSelection.name
+              : gameTrackerStore.player2.teamSelection.name}{' '}
+            selects one drop zone.
+          </li>
+          <li>
+            {setupInitiative === 'player1'
+              ? gameTrackerStore.player2.teamSelection.name
+              : gameTrackerStore.player1.teamSelection.name}{' '}
+            has the other drop zone and gains the Re-roll initiative card.
+          </li>
+        </ul>
+      )}
     </>
   )
 }
