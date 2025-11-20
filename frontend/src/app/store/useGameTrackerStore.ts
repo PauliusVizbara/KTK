@@ -6,6 +6,8 @@ interface PlayerState {
   setTeamSelection: (team: {name: string | null; id: string | null}) => void
   score: number
   setScore: (score: number) => void
+  cp: number
+  setCp: (cp: number) => void
 }
 
 interface GameTrackerState {
@@ -40,6 +42,8 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
       set((state) => ({player1: {...state.player1, teamSelection: team}})),
     score: 0,
     setScore: (score) => set((state) => ({player1: {...state.player1, score}})),
+    cp: 2,
+    setCp: (cp) => set((state) => ({player1: {...state.player1, cp}})),
   },
   player2: {
     teamSelection: {name: null, id: null},
@@ -47,5 +51,7 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
       set((state) => ({player2: {...state.player2, teamSelection: team}})),
     score: 0,
     setScore: (score) => set((state) => ({player2: {...state.player2, score}})),
+    cp: 2,
+    setCp: (cp) => set((state) => ({player2: {...state.player2, cp}})),
   },
 }))
