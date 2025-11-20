@@ -227,7 +227,7 @@ const SelectKillzoneStep = ({onNext, onBack}: StepProps) => {
         <Button onClick={onBack}>Previous</Button>
         <Button
           onClick={() => {
-            setMap(maps[killzone as keyof typeof maps][(emblaApi?.selectedScrollSnap() ?? 1) - 1])
+            setMap(maps[killzone as keyof typeof maps][emblaApi?.selectedScrollSnap() ?? 1])
             onNext()
           }}
         >
@@ -259,7 +259,7 @@ const SelectCritOpStep = ({onNext, onBack}: StepProps) => {
         <Button onClick={onBack}>Previous</Button>
         <Button
           onClick={() => {
-            setCritOp(critOps[(emblaApi?.selectedScrollSnap() ?? 1) - 1])
+            setCritOp(critOps[emblaApi?.selectedScrollSnap() ?? 1])
             onNext()
           }}
         >
