@@ -962,7 +962,7 @@ export type PagesSlugsResult = Array<{
   slug: string
 }>
 // Variable: teamListQuery
-// Query: *[_type == "team"] {    "id": _id,    name  }
+// Query: *[_type == "team"] | order(name asc) {    "id": _id,    name  }
 export type TeamListQueryResult = Array<{
   id: string
   name: string
@@ -1032,7 +1032,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
     '\n  *[_type == "post" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
-    '\n  *[_type == "team"] {\n    "id": _id,\n    name\n  }\n': TeamListQueryResult
+    '\n  *[_type == "team"] | order(name asc) {\n    "id": _id,\n    name\n  }\n': TeamListQueryResult
     '\n  *[_type == "critOp"] | order(name asc) {\n    ...,\n    "id": _id,\n  }\n': CritOpQueryResult
   }
 }

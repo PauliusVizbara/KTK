@@ -1,16 +1,20 @@
-import { Stat } from '@/app/stat'
-import { Badge } from '@/components/badge'
-import { Button } from '@/components/button'
-import { Heading, Subheading } from '@/components/heading'
-import { Link } from '@/components/link'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
-import { getEvent, getEventOrders } from '@/data'
-import { ChevronLeftIcon } from '@heroicons/react/16/solid'
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import {Stat} from '@/app/stat'
+import {Badge} from '@/components/badge'
+import {Button} from '@/components'
+import {Heading, Subheading} from '@/components/heading'
+import {Link} from '@/components/link'
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/table'
+import {getEvent, getEventOrders} from '@/data'
+import {ChevronLeftIcon} from '@heroicons/react/16/solid'
+import type {Metadata} from 'next'
+import {notFound} from 'next/navigation'
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  let { id } = await params
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{id: string}>
+}): Promise<Metadata> {
+  let {id} = await params
   let event = await getEvent(id)
 
   return {
@@ -18,8 +22,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 }
 
-export default async function Event({ params }: { params: Promise<{ id: string }> }) {
-  let { id } = await params
+export default async function Event({params}: {params: Promise<{id: string}>}) {
+  let {id} = await params
   let event = await getEvent(id)
   let orders = await getEventOrders(id)
 
@@ -30,16 +34,16 @@ export default async function Event({ params }: { params: Promise<{ id: string }
   return (
     <>
       <div className="max-lg:hidden">
-        <Link href="/events" className="inline-flex items-center gap-2 text-sm/6 text-zinc-500 dark:text-zinc-400">
+        <Link
+          href="/events"
+          className="inline-flex items-center gap-2 text-sm/6 text-zinc-500 dark:text-zinc-400"
+        >
           <ChevronLeftIcon className="size-4 fill-zinc-400 dark:fill-zinc-500" />
           Events
         </Link>
       </div>
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-wrap items-center gap-6">
-          <div className="w-32 shrink-0">
-            <img className="aspect-3/2 rounded-lg shadow-sm" src={event.imgUrl} alt="" />
-          </div>
           <div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <Heading>{event.name}</Heading>

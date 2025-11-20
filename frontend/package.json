@@ -49,6 +49,7 @@
     "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.7",
     "@vitest/browser": "^4.0.2",
+    "@vitest/browser-playwright": "^4.0.12",
     "@vitest/coverage-v8": "^4.0.2",
     "eslint": "^9.34.0",
     "eslint-config-next": "^15.5.0",

@@ -12,8 +12,8 @@ import {handleError} from '@/app/client-utils'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s - Catalyst',
-    default: 'Catalyst',
+    template: '%s - KTK',
+    default: 'KTK',
   },
   description: '',
 }

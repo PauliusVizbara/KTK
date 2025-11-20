@@ -1,14 +1,14 @@
-import { Button } from '@/components/button'
-import { Checkbox, CheckboxField } from '@/components/checkbox'
-import { Divider } from '@/components/divider'
-import { Label } from '@/components/fieldset'
-import { Heading, Subheading } from '@/components/heading'
-import { Input } from '@/components/input'
-import { Select } from '@/components/select'
-import { Text } from '@/components/text'
-import { Textarea } from '@/components/textarea'
-import type { Metadata } from 'next'
-import { Address } from './address'
+import {Button} from '@/components'
+import {Checkbox, CheckboxField} from '@/components/checkbox'
+import {Divider} from '@/components/divider'
+import {Label} from '@/components/fieldset'
+import {Heading, Subheading} from '@/components/heading'
+import {Input} from '@/components/input'
+import {Select} from '@/components/select'
+import {Text} from '@/components/text'
+import {Textarea} from '@/components/textarea'
+import type {Metadata} from 'next'
+import {Address} from './address'
 
 export const metadata: Metadata = {
   title: 'Settings',
@@ -50,7 +50,12 @@ export default function Settings() {
           <Text>This is how customers can contact you for support.</Text>
         </div>
         <div className="space-y-4">
-          <Input type="email" aria-label="Organization Email" name="email" defaultValue="info@example.com" />
+          <Input
+            type="email"
+            aria-label="Organization Email"
+            name="email"
+            defaultValue="info@example.com"
+          />
           <CheckboxField>
             <Checkbox name="email_is_public" defaultChecked />
             <Label>Show email on public profile</Label>

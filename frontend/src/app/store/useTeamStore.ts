@@ -1,6 +1,4 @@
-import {teamListQuery} from '@/sanity/queries'
 import {create} from 'zustand'
-import {sanityFetch} from '@/sanity/live'
 
 interface TeamSelect {
   id: string

@@ -1,18 +1,27 @@
-import { Avatar } from '@/components/avatar'
-import { Badge } from '@/components/badge'
-import { Button } from '@/components/button'
-import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/description-list'
-import { Divider } from '@/components/divider'
-import { Heading, Subheading } from '@/components/heading'
-import { Link } from '@/components/link'
-import { getOrder } from '@/data'
-import { BanknotesIcon, CalendarIcon, ChevronLeftIcon, CreditCardIcon } from '@heroicons/react/16/solid'
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { RefundOrder } from './refund'
+import {Avatar} from '@/components/avatar'
+import {Badge} from '@/components/badge'
+import {Button} from '@/components'
+import {DescriptionDetails, DescriptionList, DescriptionTerm} from '@/components/description-list'
+import {Divider} from '@/components/divider'
+import {Heading, Subheading} from '@/components/heading'
+import {Link} from '@/components/link'
+import {getOrder} from '@/data'
+import {
+  BanknotesIcon,
+  CalendarIcon,
+  ChevronLeftIcon,
+  CreditCardIcon,
+} from '@heroicons/react/16/solid'
+import type {Metadata} from 'next'
+import {notFound} from 'next/navigation'
+import {RefundOrder} from './refund'
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  let { id } = await params
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{id: string}>
+}): Promise<Metadata> {
+  let {id} = await params
   let order = await getOrder(id)
 
   return {
@@ -20,8 +29,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 }
 
-export default async function Order({ params }: { params: Promise<{ id: string }> }) {
-  let { id } = await params
+export default async function Order({params}: {params: Promise<{id: string}>}) {
+  let {id} = await params
   let order = await getOrder(id)
 
   if (!order) {
@@ -31,7 +40,10 @@ export default async function Order({ params }: { params: Promise<{ id: string }
   return (
     <>
       <div className="max-lg:hidden">
-        <Link href="/orders" className="inline-flex items-center gap-2 text-sm/6 text-zinc-500 dark:text-zinc-400">
+        <Link
+          href="/orders"
+          className="inline-flex items-center gap-2 text-sm/6 text-zinc-500 dark:text-zinc-400"
+        >
           <ChevronLeftIcon className="size-4 fill-zinc-400 dark:fill-zinc-500" />
           Orders
         </Link>
@@ -113,12 +125,7 @@ export default async function Order({ params }: { params: Promise<{ id: string }
           <DescriptionTerm>Address</DescriptionTerm>
           <DescriptionDetails>{order.customer.address}</DescriptionDetails>
           <DescriptionTerm>Country</DescriptionTerm>
-          <DescriptionDetails>
-            <span className="inline-flex gap-3">
-              <img src={order.customer.countryFlagUrl} alt={order.customer.country} />
-              {order.customer.country}
-            </span>
-          </DescriptionDetails>
+
           <DescriptionTerm>CVC</DescriptionTerm>
           <DescriptionDetails>
             <Badge color="lime">Passed successfully</Badge>

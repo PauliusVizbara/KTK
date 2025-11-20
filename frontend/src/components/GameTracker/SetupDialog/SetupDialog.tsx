@@ -171,7 +171,8 @@ export function MapZoomModal({
       <div className="fixed top-6 right-6">
         <XMarkIcon className="w-16 h-16 p-4 cursor-pointer text-white" onClick={clearSelection} />
       </div>
-      <img
+      <Image
+        alt="Zoomed in map"
         src={selectedMap}
         className={`rounded-xl shadow-2xl transition-transform`}
         style={{
@@ -212,6 +213,7 @@ const SelectKillzoneStep = ({onNext, onBack}: StepProps) => {
           emblaApi={emblaApi}
           slides={maps[killzone as keyof typeof maps].map((map) => (
             <Image
+              key={map}
               src={map}
               onClick={() => setZoomedInMap(map)}
               className="w-full h-auto rounded-lg"
