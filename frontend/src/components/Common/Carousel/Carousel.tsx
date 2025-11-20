@@ -1,13 +1,14 @@
 import React from 'react'
-import {EmblaOptionsType} from 'embla-carousel'
+
 import {DotButton, useDotButton} from './EmblaCarouselDotButton'
 import {PrevButton, NextButton, usePrevNextButtons} from './EmblaCarouselArrowButtons'
-import useEmblaCarousel from 'embla-carousel-react'
+
 import {Button} from '../Button/Button'
 
 type PropType = {
   slides: React.ReactElement[]
-  options?: EmblaOptionsType
+  emblaRef: any
+  emblaApi: any
 }
 
 function getRandomInt(max: number) {
@@ -15,52 +16,38 @@ function getRandomInt(max: number) {
 }
 
 const EmblaCarousel: React.FC<PropType> = (props) => {
-  const {slides, options} = props
-  const [emblaRef, emblaApi] = useEmblaCarousel(options)
-
-  const {selectedIndex, scrollSnaps, onDotButtonClick} = useDotButton(emblaApi)
+  const {slides, emblaRef, emblaApi} = props
 
   const {prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick} =
     usePrevNextButtons(emblaApi)
 
   return (
-    <section className="embla">
-      <div className="embla__viewport" ref={emblaRef}>
-        <div className="embla__container">
-          {slides.map((el, index) => (
-            <div className="embla__slide" key={index}>
-              {el}
-            </div>
-          ))}
+    <div className="flex flex-col max-w-full">
+      <section className="embla">
+        <div className="embla__viewport" ref={emblaRef}>
+          <div className="embla__container">
+            {slides.map((el, index) => (
+              <div className="embla__slide basis-full sm:basis-[70%] " key={index}>
+                {el}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div className="embla__controls">
-        <div className="embla__buttons">
-          <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
-          <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
-          <Button
-            onClick={() => {
-              emblaApi?.scrollTo(getRandomInt(slides.length))
-            }}
-          >
-            Random
-          </Button>
-        </div>
-
-        <div className="embla__dots">
-          {scrollSnaps.map((_, index) => (
-            <DotButton
-              key={index}
-              onClick={() => onDotButtonClick(index)}
-              className={'embla__dot'.concat(
-                index === selectedIndex ? ' embla__dot--selected' : '',
-              )}
-            />
-          ))}
-        </div>
+      <div className="w-full flex justify-between mt-8 items-center">
+        <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
+        <Button
+          className="w-32 h-fit"
+          onClick={() => {
+            emblaApi?.scrollTo(getRandomInt(slides.length))
+          }}
+        >
+          Random
+        </Button>
+        <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
       </div>
-    </section>
+    </div>
   )
 }
 

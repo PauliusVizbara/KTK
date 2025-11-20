@@ -19,42 +19,23 @@ export const critOp = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'loreText',
-      title: 'Lore Text',
-      type: 'string',
-    }),
-    defineField({
-      name: 'additionalRulesTxt',
+      name: 'additionalRulesText',
       title: 'Additional Rules',
-      type: 'array', 
-      of: [{type: 'block'}]
+      type: 'array',
+      of: [{type: 'block'}],
     }),
     defineField({
-      name: 'missionActionName',
-      title: 'Mission Action Name',
-      type: 'string', 
-    }),
-    defineField({
-      name: 'missionActionApCost',
-      title: 'Mission Action AP Cost',
-      type: 'number', 
-    }),
-    defineField({
-      name: 'missionActionDescriptionGreen',
-      title: 'Mission Action Green Description',
-      type: 'array', 
-      of: [{type: 'block'}]
-    }),
-    defineField({
-      name: 'missionActionDescriptionRed',
-      title: 'Mission Action Red Description',
-      type: 'array', 
-      of: [{type: 'block'}]
+      name: 'missionActions',
+      title: 'Mission Actions',
+      type: 'array',
+      of: [{type: 'action'}],
     }),
     defineField({
       name: 'victoryPoints',
       title: 'Victory Points',
-      type: 'array', 
-      of: [{type: 'block'}]
-    })]
+      type: 'array',
+      of: [{type: 'block'}],
+      validation: (Rule) => Rule.required(),
+    }),
+  ],
 })

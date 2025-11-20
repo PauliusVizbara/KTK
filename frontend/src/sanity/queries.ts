@@ -104,7 +104,7 @@ export const teamListQuery = defineQuery(`
 `)
 
 export const critOpQuery = defineQuery(`
-  *[_type == "critOp"] {
+  *[_type == "critOp"] | order(name asc) {
     ...,
     "id": _id,
   }

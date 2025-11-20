@@ -15,7 +15,7 @@ body {
 }
 
 .embla {
-  max-width: 48rem;
+  max-width: 100%;
   margin: auto;
   --slide-height: 19rem;
   --slide-spacing: 1rem;
@@ -31,7 +31,8 @@ body {
 }
 .embla__slide {
   transform: translate3d(0, 0, 0);
-  flex: 0 0 var(--slide-size);
+  flex-grow: 0;
+  flex-shrink: 0;
   min-width: 0;
   padding-left: var(--slide-spacing);
 }
@@ -45,13 +46,6 @@ body {
   justify-content: center;
   height: var(--slide-height);
   user-select: none;
-}
-.embla__controls {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  justify-content: space-between;
-  gap: 1.2rem;
-  margin-top: 1.8rem;
 }
 .embla__buttons {
   display: grid;

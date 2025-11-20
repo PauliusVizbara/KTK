@@ -8,6 +8,7 @@ import {link} from './objects/link'
 import {blockContent} from './objects/blockContent'
 import {operative} from './objects/operative'
 import {weapon} from './objects/weapon'
+import {action} from './objects/action'
 import {team} from './documents/team'
 import {critOp} from './documents/critOp'
 
@@ -29,4 +30,5 @@ export const schemaTypes = [
   link,
   operative,
   weapon,
+  action,
 ]

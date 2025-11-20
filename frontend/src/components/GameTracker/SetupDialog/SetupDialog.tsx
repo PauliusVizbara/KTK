@@ -3,26 +3,34 @@ import {DialogBody, DialogActions} from '@/components/dialog'
 import {Field, Label} from '@/components/fieldset'
 import {Dialog, DialogTitle, DialogDescription} from '@/components/dialog'
 import React, {useEffect} from 'react'
-import {useGameTrackerStore, useTeamStore} from '@/app/store'
+import {useGameTrackerStore, useTeamStore, useCritOpStore} from '@/app/store'
 import {Heading} from '@/components/heading'
 import {Combobox, ComboboxLabel, ComboboxOption} from '@/components/combobox'
-import {Button} from '@/components'
+import {Button, CritOpCard} from '@/components'
 import Image from 'next/image'
 import {Select} from '@/components/select'
 import EmblaCarousel from '@/components/Common/Carousel/Carousel'
+import useEmblaCarousel from 'embla-carousel-react'
 import {Divider} from '@/components/divider'
 import ReactDOM from 'react-dom'
 
 import {ArrowUturnLeftIcon, ArrowUturnRightIcon, XMarkIcon} from '@heroicons/react/16/solid'
+import {CritOp} from '../../../../sanity.types'
 
-const STEP_TITLES = ['1. Set up the Battle', '1. Set up the Battle', '1. Set up the Battle']
+const STEP_TITLES = [
+  '1. Set up the Battle',
+  '1. Set up the Battle',
+  '1. Set up the Battle',
+  '1. Set up the Battle',
+]
 const STEP_DESCRIPTIONS = [
   'Select the Kill Teams',
   'Select the Kill Zone',
+  'Select any critical operation rules for the battle.',
   'Roll-off for initiative',
 ]
 
-const STEP_SIZES = ['5xl', '5xl', '3xl'] as const
+const STEP_SIZES = ['5xl', '5xl', '5xl', '3xl'] as const
 
 const SelectTeamsStep = () => {
   const {player1, player2} = useGameTrackerStore()
@@ -148,6 +156,7 @@ export function MapZoomModal() {
 const SelectKillzoneStep = () => {
   const setSelectedMap = useGameTrackerStore((s) => s.setSelectedMap)
   const [killzone, setKillzone] = React.useState(KILLZONES[0].id)
+  const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
   return (
     <>
       <Field className="w-1/4">
@@ -163,6 +172,8 @@ const SelectKillzoneStep = () => {
       <Divider className="my-6" />
       {ReactDOM.createPortal(<MapZoomModal />, document.body)}
       <EmblaCarousel
+        emblaRef={emblaRef}
+        emblaApi={emblaApi}
         slides={maps[killzone as keyof typeof maps].map((map) => (
           <Image
             src={map}
@@ -174,17 +185,26 @@ const SelectKillzoneStep = () => {
             style={{objectFit: 'fill'}}
           />
         ))}
-        options={{loop: true}}
       />
     </>
   )
 }
 
 const SelectCritOpStep = () => {
+  const critOps = useCritOpStore((s) => s.critOps)
+  const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
   return (
-    <Heading className="mt-6" level={6}>
-      3. Select any critical operation rules for the battle.
-    </Heading>
+    <>
+      <div className="mt-4 flex">
+        <EmblaCarousel
+          emblaRef={emblaRef}
+          emblaApi={emblaApi}
+          slides={critOps.map((critOp) => (
+            <CritOpCard key={critOp._id} critOp={critOp} />
+          ))}
+        />
+      </div>
+    </>
   )
 }
 
@@ -227,17 +247,20 @@ const STEP_COMPONENTS = [
 
 interface Props {
   initialTeams: {id: string; name: string}[]
+  critOps: CritOp[]
 }
 
-export const SetupDialog = ({initialTeams}: Props) => {
+export const SetupDialog = ({initialTeams, critOps}: Props) => {
   const [step, setStep] = React.useState(0)
 
   const {isSetupOpen, setIsSetupOpen} = useGameTrackerStore()
   const {setTeamSelectOptions} = useTeamStore()
+  const {setCritOps} = useCritOpStore()
 
   useEffect(() => {
     setTeamSelectOptions(initialTeams)
-  }, [initialTeams])
+    setCritOps(critOps)
+  }, [initialTeams, setTeamSelectOptions, critOps, setCritOps])
 
   return (
     <>
