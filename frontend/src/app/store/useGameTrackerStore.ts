@@ -11,8 +11,6 @@ interface GameTrackerState {
   setIsSetupOpen: (isOpen: boolean) => void
   isSetupDone: boolean
   setIsSetupDone: (isDone: boolean) => void
-  killZone: string | null
-  setKillZone: (killZone: string | null) => void
   map: string | null
   setMap: (map: string | null) => void
   critOp: CritOp | null
@@ -26,8 +24,6 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
   setIsSetupOpen: (isOpen) => set({isSetupOpen: isOpen}),
   isSetupDone: false,
   setIsSetupDone: (isDone) => set({isSetupDone: isDone}),
-  killZone: null,
-  setKillZone: (killZone) => set({killZone}),
   map: null,
   setMap: (map) => set({map}),
   critOp: null,
