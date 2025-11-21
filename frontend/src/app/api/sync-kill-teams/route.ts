@@ -58,7 +58,6 @@ function stringToSectionBlock(text: string) {
 // Define the schema for the extracted data
 const EquipmentSchema = z.object({
   name: z.string(),
-  lore: z.string(),
   description: z.string(),
   weapon: z
     .object({
@@ -82,6 +81,7 @@ const EquipmentSchema = z.object({
 })
 
 const ExtractionSchema = z.object({
+  teamName: z.string(),
   factionEquipment: z.array(EquipmentSchema),
 })
 
@@ -157,8 +157,7 @@ async function extractEquipmentFromText(text: string) {
     messages: [
       {
         role: 'system',
-        content:
-          'You are a helper that extracts structured data from Warhammer Kill Team PDF text. Find the 4 FACTION EQUIPMENT cards. Extract their names, lores, descriptions, and any weapon (singular) or action (singular) associated with them. For weapons, determine if it is "ranged" or "melee". Weapon stat consists of name, attacks, hit, damage and critical damage. Damage and critical damage are separated by a slash. AP cost should be a number. Extract any limitations for actions if present. An action is present only if an action name, AP cost and description with limitations are defined. Do not trim anything from the text, like strategic gambit',
+        content: `You are a helper that extracts structured data from Warhammer Kill Team PDF text. First, identify the team name from the document header/title. Then find the 4 FACTION EQUIPMENT cards. Extract their names, lores, descriptions, and any weapon (singular) or action (singular) associated with them. For weapons, determine if it is "ranged" or "melee". Weapon stat consists of name, attacks, hit, damage and critical damage. Damage and critical damage are separated by a slash. AP cost should be a number. Extract any limitations for actions if present. An action is present only if an action name, AP cost and description with limitations are defined. Do not trim anything from the text, like strategic gambit. Name is at top of card, lore is second paragraph, description is third paragraph. Do not mix lore and description fields. Make description without new lines, except for list items.`,
       },
       {role: 'user', content: relevantText},
     ],
@@ -170,73 +169,98 @@ async function extractEquipmentFromText(text: string) {
 
 export async function GET() {
   try {
-    const pdfLinks = await getPdfLinks(BASE_URL)
-    // const pdfLinks = [
-    //   'https://assets.warhammer-community.com/eng_29-10_kill_team_team_rules_legionaries-e5hsbsasn6-l5akyfyeyu.pdf',
-    // ]
+    // const pdfLinks = await getPdfLinks(BASE_URL)
+    const pdfLinks = [
+      'https://assets.warhammer-community.com/eng_29-10_kill_team_team_rules_legionaries-e5hsbsasn6-l5akyfyeyu.pdf',
+    ]
     if (pdfLinks.length === 0) {
       return Response.json({message: 'No PDFs found'})
     }
 
-    const firstPdfUrl = pdfLinks[0]
-    const text = await extractTextFromPdf(firstPdfUrl)
-    const extractedData = await extractEquipmentFromText(text)
-
-    if (!extractedData) {
-      return Response.json({error: 'Failed to extract data'}, {status: 500})
+    const results = {
+      total: pdfLinks.length,
+      successful: [] as string[],
+      failed: [] as {team: string; error: string}[],
     }
 
-    const equipmentList = extractedData.factionEquipment.map((item) => ({
-      _type: 'equipment',
-      _key: uuid(),
-      name: item.name,
-      description: item.description,
-      weapon: item.weapon
-        ? {
-            ...item.weapon,
-            _type: 'weapon',
+    // Process each PDF
+    for (const pdfUrl of pdfLinks) {
+      try {
+        console.log(`\n--- Processing: ${pdfUrl} ---`)
+        const text = await extractTextFromPdf(pdfUrl)
+        const extractedData = await extractEquipmentFromText(text)
+
+        if (!extractedData) {
+          results.failed.push({team: pdfUrl, error: 'Failed to extract data'})
+          continue
+        }
+
+        const teamName = extractedData.teamName
+        console.log(`Team name: ${teamName}`)
+
+        const equipmentList = extractedData.factionEquipment.map((item) => ({
+          _type: 'equipment',
+          _key: uuid(),
+          name: item.name,
+          description: item.description,
+          weapon: item.weapon
+            ? {
+                ...item.weapon,
+                _type: 'weapon',
+              }
+            : undefined,
+          action: item.action
+            ? {
+                _type: 'action',
+                name: item.action.name,
+                apCost: item.action.apCost,
+                description: stringToSectionBlock(item.action.description),
+                limitations: item.action.limitations
+                  ? stringToBlock(item.action.limitations)
+                  : undefined,
+              }
+            : undefined,
+        }))
+
+        // Check if team already exists
+        const existingTeam = await serverClient.fetch(`*[_type == "team" && name == $name][0]`, {
+          name: teamName,
+        })
+
+        let result
+        if (existingTeam) {
+          // Update existing team
+          result = await serverClient
+            .patch(existingTeam._id)
+            .set({equipment: equipmentList})
+            .commit()
+          console.log(`✓ Updated existing team: ${teamName}`)
+        } else {
+          // Create new team
+          const doc = {
+            _type: 'team',
+            name: teamName,
+            equipment: equipmentList,
           }
-        : undefined,
-      action: item.action
-        ? {
-            _type: 'action',
-            name: item.action.name,
-            apCost: item.action.apCost,
-            description: stringToSectionBlock(item.action.description),
-            limitations: item.action.limitations
-              ? stringToBlock(item.action.limitations)
-              : undefined,
-          }
-        : undefined,
-    }))
+          result = await serverClient.create(doc)
+          console.log(`✓ Created new team: ${teamName}`)
+        }
 
-    const teamName = 'Legionaries'
-
-    // Check if team already exists
-    const existingTeam = await serverClient.fetch(`*[_type == "team" && name == $name][0]`, {
-      name: teamName,
-    })
-
-    let result
-    if (existingTeam) {
-      // Update existing team
-      result = await serverClient.patch(existingTeam._id).set({equipment: equipmentList}).commit()
-      console.log(`Updated existing team: ${teamName}`)
-    } else {
-      // Create new team
-      const doc = {
-        _type: 'team',
-        name: teamName,
-        equipment: equipmentList,
+        results.successful.push(teamName)
+      } catch (error: any) {
+        console.error(`✗ Error processing PDF ${pdfUrl}:`, error.message)
+        results.failed.push({team: pdfUrl, error: error.message})
       }
-      result = await serverClient.create(doc)
-      console.log(`Created new team: ${teamName}`)
     }
+
+    console.log(`\n=== Import Complete ===`)
+    console.log(`Total: ${results.total}`)
+    console.log(`Successful: ${results.successful.length}`)
+    console.log(`Failed: ${results.failed.length}`)
 
     return Response.json({
-      url: firstPdfUrl,
-      data: extractedData,
-      sanityResult: result,
+      message: 'Import complete',
+      results,
     })
   } catch (error: any) {
     console.error('Error in sync route:', error)
