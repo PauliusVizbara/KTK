@@ -24,5 +24,11 @@ export const team = defineType({
       type: 'array',
       of: [{type: 'operative'}],
     }),
+    defineField({
+      name: 'equipment',
+      title: 'Equipment',
+      type: 'array',
+      of: [{type: 'equipment'}],
+    }),
   ],
 })
