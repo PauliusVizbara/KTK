@@ -26,31 +26,6 @@ import {uuid} from '@sanity/uuid'
 // Initialize OpenAI
 const openai = new OpenAI()
 
-function stringToSectionBlock(text: string) {
-  return [
-    {
-      _type: 'section',
-      _key: uuid(),
-      content: [
-        {
-          _type: 'block',
-          _key: uuid(),
-          style: 'normal',
-          children: [
-            {
-              _type: 'span',
-              _key: uuid(),
-              text: text,
-              marks: [],
-            },
-          ],
-          markDefs: [],
-        },
-      ],
-    },
-  ]
-}
-
 function stringToBlock(text: string) {
   return [
     {
