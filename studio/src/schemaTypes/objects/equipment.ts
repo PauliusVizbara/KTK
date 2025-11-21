@@ -33,7 +33,12 @@ export const equipment = defineType({
   preview: {
     select: {
       name: 'name',
-      description: 'description',
+    },
+    prepare(selection) {
+      const {name} = selection
+      return {
+        title: name,
+      }
     },
   },
 })

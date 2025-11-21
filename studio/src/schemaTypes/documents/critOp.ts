@@ -8,7 +8,7 @@ import {DocumentIcon} from '@sanity/icons'
 
 export const critOp = defineType({
   name: 'critOp',
-  title: 'Critical Operation',
+  title: 'Crit Ops',
   type: 'document',
   icon: DocumentIcon,
   fields: [

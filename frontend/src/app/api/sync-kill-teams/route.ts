@@ -20,8 +20,8 @@ const HEADERS = {
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
 }
 
-import {client} from '@/sanity/client'
 import {uuid} from '@sanity/uuid'
+import {serverClient} from '@/sanity/client'
 
 // Initialize OpenAI
 const openai = new OpenAI()
@@ -58,6 +58,7 @@ function stringToSectionBlock(text: string) {
 // Define the schema for the extracted data
 const EquipmentSchema = z.object({
   name: z.string(),
+  lore: z.string(),
   description: z.string(),
   weapon: z
     .object({
@@ -157,7 +158,7 @@ async function extractEquipmentFromText(text: string) {
       {
         role: 'system',
         content:
-          'You are a helper that extracts structured data from Warhammer Kill Team PDF text. Find the 4 FACTION EQUIPMENT cards. Extract their names, descriptions, and any weapon (singular) or action (singular) associated with them. For weapons, determine if it is "ranged" or "melee". Weapon stat consists of name, attacks, hit, damage and critical damage. Damage and critical damage are separated by a slash. AP cost should be a number. Extract any limitations for actions if present.',
+          'You are a helper that extracts structured data from Warhammer Kill Team PDF text. Find the 4 FACTION EQUIPMENT cards. Extract their names, lores, descriptions, and any weapon (singular) or action (singular) associated with them. For weapons, determine if it is "ranged" or "melee". Weapon stat consists of name, attacks, hit, damage and critical damage. Damage and critical damage are separated by a slash. AP cost should be a number. Extract any limitations for actions if present. An action is present only if an action name, AP cost and description with limitations are defined. Do not trim anything from the text, like strategic gambit',
       },
       {role: 'user', content: relevantText},
     ],
@@ -169,10 +170,10 @@ async function extractEquipmentFromText(text: string) {
 
 export async function GET() {
   try {
-    // const pdfLinks = await getPdfLinks(BASE_URL)
-    const pdfLinks = [
-      'https://assets.warhammer-community.com/eng_29-10_kill_team_team_rules_legionaries-e5hsbsasn6-l5akyfyeyu.pdf',
-    ]
+    const pdfLinks = await getPdfLinks(BASE_URL)
+    // const pdfLinks = [
+    //   'https://assets.warhammer-community.com/eng_29-10_kill_team_team_rules_legionaries-e5hsbsasn6-l5akyfyeyu.pdf',
+    // ]
     if (pdfLinks.length === 0) {
       return Response.json({message: 'No PDFs found'})
     }
@@ -209,13 +210,28 @@ export async function GET() {
         : undefined,
     }))
 
-    const doc = {
-      _type: 'team',
-      name: 'Legionaries',
-      equipment: equipmentList,
-    }
+    const teamName = 'Legionaries'
 
-    const result = await client.create(doc)
+    // Check if team already exists
+    const existingTeam = await serverClient.fetch(`*[_type == "team" && name == $name][0]`, {
+      name: teamName,
+    })
+
+    let result
+    if (existingTeam) {
+      // Update existing team
+      result = await serverClient.patch(existingTeam._id).set({equipment: equipmentList}).commit()
+      console.log(`Updated existing team: ${teamName}`)
+    } else {
+      // Create new team
+      const doc = {
+        _type: 'team',
+        name: teamName,
+        equipment: equipmentList,
+      }
+      result = await serverClient.create(doc)
+      console.log(`Created new team: ${teamName}`)
+    }
 
     return Response.json({
       url: firstPdfUrl,

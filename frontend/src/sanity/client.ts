@@ -23,3 +23,12 @@ export const client = createClient({
     },
   },
 })
+
+export const serverClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  perspective: 'published',
+  token:
+    'sk3UCitWEH7rqceEVWeMQSGBYNJ05ORVvfePuFr8Ve5ZHzfCOGnZ2HuK9y5jrSo5QohYKypxm1vH9ljHBhOEUt5fA9iO0wrYCaGQNfs6chQCknSK1UlKW9i7HmiQ5XimArZnvt7pKsvauAE6Xn1b2RC4sZRMO3fVdXMx0uPXUk0OoNQLXN42', // Required if you have a private dataset
+})
