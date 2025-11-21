@@ -41,29 +41,19 @@ export const weapon = defineType({
       type: 'number',
     }),
     defineField({
-      name: 'dmg_normal',
+      name: 'damageNormal',
       title: 'Normal Damage',
       type: 'number',
     }),
     defineField({
-      name: 'dmg_critical',
+      name: 'damageCritical',
       title: 'Critical Damage',
       type: 'number',
     }),
     defineField({
-      name: 'severe',
-      title: 'Severe',
-      type: 'boolean',
-    }),
-    defineField({
-      name: 'range',
-      title: 'Range',
-      type: 'number',
-    }),
-    defineField({
-      name: 'rending',
-      title: 'Rending',
-      type: 'boolean',
+      name: 'rules',
+      title: 'Rules',
+      type: 'string',
     }),
   ],
   preview: {
@@ -72,13 +62,13 @@ export const weapon = defineType({
       type: 'type',
       atk: 'atk',
       hit: 'hit',
-      dmg_normal: 'dmg_normal',
-      dmg_critical: 'dmg_critical',
+      damageNormal: 'damageNormal',
+      damageCritical: 'damageCritical',
     },
     prepare(selection) {
-      const {name, type, atk, hit, dmg_normal, dmg_critical} = selection
+      const {name, type, atk, hit, damageNormal, damageCritical} = selection
       return {
-        title: `${type === 'ranged' ? '🔫' : '⚔️'} ${name} ${atk} ${hit} ${dmg_normal}/${dmg_critical}`,
+        title: `${type === 'ranged' ? '🔫' : '⚔️'} ${name} ${atk} ${hit} ${damageNormal}/${damageCritical}`,
       }
     },
   },
