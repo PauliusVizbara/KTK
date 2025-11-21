@@ -20,34 +20,88 @@ const HEADERS = {
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
 }
 
+import {client} from '@/sanity/client'
+import {uuid} from '@sanity/uuid'
+
 // Initialize OpenAI
 const openai = new OpenAI()
+
+function stringToSectionBlock(text: string) {
+  return [
+    {
+      _type: 'section',
+      _key: uuid(),
+      content: [
+        {
+          _type: 'block',
+          _key: uuid(),
+          style: 'normal',
+          children: [
+            {
+              _type: 'span',
+              _key: uuid(),
+              text: text,
+              marks: [],
+            },
+          ],
+          markDefs: [],
+        },
+      ],
+    },
+  ]
+}
+
+function stringToBlock(text: string) {
+  return [
+    {
+      _type: 'block',
+      _key: uuid(),
+      style: 'normal',
+      children: [
+        {
+          _type: 'span',
+          _key: uuid(),
+          text: text,
+          marks: [],
+        },
+      ],
+      markDefs: [],
+    },
+  ]
+}
+
+function stringToSectionBlock(text: string) {
+  return [
+    {
+      _type: 'section',
+      _key: uuid(),
+      content: stringToBlock(text),
+    },
+  ]
+}
 
 // Define the schema for the extracted data
 const EquipmentSchema = z.object({
   name: z.string(),
-  lore: z.string(),
   description: z.string(),
-  weaponStats: z
-    .array(
-      z.object({
-        name: z.string(),
-        attacks: z.number(),
-        hit: z.number(),
-        damage: z.number(),
-        critDamage: z.number(),
-        rules: z.string(),
-      }),
-    )
+  weapon: z
+    .object({
+      name: z.string(),
+      type: z.enum(['ranged', 'melee']),
+      atk: z.number(),
+      hit: z.number(),
+      damageNormal: z.number(),
+      damageCritical: z.number(),
+      rules: z.string(),
+    })
     .nullable(),
-  actions: z
-    .array(
-      z.object({
-        name: z.string(),
-        apCost: z.string(),
-        description: z.string(),
-      }),
-    )
+  action: z
+    .object({
+      name: z.string(),
+      apCost: z.number(),
+      description: z.string(),
+      limitations: z.string().nullable(),
+    })
     .nullable(),
 })
 
@@ -128,7 +182,7 @@ async function extractEquipmentFromText(text: string) {
       {
         role: 'system',
         content:
-          'You are a helper that extracts structured data from Warhammer Kill Team PDF text. Find the 4 FACTION EQUIPMENT cards. Extract their names, descriptions, and any weapon stats or actions associated with them. Weapon stat consists of name, attacks, hit, damage and critical damage. Damage and critical damage are separated by a slash.',
+          'You are a helper that extracts structured data from Warhammer Kill Team PDF text. Find the 4 FACTION EQUIPMENT cards. Extract their names, descriptions, and any weapon (singular) or action (singular) associated with them. For weapons, determine if it is "ranged" or "melee". Weapon stat consists of name, attacks, hit, damage and critical damage. Damage and critical damage are separated by a slash. AP cost should be a number. Extract any limitations for actions if present.',
       },
       {role: 'user', content: relevantText},
     ],
@@ -152,9 +206,46 @@ export async function GET() {
     const text = await extractTextFromPdf(firstPdfUrl)
     const extractedData = await extractEquipmentFromText(text)
 
+    if (!extractedData) {
+      return Response.json({error: 'Failed to extract data'}, {status: 500})
+    }
+
+    const equipmentList = extractedData.factionEquipment.map((item) => ({
+      _type: 'equipment',
+      _key: uuid(),
+      name: item.name,
+      description: item.description,
+      weapon: item.weapon
+        ? {
+            ...item.weapon,
+            _type: 'weapon',
+          }
+        : undefined,
+      action: item.action
+        ? {
+            _type: 'action',
+            name: item.action.name,
+            apCost: item.action.apCost,
+            description: stringToSectionBlock(item.action.description),
+            limitations: item.action.limitations
+              ? stringToBlock(item.action.limitations)
+              : undefined,
+          }
+        : undefined,
+    }))
+
+    const doc = {
+      _type: 'team',
+      name: 'Legionaries',
+      equipment: equipmentList,
+    }
+
+    const result = await client.create(doc)
+
     return Response.json({
       url: firstPdfUrl,
       data: extractedData,
+      sanityResult: result,
     })
   } catch (error: any) {
     console.error('Error in sync route:', error)
