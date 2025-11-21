@@ -31,7 +31,9 @@ export const CritOpCard = ({critOp}: {critOp: CritOp}) => {
             </div>
 
             <div className="space-y-2 text-sm text-gray-700">
-              {action.description && <PortableText value={action.description} />}
+              {action?.description?.map(
+                (desc) => desc.content && <PortableText key={desc._key} value={desc.content} />,
+              )}
               {action.limitations && <PortableText value={action.limitations} />}
             </div>
           </div>

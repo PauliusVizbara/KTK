@@ -19,7 +19,21 @@ export const action = defineType({
       name: 'description',
       title: 'Description',
       type: 'array',
-      of: [{type: 'block'}],
+      of: [
+        {
+          type: 'object',
+          name: 'section',
+          title: 'Section',
+          fields: [
+            {
+              name: 'content',
+              title: 'Content',
+              type: 'array',
+              of: [{type: 'block'}],
+            },
+          ],
+        },
+      ],
     }),
     defineField({
       name: 'limitations',
