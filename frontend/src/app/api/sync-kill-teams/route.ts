@@ -32,10 +32,10 @@ const EquipmentSchema = z.object({
     .array(
       z.object({
         name: z.string(),
-        attacks: z.string(),
-        hit: z.string(),
-        damage: z.string(),
-        critDamage: z.string(),
+        attacks: z.number(),
+        hit: z.number(),
+        damage: z.number(),
+        critDamage: z.number(),
         rules: z.string(),
       }),
     )
@@ -128,7 +128,7 @@ async function extractEquipmentFromText(text: string) {
       {
         role: 'system',
         content:
-          'You are a helper that extracts structured data from Warhammer Kill Team PDF text. Find the 4 FACTION EQUIPMENT cards. Extract their names, descriptions, and any weapon stats or actions associated with them.',
+          'You are a helper that extracts structured data from Warhammer Kill Team PDF text. Find the 4 FACTION EQUIPMENT cards. Extract their names, descriptions, and any weapon stats or actions associated with them. Weapon stat consists of name, attacks, hit, damage and critical damage. Damage and critical damage are separated by a slash.',
       },
       {role: 'user', content: relevantText},
     ],
@@ -140,8 +140,10 @@ async function extractEquipmentFromText(text: string) {
 
 export async function GET() {
   try {
-    const pdfLinks = await getPdfLinks(BASE_URL)
-
+    // const pdfLinks = await getPdfLinks(BASE_URL)
+    const pdfLinks = [
+      'https://assets.warhammer-community.com/eng_29-10_kill_team_team_rules_legionaries-e5hsbsasn6-l5akyfyeyu.pdf',
+    ]
     if (pdfLinks.length === 0) {
       return Response.json({message: 'No PDFs found'})
     }
