@@ -172,6 +172,8 @@ export function MapZoomModal({
         <XMarkIcon className="w-16 h-16 p-4 cursor-pointer text-white" onClick={clearSelection} />
       </div>
       <Image
+        width={1000}
+        height={700}
         alt="Zoomed in map"
         src={selectedMap}
         className={`rounded-xl shadow-2xl transition-transform`}
@@ -329,11 +331,12 @@ const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
   return (
     <>
       <DialogBody>
-        <Heading className="mt-6" level={6}>
-          Select Operatives
-        </Heading>
         <div className="mt-4">
-          <p>Content for selecting operatives goes here.</p>
+          <p>
+            Each player secretly selects their operatives for the battle, adhering to the selection
+            requirements in their kill team’s rules. They then reveal their selections
+            simultaneously.
+          </p>
         </div>
       </DialogBody>
       <DialogActions>
@@ -348,11 +351,11 @@ const SelectEquipmentStep = ({onNext, onBack}: StepProps) => {
   return (
     <>
       <DialogBody>
-        <Heading className="mt-6" level={6}>
-          Select Equipment
-        </Heading>
         <div className="mt-4">
-          <p>Content for selecting equipment goes here.</p>
+          <p>
+            Each player secretly selects up to four equipment options. Each option cannot be
+            selected more than once per player. They then reveal their selections simultaneously.
+          </p>
         </div>
       </DialogBody>
       <DialogActions>
