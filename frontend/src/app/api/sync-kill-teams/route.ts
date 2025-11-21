@@ -157,7 +157,24 @@ async function extractEquipmentFromText(text: string) {
     messages: [
       {
         role: 'system',
-        content: `You are a helper that extracts structured data from Warhammer Kill Team PDF text. First, identify the team name from the document header/title. Then find the 4 FACTION EQUIPMENT cards. Extract their names, lores, descriptions, and any weapon (singular) or action (singular) associated with them. For weapons, determine if it is "ranged" or "melee". Weapon stat consists of name, attacks, hit, damage and critical damage. Damage and critical damage are separated by a slash. AP cost should be a number. Extract any limitations for actions if present. An action is present only if an action name, AP cost and description with limitations are defined. Do not trim anything from the text, like strategic gambit. Name is at top of card, lore is second paragraph, description is third paragraph. Do not mix lore and description fields. Make description without new lines, except for list items.`,
+        content: `You are a helper that extracts structured data from Warhammer Kill Team PDF text.
+
+First, identify the team name from the document header/title.
+
+Then find the 4 FACTION EQUIPMENT cards. Each card has this structure:
+1. NAME (in all caps at the top)
+2. LORE (italic/flavour text paragraph - this is narrative/story text, NOT game rules)
+3. DESCRIPTION (game rules text - starts with phrases like "Once per turning point", "When", "Each time", etc.)
+
+CRITICAL: The lore and description are SEPARATE fields. Do NOT combine them.
+- LORE = The italic narrative text that describes what the equipment is thematically
+- DESCRIPTION = The actual game mechanics and rules for how to use it. Remove random newlines - only keep newlines when there are bullet points or list items.
+
+For each equipment, also extract:
+- Weapon (if present): name, type ("ranged" or "melee"), attacks, hit, damage (normal/critical separated by slash), rules
+- Action (if present): name, AP cost, description, limitations
+
+Do not trim anything from the text. Keep all game terms like "strategic gambit" intact.`,
       },
       {role: 'user', content: relevantText},
     ],
