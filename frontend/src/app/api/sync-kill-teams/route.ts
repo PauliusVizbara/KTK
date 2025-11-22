@@ -1,18 +1,9 @@
+import 'pdf-parse/worker' // Import this before importing "pdf-parse"
+import {PDFParse} from 'pdf-parse'
 import puppeteer from 'puppeteer'
 import OpenAI from 'openai'
 import {z} from 'zod'
 import {zodResponseFormat} from 'openai/helpers/zod'
-
-// Polyfill DOMMatrix for pdf-parse
-if (typeof DOMMatrix === 'undefined') {
-  // @ts-ignore
-  global.DOMMatrix = class DOMMatrix {
-    constructor() {}
-  }
-}
-
-// @ts-ignore
-const pdf = require('pdf-parse/lib/pdf-parse.js')
 
 const BASE_URL = 'https://www.warhammer-community.com/en-gb/downloads/kill-team/'
 const HEADERS = {
@@ -141,8 +132,10 @@ async function extractTextFromPdf(url: string): Promise<string> {
   if (!response.ok) throw new Error(`Failed to fetch PDF: ${response.statusText}`)
 
   const buffer = await response.arrayBuffer()
-  const data = await pdf(Buffer.from(buffer))
-  return data.text
+  const parser = new PDFParse({data: buffer})
+
+  const result = await parser.getText()
+  return result.text
 }
 
 async function extractEquipmentFromText(text: string) {

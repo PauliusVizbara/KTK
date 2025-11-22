@@ -17,11 +17,8 @@ import {Cog8ToothIcon, PlusIcon} from '@heroicons/react/16/solid'
 import {usePathname} from 'next/navigation'
 
 const navItems = [
-  {label: 'Home', url: '/'},
-  {label: 'Game Tracker', url: '/game-tracker'},
-  {label: 'Game Rules', url: '/game-rules'},
-  {label: 'Team Rules', url: '/team-rules'},
-  {label: 'Approved Ops', url: '/approved-ops'},
+  {label: 'Game Tracker', url: '/'},
+  {label: 'Stats', url: '/stats'},
 ]
 
 function TeamDropdownMenu() {
