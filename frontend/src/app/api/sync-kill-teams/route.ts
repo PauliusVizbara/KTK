@@ -183,10 +183,10 @@ Do not trim anything from the text. Keep all game terms like "strategic gambit" 
 
 export async function GET() {
   try {
-    // const pdfLinks = await getPdfLinks(BASE_URL)
-    const pdfLinks = [
-      'https://assets.warhammer-community.com/eng_29-10_kill_team_team_rules_legionaries-e5hsbsasn6-l5akyfyeyu.pdf',
-    ]
+    const pdfLinks = await getPdfLinks(BASE_URL)
+    // const pdfLinks = [
+    //   'https://assets.warhammer-community.com/eng_29-10_kill_team_team_rules_legionaries-e5hsbsasn6-l5akyfyeyu.pdf',
+    // ]
     if (pdfLinks.length === 0) {
       return Response.json({message: 'No PDFs found'})
     }
