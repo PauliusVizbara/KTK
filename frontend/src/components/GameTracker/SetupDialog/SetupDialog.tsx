@@ -406,6 +406,7 @@ const SelectEquipmentStep = ({
     return universalEquipment.map((u) => ({
       ...u.equipment!,
       id: u._id,
+      name: `${u.amount}X ${u.equipment!.name}`,
     }))
   }, [universalEquipment])
 
