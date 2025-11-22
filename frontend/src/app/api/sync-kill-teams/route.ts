@@ -215,7 +215,7 @@ export async function GET() {
         const teamName = extractedData.teamName
         console.log(`Team name: ${teamName}`)
 
-        const equipmentList = extractedData.factionEquipment.map((item) => ({
+        const equipmentList = extractedData.factionEquipment.map((item: any) => ({
           _type: 'equipment',
           _key: uuid(),
           name: item.name,
