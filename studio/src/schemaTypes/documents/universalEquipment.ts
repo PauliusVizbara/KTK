@@ -13,4 +13,15 @@ export const universalEquipment = defineType({
       type: 'equipment',
     }),
   ],
+  preview: {
+    select: {
+      name: 'equipment.name',
+    },
+    prepare(selection) {
+      const {name} = selection
+      return {
+        title: name,
+      }
+    },
+  },
 })
