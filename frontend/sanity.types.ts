@@ -17,8 +17,16 @@ export type Equipment = {
   _type: 'equipment'
   name: string
   description: string
-  weapon?: Weapon
-  action?: Action
+  weapons?: Array<
+    {
+      _key: string
+    } & Weapon
+  >
+  actions?: Array<
+    {
+      _key: string
+    } & Action
+  >
 }
 
 export type Action = {

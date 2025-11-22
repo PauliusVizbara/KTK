@@ -26,19 +26,47 @@
           },
           "optional": false
         },
-        "weapon": {
+        "weapons": {
           "type": "objectAttribute",
           "value": {
-            "type": "inline",
-            "name": "weapon"
+            "type": "array",
+            "of": {
+              "type": "object",
+              "attributes": {
+                "_key": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              },
+              "rest": {
+                "type": "inline",
+                "name": "weapon"
+              }
+            }
           },
           "optional": true
         },
-        "action": {
+        "actions": {
           "type": "objectAttribute",
           "value": {
-            "type": "inline",
-            "name": "action"
+            "type": "array",
+            "of": {
+              "type": "object",
+              "attributes": {
+                "_key": {
+                  "type": "objectAttribute",
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              },
+              "rest": {
+                "type": "inline",
+                "name": "action"
+              }
+            }
           },
           "optional": true
         }

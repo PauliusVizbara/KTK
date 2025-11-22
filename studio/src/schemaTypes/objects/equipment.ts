@@ -20,14 +20,16 @@ export const equipment = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'weapon',
-      title: 'Weapon',
-      type: 'weapon',
+      name: 'weapons',
+      title: 'Weapons',
+      type: 'array',
+      of: [{type: 'weapon'}],
     }),
     defineField({
-      name: 'action',
-      title: 'Action',
-      type: 'action',
+      name: 'actions',
+      title: 'Actions',
+      type: 'array',
+      of: [{type: 'action'}],
     }),
   ],
   preview: {

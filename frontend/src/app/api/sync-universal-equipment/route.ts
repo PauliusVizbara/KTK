@@ -51,24 +51,28 @@ const EquipmentSchema = z.object({
   name: z.string(),
   amount: z.number(),
   description: z.string(),
-  weapon: z
-    .object({
-      name: z.string(),
-      type: z.enum(['ranged', 'melee']),
-      atk: z.number(),
-      hit: z.number(),
-      damageNormal: z.number(),
-      damageCritical: z.number(),
-      rules: z.string(),
-    })
+  weapons: z
+    .array(
+      z.object({
+        name: z.string(),
+        type: z.enum(['ranged', 'melee']),
+        atk: z.number(),
+        hit: z.number(),
+        damageNormal: z.number(),
+        damageCritical: z.number(),
+        rules: z.string(),
+      }),
+    )
     .nullable(),
-  action: z
-    .object({
-      name: z.string(),
-      apCost: z.number(),
-      description: z.string(),
-      limitations: z.string().nullable(),
-    })
+  actions: z
+    .array(
+      z.object({
+        name: z.string(),
+        apCost: z.number(),
+        description: z.string(),
+        limitations: z.string().nullable(),
+      }),
+    )
     .nullable(),
 })
 
@@ -162,8 +166,8 @@ CRITICAL: The lore and description are SEPARATE fields. Do NOT combine them.
 - DESCRIPTION = The actual game mechanics and rules for how to use it. Remove random newlines - only keep newlines when there are bullet points or list items.
 
 For each equipment, also extract:
-- Weapon (if present): name, type ("ranged" or "melee"), attacks, hit, damage (normal/critical separated by slash), rules
-- Action (if present): name, AP cost, description, limitations
+- Weapons (list, if present): name, type ("ranged" or "melee"), attacks, hit, damage (normal/critical separated by slash), rules
+- Actions (list, if present): name, AP cost, description, limitations
 
 Do not trim anything from the text. Keep all game terms like "strategic gambit" intact.`,
       },
@@ -211,23 +215,19 @@ export async function GET() {
               _key: uuid(),
               name: item.name,
               description: item.description,
-              weapon: item.weapon
-                ? {
-                    ...item.weapon,
-                    _type: 'weapon',
-                  }
-                : undefined,
-              action: item.action
-                ? {
-                    _type: 'action',
-                    name: item.action.name,
-                    apCost: item.action.apCost,
-                    description: stringToSectionBlock(item.action.description),
-                    limitations: item.action.limitations
-                      ? stringToBlock(item.action.limitations)
-                      : undefined,
-                  }
-                : undefined,
+              weapons: item.weapons?.map((weapon) => ({
+                ...weapon,
+                _type: 'weapon',
+                _key: uuid(),
+              })),
+              actions: item.actions?.map((action) => ({
+                _type: 'action',
+                _key: uuid(),
+                name: action.name,
+                apCost: action.apCost,
+                description: stringToSectionBlock(action.description),
+                limitations: action.limitations ? stringToBlock(action.limitations) : undefined,
+              })),
             }
 
             // Check if equipment already exists by name
