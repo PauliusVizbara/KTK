@@ -104,72 +104,21 @@ export type Operative = {
   >
 }
 
-export type Link = {
-  _type: 'link'
-  linkType?: 'href' | 'page' | 'post'
-  href?: string
-  page?: {
-    _ref: string
-    _type: 'reference'
-    _weak?: boolean
-    [internalGroqTypeReferenceTo]?: 'page'
-  }
-  post?: {
-    _ref: string
-    _type: 'reference'
-    _weak?: boolean
-    [internalGroqTypeReferenceTo]?: 'post'
-  }
-  openInNewTab?: boolean
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop'
+  top: number
+  bottom: number
+  left: number
+  right: number
 }
 
-export type CallToAction = {
-  _type: 'callToAction'
-  heading: string
-  text?: string
-  buttonText?: string
-  link?: Link
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot'
+  x: number
+  y: number
+  height: number
+  width: number
 }
-
-export type InfoSection = {
-  _type: 'infoSection'
-  heading?: string
-  subheading?: string
-  content?: BlockContent
-}
-
-export type BlockContent = Array<{
-  children?: Array<{
-    marks?: Array<string>
-    text?: string
-    _type: 'span'
-    _key: string
-  }>
-  style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
-  listItem?: 'bullet' | 'number'
-  markDefs?: Array<{
-    linkType?: 'href' | 'page' | 'post'
-    href?: string
-    page?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'page'
-    }
-    post?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'post'
-    }
-    openInNewTab?: boolean
-    _type: 'link'
-    _key: string
-  }>
-  level?: number
-  _type: 'block'
-  _key: string
-}>
 
 export type CritOp = {
   _id: string
@@ -233,163 +182,6 @@ export type Team = {
       _key: string
     } & Equipment
   >
-}
-
-export type Settings = {
-  _id: string
-  _type: 'settings'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title: string
-  description?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal'
-    listItem?: never
-    markDefs?: Array<{
-      linkType?: 'href' | 'page' | 'post'
-      href?: string
-      page?: {
-        _ref: string
-        _type: 'reference'
-        _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'page'
-      }
-      post?: {
-        _ref: string
-        _type: 'reference'
-        _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'post'
-      }
-      openInNewTab?: boolean
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
-    _key: string
-  }>
-  ogImage?: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    metadataBase?: string
-    _type: 'image'
-  }
-}
-
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop'
-  top: number
-  bottom: number
-  left: number
-  right: number
-}
-
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot'
-  x: number
-  y: number
-  height: number
-  width: number
-}
-
-export type Page = {
-  _id: string
-  _type: 'page'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  name: string
-  slug: Slug
-  heading: string
-  subheading?: string
-  pageBuilder?: Array<
-    | ({
-        _key: string
-      } & CallToAction)
-    | ({
-        _key: string
-      } & InfoSection)
-  >
-}
-
-export type Post = {
-  _id: string
-  _type: 'post'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title: string
-  slug: Slug
-  content?: BlockContent
-  excerpt?: string
-  coverImage: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
-  }
-  date?: string
-  author?: {
-    _ref: string
-    _type: 'reference'
-    _weak?: boolean
-    [internalGroqTypeReferenceTo]?: 'person'
-  }
-  Operatives?: Array<
-    {
-      _key: string
-    } & Operative
-  >
-}
-
-export type Person = {
-  _id: string
-  _type: 'person'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  firstName: string
-  lastName: string
-  picture: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
-  }
-}
-
-export type Slug = {
-  _type: 'slug'
-  current: string
-  source?: string
 }
 
 export type SanityAssistInstructionTask = {
@@ -623,24 +415,21 @@ export type Geopoint = {
   alt?: number
 }
 
+export type Slug = {
+  _type: 'slug'
+  current: string
+  source?: string
+}
+
 export type AllSanitySchemaTypes =
   | Equipment
   | Action
   | Weapon
   | Operative
-  | Link
-  | CallToAction
-  | InfoSection
-  | BlockContent
-  | CritOp
-  | Team
-  | Settings
   | SanityImageCrop
   | SanityImageHotspot
-  | Page
-  | Post
-  | Person
-  | Slug
+  | CritOp
+  | Team
   | SanityAssistInstructionTask
   | SanityAssistTaskStatus
   | SanityAssistSchemaTypeAnnotations
@@ -661,285 +450,33 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
   | Geopoint
+  | Slug
 export declare const internalGroqTypeReferenceTo: unique symbol
 // Source: ./src/sanity/queries.ts
 // Variable: settingsQuery
 // Query: *[_type == "settings"][0]
-export type SettingsQueryResult = {
-  _id: string
-  _type: 'settings'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title: string
-  description?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal'
-    listItem?: never
-    markDefs?: Array<{
-      linkType?: 'href' | 'page' | 'post'
-      href?: string
-      page?: {
-        _ref: string
-        _type: 'reference'
-        _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'page'
-      }
-      post?: {
-        _ref: string
-        _type: 'reference'
-        _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'post'
-      }
-      openInNewTab?: boolean
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
-    _key: string
-  }>
-  ogImage?: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    metadataBase?: string
-    _type: 'image'
-  }
-} | null
+export type SettingsQueryResult = null
 // Variable: getPageQuery
 // Query: *[_type == 'page' && slug.current == $slug][0]{    _id,    _type,    name,    slug,    heading,    subheading,    "pageBuilder": pageBuilder[]{      ...,      _type == "callToAction" => {          link {      ...,        _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }      },      },      _type == "infoSection" => {        content[]{          ...,          markDefs[]{            ...,              _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }          }        }      },    },  }
-export type GetPageQueryResult = {
-  _id: string
-  _type: 'page'
-  name: string
-  slug: Slug
-  heading: string
-  subheading: string | null
-  pageBuilder: Array<
-    | {
-        _key: string
-        _type: 'callToAction'
-        heading: string
-        text?: string
-        buttonText?: string
-        link: {
-          _type: 'link'
-          linkType?: 'href' | 'page' | 'post'
-          href?: string
-          page: string | null
-          post: string | null
-          openInNewTab?: boolean
-        } | null
-      }
-    | {
-        _key: string
-        _type: 'infoSection'
-        heading?: string
-        subheading?: string
-        content: Array<{
-          children?: Array<{
-            marks?: Array<string>
-            text?: string
-            _type: 'span'
-            _key: string
-          }>
-          style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
-          listItem?: 'bullet' | 'number'
-          markDefs: Array<{
-            linkType?: 'href' | 'page' | 'post'
-            href?: string
-            page: string | null
-            post: string | null
-            openInNewTab?: boolean
-            _type: 'link'
-            _key: string
-          }> | null
-          level?: number
-          _type: 'block'
-          _key: string
-        }> | null
-      }
-  > | null
-} | null
+export type GetPageQueryResult = null
 // Variable: sitemapData
 // Query: *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {    "slug": slug.current,    _type,    _updatedAt,  }
-export type SitemapDataResult = Array<
-  | {
-      slug: string
-      _type: 'page'
-      _updatedAt: string
-    }
-  | {
-      slug: string
-      _type: 'post'
-      _updatedAt: string
-    }
->
+export type SitemapDataResult = Array<never>
 // Variable: allPostsQuery
 // Query: *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  }
-export type AllPostsQueryResult = Array<{
-  _id: string
-  status: 'draft' | 'published'
-  title: string
-  slug: string
-  excerpt: string | null
-  coverImage: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
-  }
-  date: string
-  author: {
-    firstName: string
-    lastName: string
-    picture: {
-      asset?: {
-        _ref: string
-        _type: 'reference'
-        _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-      }
-      media?: unknown
-      hotspot?: SanityImageHotspot
-      crop?: SanityImageCrop
-      alt?: string
-      _type: 'image'
-    }
-  } | null
-}>
+export type AllPostsQueryResult = Array<never>
 // Variable: morePostsQuery
 // Query: *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  }
-export type MorePostsQueryResult = Array<{
-  _id: string
-  status: 'draft' | 'published'
-  title: string
-  slug: string
-  excerpt: string | null
-  coverImage: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
-  }
-  date: string
-  author: {
-    firstName: string
-    lastName: string
-    picture: {
-      asset?: {
-        _ref: string
-        _type: 'reference'
-        _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-      }
-      media?: unknown
-      hotspot?: SanityImageHotspot
-      crop?: SanityImageCrop
-      alt?: string
-      _type: 'image'
-    }
-  } | null
-}>
+export type MorePostsQueryResult = Array<never>
 // Variable: postQuery
 // Query: *[_type == "post" && slug.current == $slug] [0] {    content[]{    ...,    markDefs[]{      ...,        _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }    }  },      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  }
-export type PostQueryResult = {
-  content: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
-    listItem?: 'bullet' | 'number'
-    markDefs: Array<{
-      linkType?: 'href' | 'page' | 'post'
-      href?: string
-      page: string | null
-      post: string | null
-      openInNewTab?: boolean
-      _type: 'link'
-      _key: string
-    }> | null
-    level?: number
-    _type: 'block'
-    _key: string
-  }> | null
-  _id: string
-  status: 'draft' | 'published'
-  title: string
-  slug: string
-  excerpt: string | null
-  coverImage: {
-    asset?: {
-      _ref: string
-      _type: 'reference'
-      _weak?: boolean
-      [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-    }
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
-  }
-  date: string
-  author: {
-    firstName: string
-    lastName: string
-    picture: {
-      asset?: {
-        _ref: string
-        _type: 'reference'
-        _weak?: boolean
-        [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-      }
-      media?: unknown
-      hotspot?: SanityImageHotspot
-      crop?: SanityImageCrop
-      alt?: string
-      _type: 'image'
-    }
-  } | null
-} | null
+export type PostQueryResult = null
 // Variable: postPagesSlugs
 // Query: *[_type == "post" && defined(slug.current)]  {"slug": slug.current}
-export type PostPagesSlugsResult = Array<{
-  slug: string
-}>
+export type PostPagesSlugsResult = Array<never>
 // Variable: pagesSlugs
 // Query: *[_type == "page" && defined(slug.current)]  {"slug": slug.current}
-export type PagesSlugsResult = Array<{
-  slug: string
-}>
+export type PagesSlugsResult = Array<never>
 // Variable: teamListQuery
 // Query: *[_type == "team"] | order(name asc) {    ...,    "id": _id,  }
 export type TeamListQueryResult = Array<{
