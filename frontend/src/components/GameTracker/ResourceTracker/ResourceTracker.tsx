@@ -36,9 +36,9 @@ export const ResourceTracker = () => {
     <div className="flex flex-col items-center w-full p-4 bg-white shadow rounded-lg border border-zinc-200">
       <div className="text-sm font-bold uppercase text-zinc-500 mb-4">Command Points</div>
       <div className="flex justify-around w-full">
-        <PlayerResource name={player1.team.name} cp={player1.cp} setCp={player1.setCp} />
+        <PlayerResource name={player1.team?.name ?? null} cp={player1.cp} setCp={player1.setCp} />
         <div className="w-px bg-zinc-200 mx-4" />
-        <PlayerResource name={player2.team.name} cp={player2.cp} setCp={player2.setCp} />
+        <PlayerResource name={player2.team?.name ?? null} cp={player2.cp} setCp={player2.setCp} />
       </div>
     </div>
   )
