@@ -77,6 +77,7 @@ const EquipmentSchema = z.object({
 
 const ExtractionSchema = z.object({
   teamName: z.string(),
+  operativeCount: z.number(),
   factionEquipment: z.array(EquipmentSchema),
 })
 
@@ -158,6 +159,12 @@ async function extractEquipmentFromText(text: string) {
 
 First, identify the team name from the document header/title.
 
+Then, calculate the TOTAL OPERATIVE COUNT for the kill team.
+- Look for the "OPERATIVES" section.
+- It will list requirements like "1 LEADER", "1 DRONE", "9 OPERATIVES selected from...".
+- Sum these numbers to get the total count (e.g., 1 + 1 + 9 = 11).
+- If it says "consists of X operatives", use that number.
+
 Then find the 4 FACTION EQUIPMENT cards. Each card has this structure:
 1. NAME (in all caps at the top)
 2. LORE (italic/flavour text paragraph - this is narrative/story text, NOT game rules)
@@ -210,7 +217,8 @@ export async function GET() {
         }
 
         const teamName = extractedData.teamName
-        console.log(`Team name: ${teamName}`)
+        const operativeCount = extractedData.operativeCount
+        console.log(`Team name: ${teamName}, Operatives: ${operativeCount}`)
 
         const equipmentList = extractedData.factionEquipment.map((item: any) => ({
           _type: 'equipment',
@@ -242,7 +250,7 @@ export async function GET() {
           // Update existing team
           result = await serverClient
             .patch(existingTeam._id)
-            .set({equipment: equipmentList})
+            .set({equipment: equipmentList, operativeCount: operativeCount})
             .commit()
           console.log(`✓ Updated existing team: ${teamName}`)
         } else {
@@ -250,6 +258,7 @@ export async function GET() {
           const doc = {
             _type: 'team',
             name: teamName,
+            operativeCount: operativeCount,
             equipment: equipmentList,
           }
           result = await serverClient.create(doc)

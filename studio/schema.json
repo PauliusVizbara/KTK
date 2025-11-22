@@ -1314,6 +1314,13 @@
         },
         "optional": false
       },
+      "operativeCount": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "number"
+        },
+        "optional": false
+      },
       "equipment": {
         "type": "objectAttribute",
         "value": {
