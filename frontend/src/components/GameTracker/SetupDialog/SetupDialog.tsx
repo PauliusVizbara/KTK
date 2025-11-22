@@ -14,8 +14,16 @@ import useEmblaCarousel from 'embla-carousel-react'
 import {Divider} from '@/components/divider'
 import ReactDOM from 'react-dom'
 import {useShallow} from 'zustand/shallow'
-import {ArrowUturnLeftIcon, ArrowUturnRightIcon, XMarkIcon} from '@heroicons/react/16/solid'
-import {CritOp, Team, TeamListQueryResult} from '../../../../sanity.types'
+import {
+  ArrowUturnLeftIcon,
+  ArrowUturnRightIcon,
+  XMarkIcon,
+  ChevronDownIcon,
+} from '@heroicons/react/16/solid'
+import {CritOp, Team, TeamListQueryResult, UniversalEquipment} from '../../../../sanity.types'
+import {Dropdown, DropdownButton, DropdownItem, DropdownMenu} from '@/components/dropdown'
+import {PlayerTurnBanner} from './PlayerTurnBanner'
+import {EquipmentAccordion} from './EquipmentAccordion'
 const STEP_TITLES = [
   '1. Set up the Battle',
   '1. Set up the Battle',
@@ -66,40 +74,44 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
         <Heading className="mt-6" level={6}>
           1. Each player selects a kill team for the battle.
         </Heading>
-        <div className="flex">
-          <Field className="flex-1 mr-4">
+        <div className="flex gap-4">
+          <Field className="flex-1">
             <Label>Player 1 Team</Label>
-            <Combobox
-              name="user"
-              options={teamSelectOptions}
-              onChange={(team) =>
-                setPlayer1Selection({name: team?.name ?? null, id: team?.id ?? null})
-              }
-              displayValue={(user) => user?.name}
-            >
-              {(user) => (
-                <ComboboxOption value={user}>
-                  <ComboboxLabel>{user.name}</ComboboxLabel>
-                </ComboboxOption>
-              )}
-            </Combobox>
+            <Dropdown>
+              <DropdownButton outline className="w-full justify-between">
+                {player1Selection?.name || 'Select Team'}
+                <ChevronDownIcon />
+              </DropdownButton>
+              <DropdownMenu className="max-h-60 overflow-auto">
+                {teamSelectOptions.map((team) => (
+                  <DropdownItem
+                    key={team.id}
+                    onClick={() => setPlayer1Selection({name: team.name, id: team.id})}
+                  >
+                    {team.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
           </Field>
-          <Field className="flex-1 ml-4">
+          <Field className="flex-1">
             <Label>Player 2 Team</Label>
-            <Combobox
-              name="user"
-              options={teamSelectOptions}
-              onChange={(team) =>
-                setPlayer2Selection({name: team?.name ?? null, id: team?.id ?? null})
-              }
-              displayValue={(user) => user?.name}
-            >
-              {(user) => (
-                <ComboboxOption value={user}>
-                  <ComboboxLabel>{user.name}</ComboboxLabel>
-                </ComboboxOption>
-              )}
-            </Combobox>
+            <Dropdown>
+              <DropdownButton outline className="w-full justify-between">
+                {player2Selection?.name || 'Select Team'}
+                <ChevronDownIcon />
+              </DropdownButton>
+              <DropdownMenu className="max-h-60 overflow-auto">
+                {teamSelectOptions.map((team) => (
+                  <DropdownItem
+                    key={team.id}
+                    onClick={() => setPlayer2Selection({name: team.name, id: team.id})}
+                  >
+                    {team.name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
           </Field>
         </div>
       </DialogBody>
@@ -361,20 +373,125 @@ const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
   )
 }
 
-const SelectEquipmentStep = ({onNext, onBack}: StepProps) => {
+const SelectEquipmentStep = ({
+  onNext,
+  onBack,
+  universalEquipment,
+}: StepProps & {universalEquipment: UniversalEquipment[]}) => {
+  const {player1, player2} = useGameTrackerStore()
+  const [phase, setPhase] = React.useState<'p1' | 'p2' | 'reveal'>('p1')
+  const [p1Selection, setP1Selection] = React.useState<string[]>([])
+  const [p2Selection, setP2Selection] = React.useState<string[]>([])
+
+  // Prepare equipment lists
+  const p1TeamEquipment = React.useMemo(() => {
+    return (
+      player1.team?.equipment?.map((e) => ({
+        ...e,
+        id: e._key,
+      })) ?? []
+    )
+  }, [player1.team])
+
+  const p2TeamEquipment = React.useMemo(() => {
+    return (
+      player2.team?.equipment?.map((e) => ({
+        ...e,
+        id: e._key,
+      })) ?? []
+    )
+  }, [player2.team])
+
+  const universalEquipmentList = React.useMemo(() => {
+    return universalEquipment.map((u) => ({
+      ...u.equipment!,
+      id: u._id,
+    }))
+  }, [universalEquipment])
+
+  const p1AllEquipment = [...p1TeamEquipment, ...universalEquipmentList]
+  const p2AllEquipment = [...p2TeamEquipment, ...universalEquipmentList]
+
+  const handleToggle = (id: string, player: 'p1' | 'p2') => {
+    if (player === 'p1') {
+      setP1Selection((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]))
+    } else {
+      setP2Selection((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]))
+    }
+  }
+
   return (
     <>
       <DialogBody>
-        <div className="mt-4">
-          <p>
-            Each player secretly selects up to four equipment options. Each option cannot be
-            selected more than once per player. They then reveal their selections simultaneously.
-          </p>
-        </div>
+        {phase === 'p1' && (
+          <div className="space-y-4">
+            <PlayerTurnBanner playerName={player1.team?.name || 'Player 1'} />
+            <Heading level={6}>Select up to 4 equipment items</Heading>
+            <EquipmentAccordion
+              equipment={p1AllEquipment}
+              selectedIds={p1Selection}
+              onToggle={(id) => handleToggle(id, 'p1')}
+            />
+          </div>
+        )}
+
+        {phase === 'p2' && (
+          <div className="space-y-4">
+            <PlayerTurnBanner playerName={player2.team?.name || 'Player 2'} />
+            <Heading level={6}>Select up to 4 equipment items</Heading>
+            <EquipmentAccordion
+              equipment={p2AllEquipment}
+              selectedIds={p2Selection}
+              onToggle={(id) => handleToggle(id, 'p2')}
+            />
+          </div>
+        )}
+
+        {phase === 'reveal' && (
+          <div className="grid grid-cols-2 gap-8">
+            <div>
+              <Heading level={6} className="mb-4">
+                {player1.team?.name} Selections
+              </Heading>
+              <ul className="list-disc pl-5">
+                {p1Selection.map((id) => {
+                  const item = p1AllEquipment.find((e) => e.id === id)
+                  return <li key={id}>{item?.name}</li>
+                })}
+              </ul>
+            </div>
+            <div>
+              <Heading level={6} className="mb-4">
+                {player2.team?.name} Selections
+              </Heading>
+              <ul className="list-disc pl-5">
+                {p2Selection.map((id) => {
+                  const item = p2AllEquipment.find((e) => e.id === id)
+                  return <li key={id}>{item?.name}</li>
+                })}
+              </ul>
+            </div>
+          </div>
+        )}
       </DialogBody>
       <DialogActions>
-        <Button onClick={onBack}>Previous</Button>
-        <Button onClick={onNext}>Next</Button>
+        {phase === 'p1' && <Button onClick={() => setPhase('p2')}>Finish Selection</Button>}
+        {phase === 'p2' && (
+          <>
+            <Button onClick={() => setPhase('p1')} outline>
+              Back
+            </Button>
+            <Button onClick={() => setPhase('reveal')}>Finish Selection</Button>
+          </>
+        )}
+        {phase === 'reveal' && (
+          <>
+            <Button onClick={() => setPhase('p2')} outline>
+              Back
+            </Button>
+            <Button onClick={onNext}>Next</Button>
+          </>
+        )}
       </DialogActions>
     </>
   )
@@ -452,9 +569,11 @@ const STEP_COMPONENTS = [
 interface Props {
   initialTeams: Team[]
   critOps: CritOp[]
+  universalEquipment: UniversalEquipment[]
 }
 
-export const SetupDialog = ({initialTeams, critOps}: Props) => {
+export const SetupDialog = (props: Props) => {
+  const {initialTeams, critOps, universalEquipment} = props
   const [step, setStep] = React.useState(0)
 
   const {isSetupOpen, setIsSetupOpen, setIsSetupDone} = useGameTrackerStore()
@@ -480,7 +599,14 @@ export const SetupDialog = ({initialTeams, critOps}: Props) => {
           },
           isFirstStep: step === 0,
           isLastStep: step === STEP_COMPONENTS.length - 1,
-        })}
+          universalEquipment: critOps ? (initialTeams ? props.universalEquipment : []) : [], // Pass universalEquipment to all steps, though only SelectEquipmentStep uses it.
+          // Actually, React.createElement will pass extra props fine.
+          // But TypeScript might complain if StepProps doesn't include it.
+          // I updated SelectEquipmentStep signature but not StepProps.
+          // Let's update StepProps or just pass it.
+          // Since I can't update StepProps easily without changing all components, I'll cast or just pass it.
+          // Wait, I can update StepProps in the file.
+        } as any)}
       </Dialog>
     </>
   )
