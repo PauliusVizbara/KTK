@@ -68,7 +68,7 @@ export const StateTracker = () => {
         <div className="flex items-center gap-4 text-4xl font-bold">
           <div className="flex flex-col items-center">
             <span className="text-xs font-normal text-zinc-400 mb-1">
-              {player1.teamSelection.name || 'P1'}
+              {player1.team.name || 'P1'}
             </span>
             <input
               type="number"
@@ -80,7 +80,7 @@ export const StateTracker = () => {
           <span className="text-zinc-300">-</span>
           <div className="flex flex-col items-center">
             <span className="text-xs font-normal text-zinc-400 mb-1">
-              {player2.teamSelection.name || 'P2'}
+              {player2.team.name || 'P2'}
             </span>
             <input
               type="number"

@@ -13,9 +13,9 @@ import EmblaCarousel from '@/components/Common/Carousel/Carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import {Divider} from '@/components/divider'
 import ReactDOM from 'react-dom'
-
+import {useShallow} from 'zustand/shallow'
 import {ArrowUturnLeftIcon, ArrowUturnRightIcon, XMarkIcon} from '@heroicons/react/16/solid'
-import {CritOp} from '../../../../sanity.types'
+import {CritOp, Team, TeamListQueryResult} from '../../../../sanity.types'
 const STEP_TITLES = [
   '1. Set up the Battle',
   '1. Set up the Battle',
@@ -51,8 +51,15 @@ interface StepProps {
 
 const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
   const {player1, player2} = useGameTrackerStore()
-  const {teamSelectOptions} = useTeamStore()
-
+  const [player1Selection, setPlayer1Selection] = React.useState<{
+    id: string | null
+    name: string | null
+  } | null>(null)
+  const [player2Selection, setPlayer2Selection] = React.useState<{
+    id: string | null
+    name: string | null
+  } | null>(null)
+  const {teamSelectOptions, getTeamById} = useTeamStore()
   return (
     <>
       <DialogBody>
@@ -66,7 +73,7 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
               name="user"
               options={teamSelectOptions}
               onChange={(team) =>
-                player1.setTeamSelection({name: team?.name ?? null, id: team?.id ?? null})
+                setPlayer1Selection({name: team?.name ?? null, id: team?.id ?? null})
               }
               displayValue={(user) => user?.name}
             >
@@ -83,7 +90,7 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
               name="user"
               options={teamSelectOptions}
               onChange={(team) =>
-                player2.setTeamSelection({name: team?.name ?? null, id: team?.id ?? null})
+                setPlayer2Selection({name: team?.name ?? null, id: team?.id ?? null})
               }
               displayValue={(user) => user?.name}
             >
@@ -97,7 +104,14 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
         </div>
       </DialogBody>
       <DialogActions>
-        <Button disabled={!player1.teamSelection.id || !player2.teamSelection.id} onClick={onNext}>
+        <Button
+          disabled={!player1Selection?.id || !player2Selection?.id}
+          onClick={() => {
+            onNext()
+            player1.setTeam(getTeamById(player1Selection?.id ?? '') ?? null)
+            player2.setTeam(getTeamById(player2Selection?.id ?? '') ?? null)
+          }}
+        >
           Next
         </Button>
       </DialogActions>
@@ -291,14 +305,14 @@ const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
             onClick={() => setSetupInitiative('player1')}
             className="flex-1 m-4"
           >
-            {gameTrackerStore.player1.teamSelection.name}
+            {gameTrackerStore.player1.team?.name}
           </Button>
           <Button
             color={setupInitiative === 'player2' ? 'primary' : 'secondary'}
             onClick={() => setSetupInitiative('player2')}
             className="flex-1 m-4"
           >
-            {gameTrackerStore.player2.teamSelection.name}
+            {gameTrackerStore.player2.team?.name}
           </Button>
         </div>
 
@@ -306,14 +320,14 @@ const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
           <ul className="list-disc list-inside">
             <li>
               {setupInitiative === 'player1'
-                ? gameTrackerStore.player1.teamSelection.name
-                : gameTrackerStore.player2.teamSelection.name}{' '}
+                ? gameTrackerStore.player1.team?.name
+                : gameTrackerStore.player2.team?.name}{' '}
               selects one drop zone.
             </li>
             <li>
               {setupInitiative === 'player1'
-                ? gameTrackerStore.player2.teamSelection.name
-                : gameTrackerStore.player1.teamSelection.name}{' '}
+                ? gameTrackerStore.player2.team?.name
+                : gameTrackerStore.player1.team?.name}{' '}
               has the other drop zone and gains the Re-roll initiative card.
             </li>
           </ul>
@@ -436,7 +450,7 @@ const STEP_COMPONENTS = [
 ]
 
 interface Props {
-  initialTeams: {id: string; name: string}[]
+  initialTeams: Team[]
   critOps: CritOp[]
 }
 
@@ -444,13 +458,13 @@ export const SetupDialog = ({initialTeams, critOps}: Props) => {
   const [step, setStep] = React.useState(0)
 
   const {isSetupOpen, setIsSetupOpen, setIsSetupDone} = useGameTrackerStore()
-  const {setTeamSelectOptions} = useTeamStore()
+  const {setTeams} = useTeamStore()
   const {setCritOps} = useCritOpStore()
 
   useEffect(() => {
-    setTeamSelectOptions(initialTeams)
+    setTeams(initialTeams)
     setCritOps(critOps)
-  }, [initialTeams, setTeamSelectOptions, critOps, setCritOps])
+  }, [initialTeams, setTeams, critOps, setCritOps])
 
   return (
     <>

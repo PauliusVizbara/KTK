@@ -1,5 +1,51 @@
 [
   {
+    "name": "equipment",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "equipment"
+          }
+        },
+        "name": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": false
+        },
+        "description": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": false
+        },
+        "weapon": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "weapon"
+          },
+          "optional": true
+        },
+        "action": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "action"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
     "name": "action",
     "type": "type",
     "value": {
@@ -468,38 +514,24 @@
           },
           "optional": true
         },
-        "dmg_normal": {
+        "damageNormal": {
           "type": "objectAttribute",
           "value": {
             "type": "number"
           },
           "optional": true
         },
-        "dmg_critical": {
+        "damageCritical": {
           "type": "objectAttribute",
           "value": {
             "type": "number"
           },
           "optional": true
         },
-        "severe": {
+        "rules": {
           "type": "objectAttribute",
           "value": {
-            "type": "boolean"
-          },
-          "optional": true
-        },
-        "range": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "number"
-          },
-          "optional": true
-        },
-        "rending": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "boolean"
+            "type": "string"
           },
           "optional": true
         }
@@ -1575,7 +1607,7 @@
         },
         "optional": false
       },
-      "operatives": {
+      "equipment": {
         "type": "objectAttribute",
         "value": {
           "type": "array",
@@ -1591,7 +1623,7 @@
             },
             "rest": {
               "type": "inline",
-              "name": "operative"
+              "name": "equipment"
             }
           }
         },

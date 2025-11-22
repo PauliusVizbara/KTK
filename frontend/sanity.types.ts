@@ -13,6 +13,14 @@
  */
 
 // Source: schema.json
+export type Equipment = {
+  _type: 'equipment'
+  name: string
+  description: string
+  weapon?: Weapon
+  action?: Action
+}
+
 export type Action = {
   _type: 'action'
   name?: string
@@ -65,11 +73,9 @@ export type Weapon = {
   name?: string
   atk?: number
   hit?: number
-  dmg_normal?: number
-  dmg_critical?: number
-  severe?: boolean
-  range?: number
-  rending?: boolean
+  damageNormal?: number
+  damageCritical?: number
+  rules?: string
 }
 
 export type Operative = {
@@ -222,10 +228,10 @@ export type Team = {
   _updatedAt: string
   _rev: string
   name: string
-  operatives?: Array<
+  equipment?: Array<
     {
       _key: string
-    } & Operative
+    } & Equipment
   >
 }
 
@@ -618,6 +624,7 @@ export type Geopoint = {
 }
 
 export type AllSanitySchemaTypes =
+  | Equipment
   | Action
   | Weapon
   | Operative
@@ -934,10 +941,20 @@ export type PagesSlugsResult = Array<{
   slug: string
 }>
 // Variable: teamListQuery
-// Query: *[_type == "team"] | order(name asc) {    "id": _id,    name  }
+// Query: *[_type == "team"] | order(name asc) {    ...,    "id": _id,  }
 export type TeamListQueryResult = Array<{
-  id: string
+  _id: string
+  _type: 'team'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
   name: string
+  equipment?: Array<
+    {
+      _key: string
+    } & Equipment
+  >
+  id: string
 }>
 // Variable: critOpQuery
 // Query: *[_type == "critOp"] | order(name asc) {    ...,    "id": _id,  }
@@ -1004,7 +1021,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
     '\n  *[_type == "post" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
-    '\n  *[_type == "team"] | order(name asc) {\n    "id": _id,\n    name\n  }\n': TeamListQueryResult
+    '\n  *[_type == "team"] | order(name asc) {\n    ...,\n    "id": _id,\n  }\n': TeamListQueryResult
     '\n  *[_type == "critOp"] | order(name asc) {\n    ...,\n    "id": _id,\n  }\n': CritOpQueryResult
   }
 }

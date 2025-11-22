@@ -2,8 +2,8 @@ import {create} from 'zustand'
 import {CritOp, Team} from '../../../sanity.types'
 
 interface PlayerState {
-  teamSelection: {name: string | null; id: string | null}
-  setTeamSelection: (team: {name: string | null; id: string | null}) => void
+  team: Team | null
+  setTeam: (team: Team | null) => void
   score: number
   setScore: (score: number) => void
   cp: number
@@ -37,18 +37,16 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
   turningPoint: 1,
   setTurningPoint: (turningPoint) => set({turningPoint}),
   player1: {
-    teamSelection: {name: null, id: null},
-    setTeamSelection: (team) =>
-      set((state) => ({player1: {...state.player1, teamSelection: team}})),
+    team: null,
+    setTeam: (team) => set((state) => ({player1: {...state.player1, team: team}})),
     score: 0,
     setScore: (score) => set((state) => ({player1: {...state.player1, score}})),
     cp: 2,
     setCp: (cp) => set((state) => ({player1: {...state.player1, cp}})),
   },
   player2: {
-    teamSelection: {name: null, id: null},
-    setTeamSelection: (team) =>
-      set((state) => ({player2: {...state.player2, teamSelection: team}})),
+    team: null,
+    setTeam: (team) => set((state) => ({player2: {...state.player2, team: team}})),
     score: 0,
     setScore: (score) => set((state) => ({player2: {...state.player2, score}})),
     cp: 2,
