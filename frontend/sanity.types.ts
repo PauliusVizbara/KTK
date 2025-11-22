@@ -195,6 +195,7 @@ export type Team = {
   _updatedAt: string
   _rev: string
   name: string
+  operativeCount: number
   equipment?: Array<
     {
       _key: string
@@ -505,6 +506,7 @@ export type TeamListQueryResult = Array<{
   _updatedAt: string
   _rev: string
   name: string
+  operativeCount: number
   equipment?: Array<
     {
       _key: string
@@ -564,6 +566,18 @@ export type CritOpQueryResult = Array<{
   }>
   id: string
 }>
+// Variable: universalEquipmentQuery
+// Query: *[_type == "universalEquipment"] | order(equipment.name asc) {    ...,    "id": _id,  }
+export type UniversalEquipmentQueryResult = Array<{
+  _id: string
+  _type: 'universalEquipment'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  equipment?: Equipment
+  amount?: number
+  id: string
+}>
 
 // Query TypeMap
 import '@sanity/client'
@@ -579,5 +593,6 @@ declare module '@sanity/client' {
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
     '\n  *[_type == "team"] | order(name asc) {\n    ...,\n    "id": _id,\n  }\n': TeamListQueryResult
     '\n  *[_type == "critOp"] | order(name asc) {\n    ...,\n    "id": _id,\n  }\n': CritOpQueryResult
+    '\n  *[_type == "universalEquipment"] | order(equipment.name asc) {\n    ...,\n    "id": _id,\n  }\n': UniversalEquipmentQueryResult
   }
 }

@@ -53,6 +53,9 @@ export default defineConfig({
   dataset,
 
   plugins: [
+    structureTool({
+      structure, // Custom studio structure configuration, imported from ./src/structure.ts
+    }),
     // Presentation tool configuration for Visual Editing
     presentationTool({
       previewUrl: {
@@ -119,9 +122,7 @@ export default defineConfig({
         },
       },
     }),
-    structureTool({
-      structure, // Custom studio structure configuration, imported from ./src/structure.ts
-    }),
+
     // Additional plugins for enhanced functionality
     unsplashImageAsset(),
     assist(),

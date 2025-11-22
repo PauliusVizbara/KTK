@@ -157,13 +157,17 @@ async function extractEquipmentFromText(text: string) {
         role: 'system',
         content: `You are a helper that extracts structured data from Warhammer Kill Team PDF text.
 
-First, identify the team name from the document header/title.
+First, identify the team name inside the document. It will be in the format "X Kill Team".
+- Format it as Title Case.
+- Don't make already plural words plural again (e.g. "Squad" not "Squads").
+- Remove any "Kill Team" suffix or prefix if present (e.g., just "Legionaries" not "Legionary Kill Team").
 
 Then, calculate the TOTAL OPERATIVE COUNT for the kill team.
 - Look for the "OPERATIVES" section.
 - It will list requirements like "1 LEADER", "1 DRONE", "9 OPERATIVES selected from...".
 - Sum these numbers to get the total count (e.g., 1 + 1 + 9 = 11).
 - If it says "consists of X operatives", use that number.
+- CRITICAL: Do NOT count operatives that are marked as "EXPENDABLE" or say "does not count towards the kill op" or similar exclusion phrases.
 
 Then find the 4 FACTION EQUIPMENT cards. Each card has this structure:
 1. NAME (in all caps at the top)
@@ -186,6 +190,24 @@ Do not trim anything from the text. Keep all game terms like "strategic gambit" 
   })
 
   return completion.choices[0].message.parsed
+}
+
+function normalizeTeamName(name: string): string {
+  // 1. Remove extra whitespace
+  let normalized = name.trim()
+
+  // 2. Convert to Title Case (simple implementation)
+  normalized = normalized.replace(
+    /\w\S*/g,
+    (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
+  )
+
+  // 3. Ensure plural (very basic heuristic, can be improved or rely on AI)
+  // For now, relying on AI for pluralization as English rules are complex.
+  // But we can strip "Kill Team" if AI missed it.
+  normalized = normalized.replace(/ Kill Team$/i, '')
+
+  return normalized
 }
 
 export async function GET() {
@@ -216,7 +238,7 @@ export async function GET() {
           continue
         }
 
-        const teamName = extractedData.teamName
+        const teamName = normalizeTeamName(extractedData.teamName)
         const operativeCount = extractedData.operativeCount
         console.log(`Team name: ${teamName}, Operatives: ${operativeCount}`)
 
