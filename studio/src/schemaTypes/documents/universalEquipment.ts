@@ -12,15 +12,22 @@ export const universalEquipment = defineType({
       title: 'Equipment',
       type: 'equipment',
     }),
+    defineField({
+      name: 'amount',
+      title: 'Amount',
+      type: 'number',
+    }),
   ],
+
   preview: {
     select: {
       name: 'equipment.name',
+      amount: 'amount',
     },
     prepare(selection) {
-      const {name} = selection
+      const {name, amount} = selection
       return {
-        title: name,
+        title: `${amount}X ${name}`,
       }
     },
   },

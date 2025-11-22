@@ -120,6 +120,16 @@ export type SanityImageHotspot = {
   width: number
 }
 
+export type UniversalEquipment = {
+  _id: string
+  _type: 'universalEquipment'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  equipment?: Equipment
+  amount?: number
+}
+
 export type CritOp = {
   _id: string
   _type: 'critOp'
@@ -428,6 +438,7 @@ export type AllSanitySchemaTypes =
   | Operative
   | SanityImageCrop
   | SanityImageHotspot
+  | UniversalEquipment
   | CritOp
   | Team
   | SanityAssistInstructionTask

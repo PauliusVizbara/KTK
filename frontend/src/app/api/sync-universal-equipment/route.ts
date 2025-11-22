@@ -49,6 +49,7 @@ function stringToSectionBlock(text: string) {
 // Define the schema for the extracted data
 const EquipmentSchema = z.object({
   name: z.string(),
+  amount: z.number(),
   description: z.string(),
   weapon: z
     .object({
@@ -152,8 +153,9 @@ async function extractEquipmentFromText(text: string) {
 
 Find all UNIVERSAL EQUIPMENT cards. Each card has this structure:
 1. NAME (in all caps at the top)
-2. LORE (italic/flavour text paragraph - this is narrative/story text, NOT game rules)
-3. DESCRIPTION (game rules text - starts with phrases like "Once per turning point", "When", "Each time", etc.)
+2. AMOUNT (number of items), found as prefix before name
+3. LORE (italic/flavour text paragraph - this is narrative/story text, NOT game rules)
+4. DESCRIPTION (game rules text - starts with phrases like "Once per turning point", "When", "Each time", etc.)
 
 CRITICAL: The lore and description are SEPARATE fields. Do NOT combine them.
 - LORE = The italic narrative text that describes what the equipment is thematically
@@ -241,7 +243,7 @@ export async function GET() {
               // Update existing equipment
               result = await serverClient
                 .patch(existingEquipment._id)
-                .set({equipment: equipmentData})
+                .set({equipment: equipmentData, amount: item.amount})
                 .commit()
               console.log(`✓ Updated existing equipment: ${item.name}`)
             } else {
@@ -249,6 +251,7 @@ export async function GET() {
               const doc = {
                 _type: 'universalEquipment',
                 equipment: equipmentData,
+                amount: item.amount,
               }
               result = await serverClient.create(doc)
               console.log(`✓ Created new equipment: ${item.name}`)
