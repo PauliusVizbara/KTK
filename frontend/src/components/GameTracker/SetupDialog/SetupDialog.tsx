@@ -5,7 +5,6 @@ import {Dialog, DialogTitle, DialogDescription} from '@/components/dialog'
 import React, {useEffect} from 'react'
 import {useGameTrackerStore, useTeamStore, useCritOpStore} from '@/app/store'
 import {Heading} from '@/components/heading'
-import {Combobox, ComboboxLabel, ComboboxOption} from '@/components/combobox'
 import {Button, CritOpCard} from '@/components'
 import Image from 'next/image'
 import {Select} from '@/components/select'
@@ -476,6 +475,19 @@ const SelectEquipmentStep = ({
         )}
       </DialogBody>
       <DialogActions>
+        <Button
+          onClick={() => {
+            if (phase === 'p1') {
+              onBack()
+            } else {
+              setPhase('p1')
+            }
+          }}
+          outline
+        >
+          Back
+        </Button>
+
         {phase === 'p1' && <Button onClick={() => setPhase('p2')}>Finish Selection</Button>}
         {phase === 'p2' && (
           <>
@@ -487,9 +499,6 @@ const SelectEquipmentStep = ({
         )}
         {phase === 'reveal' && (
           <>
-            <Button onClick={() => setPhase('p2')} outline>
-              Back
-            </Button>
             <Button
               onClick={() => {
                 const p1SelectedEquipment = p1AllEquipment.filter((e) => p1Selection.includes(e.id))
