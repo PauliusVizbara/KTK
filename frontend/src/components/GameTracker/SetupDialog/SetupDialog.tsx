@@ -487,16 +487,8 @@ const SelectEquipmentStep = ({
         >
           Back
         </Button>
-
         {phase === 'p1' && <Button onClick={() => setPhase('p2')}>Finish Selection</Button>}
-        {phase === 'p2' && (
-          <>
-            <Button onClick={() => setPhase('p1')} outline>
-              Back
-            </Button>
-            <Button onClick={() => setPhase('reveal')}>Finish Selection</Button>
-          </>
-        )}
+        {phase === 'p2' && <Button onClick={() => setPhase('reveal')}>Finish Selection</Button>}
         {phase === 'reveal' && (
           <>
             <Button
