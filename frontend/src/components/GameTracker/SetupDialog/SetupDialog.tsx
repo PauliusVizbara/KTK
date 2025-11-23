@@ -3,7 +3,7 @@ import {DialogBody, DialogActions} from '@/components/dialog'
 import {Field, Label} from '@/components/fieldset'
 import {Dialog, DialogTitle, DialogDescription} from '@/components/dialog'
 import React, {useEffect} from 'react'
-import {useGameTrackerStore, useTeamStore, useCritOpStore} from '@/app/store'
+import {useGameTrackerStore, useTeamStore, useCritOpStore, useEquipmentStore} from '@/app/store'
 import {Heading} from '@/components/heading'
 import {Button, CritOpCard} from '@/components'
 import Image from 'next/image'
@@ -28,10 +28,11 @@ const STEP_TITLES = [
   '1. Set up the Battle',
   '1. Set up the Battle',
   '1. Set up the Battle',
-  '2. Select Operatives',
-  '2. Select Operatives',
-  '2. Select Operatives',
-  '3. Set Up Operatives',
+  '2. Select Equipment',
+  '2. Select Equipment',
+  '2. Select Equipment',
+  '2. Select Tac Ops',
+  '3. Set Up Equipment',
   '3. Set Up Operatives',
 ]
 const STEP_DESCRIPTIONS = [
@@ -40,13 +41,27 @@ const STEP_DESCRIPTIONS = [
   'Select any critical operation rules for the battle.',
   'Roll-off for initiative',
   'Select Operatives',
-  'Select Equipment',
+  'Player 1 Selects Equipment',
+  'Player 2 Selects Equipment',
+  'Reveal Equipment',
   'Select Tac Ops',
   'Set Up Equipment',
   'Set Up Operatives',
 ]
 
-const STEP_SIZES = ['5xl', '5xl', '5xl', '3xl', '5xl', '5xl', '5xl', '5xl', '5xl'] as const
+const STEP_SIZES = [
+  '5xl',
+  '5xl',
+  '5xl',
+  '3xl',
+  '5xl',
+  '5xl',
+  '5xl',
+  '5xl',
+  '5xl',
+  '5xl',
+  '5xl',
+] as const
 
 interface StepProps {
   onNext: () => void
@@ -372,17 +387,10 @@ const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
   )
 }
 
-const SelectEquipmentStep = ({
-  onNext,
-  onBack,
-  universalEquipment,
-}: StepProps & {universalEquipment: UniversalEquipment[]}) => {
+const useEquipmentData = () => {
   const {player1, player2} = useGameTrackerStore()
-  const [phase, setPhase] = React.useState<'p1' | 'p2' | 'reveal'>('p1')
-  const [p1Selection, setP1Selection] = React.useState<string[]>([])
-  const [p2Selection, setP2Selection] = React.useState<string[]>([])
+  const {universalEquipment} = useEquipmentStore()
 
-  // Prepare equipment lists
   const p1TeamEquipment = React.useMemo(() => {
     return (
       player1.team?.equipment?.map((e) => ({
@@ -412,99 +420,132 @@ const SelectEquipmentStep = ({
   const p1AllEquipment = [...p1TeamEquipment, ...universalEquipmentList]
   const p2AllEquipment = [...p2TeamEquipment, ...universalEquipmentList]
 
-  const handleToggle = (id: string, player: 'p1' | 'p2') => {
-    if (player === 'p1') {
-      setP1Selection((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]))
+  return {p1AllEquipment, p2AllEquipment, player1, player2}
+}
+
+const SelectEquipmentPlayer1Step = ({onNext, onBack}: StepProps) => {
+  const {p1AllEquipment, player1} = useEquipmentData()
+
+  const p1Selection = React.useMemo(
+    () => player1.equipment.map((e: any) => e.id),
+    [player1.equipment],
+  )
+
+  const handleToggle = (id: string) => {
+    if (p1Selection.includes(id)) {
+      player1.setEquipment(player1.equipment.filter((e: any) => e.id !== id))
     } else {
-      setP2Selection((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]))
+      const item = p1AllEquipment.find((e) => e.id === id)
+      if (item) {
+        player1.setEquipment([...player1.equipment, item])
+      }
     }
   }
 
   return (
     <>
       <DialogBody>
-        {phase === 'p1' && (
-          <div className="space-y-4">
-            <PlayerTurnBanner playerName={player1.team?.name || 'Player 1'} />
-            <Heading level={6}>Select up to 4 equipment items</Heading>
-            <EquipmentAccordion
-              equipment={p1AllEquipment}
-              selectedIds={p1Selection}
-              onToggle={(id) => handleToggle(id, 'p1')}
-            />
-          </div>
-        )}
-
-        {phase === 'p2' && (
-          <div className="space-y-4">
-            <PlayerTurnBanner playerName={player2.team?.name || 'Player 2'} />
-            <Heading level={6}>Select up to 4 equipment items</Heading>
-            <EquipmentAccordion
-              equipment={p2AllEquipment}
-              selectedIds={p2Selection}
-              onToggle={(id) => handleToggle(id, 'p2')}
-            />
-          </div>
-        )}
-
-        {phase === 'reveal' && (
-          <div className="grid grid-cols-2 gap-8">
-            <div>
-              <Heading level={6} className="mb-4">
-                {player1.team?.name} Selections
-              </Heading>
-              <EquipmentAccordion
-                equipment={p1AllEquipment.filter((e) => p1Selection.includes(e.id))}
-                selectedIds={[]}
-                onToggle={() => {}}
-                readOnly
-              />
-            </div>
-            <div>
-              <Heading level={6} className="mb-4">
-                {player2.team?.name} Selections
-              </Heading>
-              <EquipmentAccordion
-                equipment={p2AllEquipment.filter((e) => p2Selection.includes(e.id))}
-                selectedIds={[]}
-                onToggle={() => {}}
-                readOnly
-              />
-            </div>
-          </div>
-        )}
+        <div className="space-y-4">
+          <PlayerTurnBanner playerName={player1.team?.name || 'Player 1'} />
+          <Heading level={6}>Select up to 4 equipment items</Heading>
+          <EquipmentAccordion
+            equipment={p1AllEquipment}
+            selectedIds={p1Selection}
+            onToggle={handleToggle}
+          />
+        </div>
       </DialogBody>
       <DialogActions>
-        <Button
-          onClick={() => {
-            if (phase === 'p1') {
-              onBack()
-            } else {
-              setPhase('p1')
-            }
-          }}
-          outline
-        >
-          Back
-        </Button>
-        {phase === 'p1' && <Button onClick={() => setPhase('p2')}>Finish Selection</Button>}
-        {phase === 'p2' && <Button onClick={() => setPhase('reveal')}>Finish Selection</Button>}
-        {phase === 'reveal' && (
-          <>
-            <Button
-              onClick={() => {
-                const p1SelectedEquipment = p1AllEquipment.filter((e) => p1Selection.includes(e.id))
-                const p2SelectedEquipment = p2AllEquipment.filter((e) => p2Selection.includes(e.id))
+        <Button onClick={onBack}>Previous</Button>
+        <Button onClick={onNext}>Next</Button>
+      </DialogActions>
+    </>
+  )
+}
 
-                player1.setEquipment(p1SelectedEquipment)
-                player2.setEquipment(p2SelectedEquipment)
-                onNext()
-              }}
-            >
-              Next
-            </Button>
-          </>
-        )}
+const SelectEquipmentPlayer2Step = ({onNext, onBack}: StepProps) => {
+  const {p2AllEquipment, player2} = useEquipmentData()
+
+  const p2Selection = React.useMemo(
+    () => player2.equipment.map((e: any) => e.id),
+    [player2.equipment],
+  )
+
+  const handleToggle = (id: string) => {
+    if (p2Selection.includes(id)) {
+      player2.setEquipment(player2.equipment.filter((e: any) => e.id !== id))
+    } else {
+      const item = p2AllEquipment.find((e) => e.id === id)
+      if (item) {
+        player2.setEquipment([...player2.equipment, item])
+      }
+    }
+  }
+
+  return (
+    <>
+      <DialogBody>
+        <div className="space-y-4">
+          <PlayerTurnBanner playerName={player2.team?.name || 'Player 2'} />
+          <Heading level={6}>Select up to 4 equipment items</Heading>
+          <EquipmentAccordion
+            equipment={p2AllEquipment}
+            selectedIds={p2Selection}
+            onToggle={handleToggle}
+          />
+        </div>
+      </DialogBody>
+      <DialogActions>
+        <Button onClick={onBack}>Previous</Button>
+        <Button onClick={onNext}>Next</Button>
+      </DialogActions>
+    </>
+  )
+}
+
+const RevealEquipmentStep = ({onNext, onBack}: StepProps) => {
+  const {p1AllEquipment, p2AllEquipment, player1, player2} = useEquipmentData()
+
+  const p1Selection = React.useMemo(
+    () => player1.equipment.map((e: any) => e.id),
+    [player1.equipment],
+  )
+  const p2Selection = React.useMemo(
+    () => player2.equipment.map((e: any) => e.id),
+    [player2.equipment],
+  )
+
+  return (
+    <>
+      <DialogBody>
+        <div className="grid grid-cols-2 gap-8">
+          <div>
+            <Heading level={6} className="mb-4">
+              {player1.team?.name} Selections
+            </Heading>
+            <EquipmentAccordion
+              equipment={p1AllEquipment.filter((e) => p1Selection.includes(e.id))}
+              selectedIds={[]}
+              onToggle={() => {}}
+              readOnly
+            />
+          </div>
+          <div>
+            <Heading level={6} className="mb-4">
+              {player2.team?.name} Selections
+            </Heading>
+            <EquipmentAccordion
+              equipment={p2AllEquipment.filter((e) => p2Selection.includes(e.id))}
+              selectedIds={[]}
+              onToggle={() => {}}
+              readOnly
+            />
+          </div>
+        </div>
+      </DialogBody>
+      <DialogActions>
+        <Button onClick={onBack}>Previous</Button>
+        <Button onClick={onNext}>Next</Button>
       </DialogActions>
     </>
   )
@@ -573,7 +614,9 @@ const STEP_COMPONENTS = [
   SelectCritOpStep,
   SelectInitiativeStep,
   SelectOperativesStep,
-  SelectEquipmentStep,
+  SelectEquipmentPlayer1Step,
+  SelectEquipmentPlayer2Step,
+  RevealEquipmentStep,
   SelectTacOpStep,
   SetupEquipmentStep,
   SetupOperativesStep,
@@ -592,11 +635,13 @@ export const SetupDialog = (props: Props) => {
   const {isSetupOpen, setIsSetupOpen, setIsSetupDone} = useGameTrackerStore()
   const {setTeams} = useTeamStore()
   const {setCritOps} = useCritOpStore()
+  const {setUniversalEquipment} = useEquipmentStore()
 
   useEffect(() => {
     setTeams(initialTeams)
     setCritOps(critOps)
-  }, [initialTeams, setTeams, critOps, setCritOps])
+    setUniversalEquipment(universalEquipment)
+  }, [initialTeams, setTeams, critOps, setCritOps, universalEquipment, setUniversalEquipment])
 
   return (
     <>
@@ -612,14 +657,7 @@ export const SetupDialog = (props: Props) => {
           },
           isFirstStep: step === 0,
           isLastStep: step === STEP_COMPONENTS.length - 1,
-          universalEquipment: critOps ? (initialTeams ? props.universalEquipment : []) : [], // Pass universalEquipment to all steps, though only SelectEquipmentStep uses it.
-          // Actually, React.createElement will pass extra props fine.
-          // But TypeScript might complain if StepProps doesn't include it.
-          // I updated SelectEquipmentStep signature but not StepProps.
-          // Let's update StepProps or just pass it.
-          // Since I can't update StepProps easily without changing all components, I'll cast or just pass it.
-          // Wait, I can update StepProps in the file.
-        } as any)}
+        })}
       </Dialog>
     </>
   )
