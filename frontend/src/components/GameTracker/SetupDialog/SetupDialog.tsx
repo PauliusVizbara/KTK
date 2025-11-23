@@ -454,23 +454,23 @@ const SelectEquipmentStep = ({
               <Heading level={6} className="mb-4">
                 {player1.team?.name} Selections
               </Heading>
-              <ul className="list-disc pl-5">
-                {p1Selection.map((id) => {
-                  const item = p1AllEquipment.find((e) => e.id === id)
-                  return <li key={id}>{item?.name}</li>
-                })}
-              </ul>
+              <EquipmentAccordion
+                equipment={p1AllEquipment.filter((e) => p1Selection.includes(e.id))}
+                selectedIds={[]}
+                onToggle={() => {}}
+                readOnly
+              />
             </div>
             <div>
               <Heading level={6} className="mb-4">
                 {player2.team?.name} Selections
               </Heading>
-              <ul className="list-disc pl-5">
-                {p2Selection.map((id) => {
-                  const item = p2AllEquipment.find((e) => e.id === id)
-                  return <li key={id}>{item?.name}</li>
-                })}
-              </ul>
+              <EquipmentAccordion
+                equipment={p2AllEquipment.filter((e) => p2Selection.includes(e.id))}
+                selectedIds={[]}
+                onToggle={() => {}}
+                readOnly
+              />
             </div>
           </div>
         )}
@@ -490,7 +490,18 @@ const SelectEquipmentStep = ({
             <Button onClick={() => setPhase('p2')} outline>
               Back
             </Button>
-            <Button onClick={onNext}>Next</Button>
+            <Button
+              onClick={() => {
+                const p1SelectedEquipment = p1AllEquipment.filter((e) => p1Selection.includes(e.id))
+                const p2SelectedEquipment = p2AllEquipment.filter((e) => p2Selection.includes(e.id))
+
+                player1.setEquipment(p1SelectedEquipment)
+                player2.setEquipment(p2SelectedEquipment)
+                onNext()
+              }}
+            >
+              Next
+            </Button>
           </>
         )}
       </DialogActions>

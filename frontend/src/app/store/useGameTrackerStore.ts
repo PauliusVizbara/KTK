@@ -1,5 +1,5 @@
 import {create} from 'zustand'
-import {CritOp, Team} from '../../../sanity.types'
+import {CritOp, Team, Equipment} from '../../../sanity.types'
 
 interface PlayerState {
   team: Team | null
@@ -8,6 +8,8 @@ interface PlayerState {
   setScore: (score: number) => void
   cp: number
   setCp: (cp: number) => void
+  equipment: Equipment[]
+  setEquipment: (equipment: Equipment[]) => void
 }
 
 interface GameTrackerState {
@@ -43,6 +45,8 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
     setScore: (score) => set((state) => ({player1: {...state.player1, score}})),
     cp: 2,
     setCp: (cp) => set((state) => ({player1: {...state.player1, cp}})),
+    equipment: [],
+    setEquipment: (equipment) => set((state) => ({player1: {...state.player1, equipment}})),
   },
   player2: {
     team: null,
@@ -51,5 +55,7 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
     setScore: (score) => set((state) => ({player2: {...state.player2, score}})),
     cp: 2,
     setCp: (cp) => set((state) => ({player2: {...state.player2, cp}})),
+    equipment: [],
+    setEquipment: (equipment) => set((state) => ({player2: {...state.player2, equipment}})),
   },
 }))

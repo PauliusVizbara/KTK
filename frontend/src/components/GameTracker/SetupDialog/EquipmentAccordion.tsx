@@ -10,6 +10,7 @@ interface EquipmentAccordionProps {
   selectedIds: string[]
   onToggle: (id: string) => void
   maxSelection?: number
+  readOnly?: boolean
 }
 
 const WeaponDisplay = ({weapon}: {weapon: Weapon}) => {
@@ -102,6 +103,7 @@ export const EquipmentAccordion = ({
   selectedIds,
   onToggle,
   maxSelection = 4,
+  readOnly = false,
 }: EquipmentAccordionProps) => {
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
@@ -125,14 +127,16 @@ export const EquipmentAccordion = ({
             )}
           >
             <div className="flex items-center p-3 cursor-pointer hover:bg-zinc-50">
-              <div className="flex items-center h-5" onClick={(e) => e.stopPropagation()}>
-                <Checkbox
-                  checked={isSelected}
-                  onChange={() => !isDisabled && onToggle(item.id)}
-                  disabled={isDisabled}
-                  color="orange"
-                />
-              </div>
+              {!readOnly && (
+                <div className="flex items-center h-5" onClick={(e) => e.stopPropagation()}>
+                  <Checkbox
+                    checked={isSelected}
+                    onChange={() => !isDisabled && onToggle(item.id)}
+                    disabled={isDisabled}
+                    color="orange"
+                  />
+                </div>
+              )}
               <div
                 className="flex-1 ml-3 font-bold uppercase text-zinc-800 select-none"
                 onClick={() => handleToggleExpand(item.id)}
