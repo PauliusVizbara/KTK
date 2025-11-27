@@ -368,15 +368,93 @@ const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
 }
 
 const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
+  const {player1, player2} = useGameTrackerStore()
+
   return (
     <>
       <DialogBody>
-        <div className="mt-4">
+        <div className="mt-4 space-y-8">
           <p>
             Each player secretly selects their operatives for the battle, adhering to the selection
             requirements in their kill team’s rules. They then reveal their selections
             simultaneously.
           </p>
+
+          <div className="grid grid-cols-2 gap-8">
+            {/* Player 1 Counter */}
+            <div className="p-4 border rounded-lg bg-zinc-50 dark:bg-zinc-900">
+              <Heading level={6} className="mb-4">
+                {player1.team?.name || 'Player 1'}
+              </Heading>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-zinc-500">Operatives</span>
+                <div className="flex items-center gap-4">
+                  <Button
+                    outline
+                    onClick={() =>
+                      player1.setSelectedOperativeCount(
+                        Math.max(5, player1.selectedOperativeCount - 1),
+                      )
+                    }
+                    disabled={player1.selectedOperativeCount <= 5}
+                  >
+                    -
+                  </Button>
+                  <span className="text-2xl font-bold w-8 text-center">
+                    {player1.selectedOperativeCount}
+                  </span>
+                  <Button
+                    outline
+                    onClick={() =>
+                      player1.setSelectedOperativeCount(
+                        Math.min(14, player1.selectedOperativeCount + 1),
+                      )
+                    }
+                    disabled={player1.selectedOperativeCount >= 14}
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Player 2 Counter */}
+            <div className="p-4 border rounded-lg bg-zinc-50 dark:bg-zinc-900">
+              <Heading level={6} className="mb-4">
+                {player2.team?.name || 'Player 2'}
+              </Heading>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-zinc-500">Operatives</span>
+                <div className="flex items-center gap-4">
+                  <Button
+                    outline
+                    onClick={() =>
+                      player2.setSelectedOperativeCount(
+                        Math.max(5, player2.selectedOperativeCount - 1),
+                      )
+                    }
+                    disabled={player2.selectedOperativeCount <= 5}
+                  >
+                    -
+                  </Button>
+                  <span className="text-2xl font-bold w-8 text-center">
+                    {player2.selectedOperativeCount}
+                  </span>
+                  <Button
+                    outline
+                    onClick={() =>
+                      player2.setSelectedOperativeCount(
+                        Math.min(14, player2.selectedOperativeCount + 1),
+                      )
+                    }
+                    disabled={player2.selectedOperativeCount >= 14}
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </DialogBody>
       <DialogActions>

@@ -10,6 +10,8 @@ interface PlayerState {
   setCp: (cp: number) => void
   equipment: Equipment[]
   setEquipment: (equipment: Equipment[]) => void
+  selectedOperativeCount: number
+  setSelectedOperativeCount: (count: number) => void
 }
 
 interface GameTrackerState {
@@ -40,22 +42,48 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
   setTurningPoint: (turningPoint) => set({turningPoint}),
   player1: {
     team: null,
-    setTeam: (team) => set((state) => ({player1: {...state.player1, team: team}})),
+    setTeam: (team) =>
+      set((state) => ({
+        player1: {
+          ...state.player1,
+          team: team,
+          selectedOperativeCount:
+            state.player1.team?._id === team?._id
+              ? state.player1.selectedOperativeCount
+              : (team?.operativeCount ?? 0),
+        },
+      })),
     score: 0,
     setScore: (score) => set((state) => ({player1: {...state.player1, score}})),
     cp: 2,
     setCp: (cp) => set((state) => ({player1: {...state.player1, cp}})),
     equipment: [],
     setEquipment: (equipment) => set((state) => ({player1: {...state.player1, equipment}})),
+    selectedOperativeCount: 0,
+    setSelectedOperativeCount: (count) =>
+      set((state) => ({player1: {...state.player1, selectedOperativeCount: count}})),
   },
   player2: {
     team: null,
-    setTeam: (team) => set((state) => ({player2: {...state.player2, team: team}})),
+    setTeam: (team) =>
+      set((state) => ({
+        player2: {
+          ...state.player2,
+          team: team,
+          selectedOperativeCount:
+            state.player2.team?._id === team?._id
+              ? state.player2.selectedOperativeCount
+              : (team?.operativeCount ?? 0),
+        },
+      })),
     score: 0,
     setScore: (score) => set((state) => ({player2: {...state.player2, score}})),
     cp: 2,
     setCp: (cp) => set((state) => ({player2: {...state.player2, cp}})),
     equipment: [],
     setEquipment: (equipment) => set((state) => ({player2: {...state.player2, equipment}})),
+    selectedOperativeCount: 0,
+    setSelectedOperativeCount: (count) =>
+      set((state) => ({player2: {...state.player2, selectedOperativeCount: count}})),
   },
 }))
