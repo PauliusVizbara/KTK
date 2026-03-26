@@ -27,6 +27,8 @@ interface GameTrackerState {
   setCritOp: (critOp: CritOp | null) => void
   turningPoint: number
   setTurningPoint: (turningPoint: number) => void
+  initiativePlayer: 'player1' | 'player2' | null
+  setInitiativePlayer: (player: 'player1' | 'player2' | null) => void
   player1: PlayerState
   player2: PlayerState
 }
@@ -42,6 +44,8 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
   setCritOp: (critOp) => set({ critOp }),
   turningPoint: 1,
   setTurningPoint: (turningPoint) => set({ turningPoint }),
+  initiativePlayer: null,
+  setInitiativePlayer: (player) => set({ initiativePlayer: player }),
   player1: {
     team: null,
     setTeam: (team) =>
