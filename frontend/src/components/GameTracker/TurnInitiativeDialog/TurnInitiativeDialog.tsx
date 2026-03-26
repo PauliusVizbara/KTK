@@ -1,7 +1,13 @@
 'use client'
 
 import React from 'react'
-import {Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle} from '@/components/dialog'
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/dialog'
 import {Button} from '@/components'
 import {Heading} from '@/components/heading'
 
@@ -79,7 +85,10 @@ export const TurnInitiativeDialog = ({
       </DialogBody>
 
       <DialogActions>
-        <Button disabled={!selectedInitiative} onClick={() => selectedInitiative && onResolve(selectedInitiative)}>
+        <Button
+          disabled={!selectedInitiative}
+          onClick={() => selectedInitiative && onResolve(selectedInitiative)}
+        >
           Confirm Initiative
         </Button>
       </DialogActions>

@@ -1,4 +1,4 @@
-import { Button, TouchTarget } from '@/components/Common/Button/Button'
+import {Button, TouchTarget} from '@/components/Common/Button/Button'
 import {
   Dropdown,
   DropdownButton,
@@ -12,14 +12,14 @@ import {
   DropdownSection,
   DropdownShortcut,
 } from '@/components/Common/Dropdown/Dropdown'
-import { Link } from '@/components/Common/Link/Link'
-import { ScoreTracker } from '@/components/GameTracker/ScoreTracker/ScoreTracker'
-import { ResourceTracker } from '@/components/GameTracker/ResourceTracker/ResourceTracker'
-import { StateTracker } from '@/components/GameTracker/StateTracker/StateTracker'
-import { SetupDialog } from '@/components/GameTracker/SetupDialog/SetupDialog'
-import { CritOpCard } from './GameTracker/CritOpCard/CritOpCard'
-import { TacOpCard } from './GameTracker/TacOpCard/TacOpCard'
-import { TurnInitiativeDialog } from './GameTracker/TurnInitiativeDialog/TurnInitiativeDialog'
+import {Link} from '@/components/Common/Link/Link'
+import {ScoreTracker} from '@/components/GameTracker/ScoreTracker/ScoreTracker'
+import {ResourceTracker} from '@/components/GameTracker/ResourceTracker/ResourceTracker'
+import {StateTracker} from '@/components/GameTracker/StateTracker/StateTracker'
+import {SetupDialog} from '@/components/GameTracker/SetupDialog/SetupDialog'
+import {CritOpCard} from './GameTracker/CritOpCard/CritOpCard'
+import {TacOpCard} from './GameTracker/TacOpCard/TacOpCard'
+import {TurnInitiativeDialog} from './GameTracker/TurnInitiativeDialog/TurnInitiativeDialog'
 export {
   Button,
   Link,
