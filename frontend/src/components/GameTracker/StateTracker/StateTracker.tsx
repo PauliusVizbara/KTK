@@ -55,6 +55,36 @@ export const StateTracker = () => {
     return player1?.team?.name || 'Player 1'
   }, [initiativePlayer, player1?.team?.name, player2?.team?.name])
 
+  const player1InitiativeCards = React.useMemo(() => {
+    const rerollCards = player1.hasInitiativeRerollCard
+      ? ([{id: 'p1-reroll', kind: 'reroll' as const}] as const)
+      : ([] as const)
+
+    const modifierCards = player1.initiativeModifierCards.map((value, index) => ({
+      id: `p1-mod-${index}`,
+      kind: 'modifier' as const,
+      value,
+      modifierIndex: index,
+    }))
+
+    return [...rerollCards, ...modifierCards]
+  }, [player1.hasInitiativeRerollCard, player1.initiativeModifierCards])
+
+  const player2InitiativeCards = React.useMemo(() => {
+    const rerollCards = player2.hasInitiativeRerollCard
+      ? ([{id: 'p2-reroll', kind: 'reroll' as const}] as const)
+      : ([] as const)
+
+    const modifierCards = player2.initiativeModifierCards.map((value, index) => ({
+      id: `p2-mod-${index}`,
+      kind: 'modifier' as const,
+      value,
+      modifierIndex: index,
+    }))
+
+    return [...rerollCards, ...modifierCards]
+  }, [player2.hasInitiativeRerollCard, player2.initiativeModifierCards])
+
   React.useEffect(() => {
     if (!isSetupDone) {
       setHasOpenedInitialInitiative(false)
@@ -143,8 +173,44 @@ export const StateTracker = () => {
         player1Name={player1.team?.name || 'Player 1'}
         player2Name={player2.team?.name || 'Player 2'}
         tieWinnerName={tieWinnerName}
-        onResolve={(initiativePlayer) => {
+        player1Cards={player1InitiativeCards}
+        player2Cards={player2InitiativeCards}
+        onResolve={({initiativePlayer, rollWinner, selectedPlayer1Cards, selectedPlayer2Cards}) => {
+          if (selectedPlayer1Cards.some((card) => card.kind === 'reroll')) {
+            player1.setHasInitiativeRerollCard(false)
+          }
+
+          const player1ModifierIndexes = selectedPlayer1Cards
+            .filter((card) => card.kind === 'modifier' && typeof card.modifierIndex === 'number')
+            .map((card) => card.modifierIndex as number)
+            .sort((a, b) => b - a)
+
+          player1ModifierIndexes.forEach((index) => {
+            player1.removeInitiativeModifierCardAt(index)
+          })
+
+          if (selectedPlayer2Cards.some((card) => card.kind === 'reroll')) {
+            player2.setHasInitiativeRerollCard(false)
+          }
+
+          const player2ModifierIndexes = selectedPlayer2Cards
+            .filter((card) => card.kind === 'modifier' && typeof card.modifierIndex === 'number')
+            .map((card) => card.modifierIndex as number)
+            .sort((a, b) => b - a)
+
+          player2ModifierIndexes.forEach((index) => {
+            player2.removeInitiativeModifierCardAt(index)
+          })
+
           setInitiativePlayer(initiativePlayer)
+
+          if (turningPoint <= 3) {
+            if (rollWinner === 'player1') {
+              player2.addInitiativeModifierCard(turningPoint)
+            } else {
+              player1.addInitiativeModifierCard(turningPoint)
+            }
+          }
 
           if (turningPoint === 1) {
             player1.setCp(player1.cp + 1)

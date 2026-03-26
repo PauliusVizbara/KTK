@@ -6,6 +6,11 @@ interface PlayerState {
   setTeam: (team: Team | null) => void
   tacOp: TacOp | null
   setTacOp: (tacOp: TacOp | null) => void
+  hasInitiativeRerollCard: boolean
+  setHasInitiativeRerollCard: (value: boolean) => void
+  initiativeModifierCards: number[]
+  addInitiativeModifierCard: (value: number) => void
+  removeInitiativeModifierCardAt: (index: number) => void
   score: number
   setScore: (score: number) => void
   cp: number
@@ -54,6 +59,8 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
           ...state.player1,
           team: team,
           tacOp: null,
+          hasInitiativeRerollCard: false,
+          initiativeModifierCards: [],
           selectedOperativeCount:
             state.player1.team?._id === team?._id
               ? state.player1.selectedOperativeCount
@@ -62,6 +69,26 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
       })),
     tacOp: null,
     setTacOp: (tacOp) => set((state) => ({player1: {...state.player1, tacOp}})),
+    hasInitiativeRerollCard: false,
+    setHasInitiativeRerollCard: (value) =>
+      set((state) => ({player1: {...state.player1, hasInitiativeRerollCard: value}})),
+    initiativeModifierCards: [],
+    addInitiativeModifierCard: (value) =>
+      set((state) => ({
+        player1: {
+          ...state.player1,
+          initiativeModifierCards: [...state.player1.initiativeModifierCards, value],
+        },
+      })),
+    removeInitiativeModifierCardAt: (index) =>
+      set((state) => ({
+        player1: {
+          ...state.player1,
+          initiativeModifierCards: state.player1.initiativeModifierCards.filter(
+            (_, i) => i !== index,
+          ),
+        },
+      })),
     score: 0,
     setScore: (score) => set((state) => ({player1: {...state.player1, score}})),
     cp: 2,
@@ -80,6 +107,8 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
           ...state.player2,
           team: team,
           tacOp: null,
+          hasInitiativeRerollCard: false,
+          initiativeModifierCards: [],
           selectedOperativeCount:
             state.player2.team?._id === team?._id
               ? state.player2.selectedOperativeCount
@@ -88,6 +117,26 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
       })),
     tacOp: null,
     setTacOp: (tacOp) => set((state) => ({player2: {...state.player2, tacOp}})),
+    hasInitiativeRerollCard: false,
+    setHasInitiativeRerollCard: (value) =>
+      set((state) => ({player2: {...state.player2, hasInitiativeRerollCard: value}})),
+    initiativeModifierCards: [],
+    addInitiativeModifierCard: (value) =>
+      set((state) => ({
+        player2: {
+          ...state.player2,
+          initiativeModifierCards: [...state.player2.initiativeModifierCards, value],
+        },
+      })),
+    removeInitiativeModifierCardAt: (index) =>
+      set((state) => ({
+        player2: {
+          ...state.player2,
+          initiativeModifierCards: state.player2.initiativeModifierCards.filter(
+            (_, i) => i !== index,
+          ),
+        },
+      })),
     score: 0,
     setScore: (score) => set((state) => ({player2: {...state.player2, score}})),
     cp: 2,

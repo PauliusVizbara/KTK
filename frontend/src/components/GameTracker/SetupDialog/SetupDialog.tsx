@@ -375,7 +375,7 @@ const SelectCritOpStep = ({onNext, onBack}: StepProps) => {
 
 const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
   const gameTrackerStore = useGameTrackerStore()
-  const {setInitiativePlayer} = useGameTrackerStore()
+  const {setInitiativePlayer, player1, player2} = useGameTrackerStore()
 
   const [setupInitiative, setSetupInitiative] = React.useState<'player1' | 'player2' | null>(null)
 
@@ -426,6 +426,15 @@ const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
           onClick={() => {
             if (!setupInitiative) return
             setInitiativePlayer(setupInitiative)
+
+            if (setupInitiative === 'player1') {
+              player1.setHasInitiativeRerollCard(false)
+              player2.setHasInitiativeRerollCard(true)
+            } else {
+              player1.setHasInitiativeRerollCard(true)
+              player2.setHasInitiativeRerollCard(false)
+            }
+
             onNext()
           }}
         >
@@ -850,7 +859,12 @@ export const SetupDialog = (props: Props) => {
 
   return (
     <>
-      <Dialog size={currentStep.size} open={isSetupOpen} onClose={() => setIsSetupOpen(false)}>
+      <Dialog
+        size={currentStep.size}
+        className="h-[calc(100dvh-2rem)] sm:h-[85vh] sm:max-h-[85vh] overflow-y-auto"
+        open={isSetupOpen}
+        onClose={() => setIsSetupOpen(false)}
+      >
         <DialogTitle className="text-4xl uppercase bold">{currentStep.title}</DialogTitle>
         <DialogDescription>{currentStep.description}</DialogDescription>
         {React.createElement(currentStep.component, {
