@@ -18,6 +18,7 @@ import {ResourceTracker} from '@/components/GameTracker/ResourceTracker/Resource
 import {StateTracker} from '@/components/GameTracker/StateTracker/StateTracker'
 import {SetupDialog} from '@/components/GameTracker/SetupDialog/SetupDialog'
 import {CritOpCard} from './GameTracker/CritOpCard/CritOpCard'
+import {TacOpCard} from './GameTracker/TacOpCard/TacOpCard'
 export {
   Button,
   Link,
@@ -38,4 +39,5 @@ export {
   StateTracker,
   SetupDialog,
   CritOpCard,
+  TacOpCard,
 }

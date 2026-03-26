@@ -109,6 +109,14 @@ export const critOpQuery = defineQuery(`
     "id": _id,
   }
 `)
+
+export const tacOpQuery = defineQuery(`
+  *[_type == "tacOp"] | order(name asc) {
+    ...,
+    "id": _id,
+  }
+`)
+
 export const universalEquipmentQuery = defineQuery(`
   *[_type == "universalEquipment"] | order(equipment.name asc) {
     ...,

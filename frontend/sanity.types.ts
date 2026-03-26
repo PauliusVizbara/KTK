@@ -138,6 +138,71 @@ export type UniversalEquipment = {
   amount?: number
 }
 
+export type TacOp = {
+  _id: string
+  _type: 'tacOp'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: string
+  reveal: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  additionalRules?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  archetype: 'Infiltration' | 'Recon' | 'Seek & Destroy' | 'Security'
+  missionAction?: Action
+  victoryPoints: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+}
+
 export type CritOp = {
   _id: string
   _type: 'critOp'
@@ -196,7 +261,7 @@ export type Team = {
   _rev: string
   name: string
   operativeCount: number
-  archetypes?: Array<'Infiltration' | 'Recon' | 'Seek & Destroy' | 'Security'>
+  archetypes: Array<'Infiltration' | 'Recon' | 'Seek & Destroy' | 'Security'>
   equipment?: Array<
     {
       _key: string
@@ -449,6 +514,7 @@ export type AllSanitySchemaTypes =
   | SanityImageCrop
   | SanityImageHotspot
   | UniversalEquipment
+  | TacOp
   | CritOp
   | Team
   | SanityAssistInstructionTask
@@ -508,7 +574,7 @@ export type TeamListQueryResult = Array<{
   _rev: string
   name: string
   operativeCount: number
-  archetypes?: Array<'Infiltration' | 'Recon' | 'Security' | 'Seek & Destroy'>
+  archetypes: Array<'Infiltration' | 'Recon' | 'Security' | 'Seek & Destroy'>
   equipment?: Array<
     {
       _key: string
@@ -568,6 +634,73 @@ export type CritOpQueryResult = Array<{
   }>
   id: string
 }>
+// Variable: tacOpQuery
+// Query: *[_type == "tacOp"] | order(name asc) {    ...,    "id": _id,  }
+export type TacOpQueryResult = Array<{
+  _id: string
+  _type: 'tacOp'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: string
+  reveal: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  additionalRules?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  archetype: 'Infiltration' | 'Recon' | 'Security' | 'Seek & Destroy'
+  missionAction?: Action
+  victoryPoints: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+    listItem?: 'bullet' | 'number'
+    markDefs?: Array<{
+      href?: string
+      _type: 'link'
+      _key: string
+    }>
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  id: string
+}>
 // Variable: universalEquipmentQuery
 // Query: *[_type == "universalEquipment"] | order(equipment.name asc) {    ...,    "id": _id,  }
 export type UniversalEquipmentQueryResult = Array<{
@@ -595,6 +728,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
     '\n  *[_type == "team"] | order(name asc) {\n    ...,\n    "id": _id,\n  }\n': TeamListQueryResult
     '\n  *[_type == "critOp"] | order(name asc) {\n    ...,\n    "id": _id,\n  }\n': CritOpQueryResult
+    '\n  *[_type == "tacOp"] | order(name asc) {\n    ...,\n    "id": _id,\n  }\n': TacOpQueryResult
     '\n  *[_type == "universalEquipment"] | order(equipment.name asc) {\n    ...,\n    "id": _id,\n  }\n': UniversalEquipmentQueryResult
   }
 }

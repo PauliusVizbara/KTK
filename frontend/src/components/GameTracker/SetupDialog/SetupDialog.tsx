@@ -3,9 +3,15 @@ import {DialogBody, DialogActions} from '@/components/dialog'
 import {Field, Label} from '@/components/fieldset'
 import {Dialog, DialogTitle, DialogDescription} from '@/components/dialog'
 import React, {useEffect} from 'react'
-import {useGameTrackerStore, useTeamStore, useCritOpStore, useEquipmentStore} from '@/app/store'
+import {
+  useGameTrackerStore,
+  useTeamStore,
+  useCritOpStore,
+  useEquipmentStore,
+  useTacOpStore,
+} from '@/app/store'
 import {Heading} from '@/components/heading'
-import {Button, CritOpCard} from '@/components'
+import {Button, CritOpCard, TacOpCard} from '@/components'
 import Image from 'next/image'
 import {Select} from '@/components/select'
 import EmblaCarousel from '@/components/Common/Carousel/Carousel'
@@ -19,7 +25,7 @@ import {
   XMarkIcon,
   ChevronDownIcon,
 } from '@heroicons/react/16/solid'
-import {CritOp, Team, TeamListQueryResult, UniversalEquipment} from '../../../../sanity.types'
+import {CritOp, TacOp, Team, UniversalEquipment} from '../../../../sanity.types'
 import {Dropdown, DropdownButton, DropdownItem, DropdownMenu} from '@/components/dropdown'
 import {PlayerTurnBanner} from './PlayerTurnBanner'
 import {EquipmentAccordion} from './EquipmentAccordion'
@@ -97,6 +103,98 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
             onNext()
             player1.setTeam(getTeamById(player1Selection?.id ?? '') ?? null)
             player2.setTeam(getTeamById(player2Selection?.id ?? '') ?? null)
+          }}
+        >
+          Next
+        </Button>
+      </DialogActions>
+    </>
+  )
+}
+
+const SelectTacOpPlayer1Step = ({onNext, onBack}: StepProps) => {
+  const tacOps = useTacOpStore((s) => s.tacOps)
+  const {player1} = useGameTrackerStore()
+  const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
+
+  const player1TacOps = React.useMemo(
+    () => tacOps.filter((tacOp) => player1.team?.archetypes?.includes(tacOp.archetype)),
+    [tacOps, player1.team?.archetypes],
+  )
+
+  return (
+    <>
+      <DialogBody className="max-h-[65vh] overflow-y-auto pr-1">
+        <div className="space-y-4">
+          <PlayerTurnBanner playerName={player1.team?.name || 'Player 1'} />
+          {player1TacOps.length > 0 ? (
+            <EmblaCarousel
+              emblaRef={emblaRef}
+              emblaApi={emblaApi}
+              slides={player1TacOps.map((tacOp) => (
+                <TacOpCard key={tacOp._id} tacOp={tacOp} />
+              ))}
+            />
+          ) : (
+            <p>No Tac Ops available for this team archetype.</p>
+          )}
+        </div>
+      </DialogBody>
+      <DialogActions>
+        <Button onClick={onBack}>Previous</Button>
+        <Button
+          disabled={player1TacOps.length === 0}
+          onClick={() => {
+            const selectedTacOp = player1TacOps[emblaApi?.selectedScrollSnap() ?? 0]
+            if (!selectedTacOp) return
+            player1.setTacOp(selectedTacOp)
+            onNext()
+          }}
+        >
+          Next
+        </Button>
+      </DialogActions>
+    </>
+  )
+}
+
+const SelectTacOpPlayer2Step = ({onNext, onBack}: StepProps) => {
+  const tacOps = useTacOpStore((s) => s.tacOps)
+  const {player2} = useGameTrackerStore()
+  const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
+
+  const player2TacOps = React.useMemo(
+    () => tacOps.filter((tacOp) => player2.team?.archetypes?.includes(tacOp.archetype)),
+    [tacOps, player2.team?.archetypes],
+  )
+
+  return (
+    <>
+      <DialogBody className="max-h-[65vh] overflow-y-auto pr-1">
+        <div className="space-y-4">
+          <PlayerTurnBanner playerName={player2.team?.name || 'Player 2'} />
+          {player2TacOps.length > 0 ? (
+            <EmblaCarousel
+              emblaRef={emblaRef}
+              emblaApi={emblaApi}
+              slides={player2TacOps.map((tacOp) => (
+                <TacOpCard key={tacOp._id} tacOp={tacOp} />
+              ))}
+            />
+          ) : (
+            <p>No Tac Ops available for this team archetype.</p>
+          )}
+        </div>
+      </DialogBody>
+      <DialogActions>
+        <Button onClick={onBack}>Previous</Button>
+        <Button
+          disabled={player2TacOps.length === 0}
+          onClick={() => {
+            const selectedTacOp = player2TacOps[emblaApi?.selectedScrollSnap() ?? 0]
+            if (!selectedTacOp) return
+            player2.setTacOp(selectedTacOp)
+            onNext()
           }}
         >
           Next
@@ -590,25 +688,6 @@ const RevealEquipmentStep = ({onNext, onBack}: StepProps) => {
   )
 }
 
-const SelectTacOpStep = ({onNext, onBack}: StepProps) => {
-  return (
-    <>
-      <DialogBody>
-        <Heading className="mt-6" level={6}>
-          Select Tac Ops
-        </Heading>
-        <div className="mt-4">
-          <p>Content for selecting Tac Ops goes here.</p>
-        </div>
-      </DialogBody>
-      <DialogActions>
-        <Button onClick={onBack}>Previous</Button>
-        <Button onClick={onNext}>Next</Button>
-      </DialogActions>
-    </>
-  )
-}
-
 const SetupEquipmentStep = ({onNext, onBack}: StepProps) => {
   return (
     <>
@@ -691,19 +770,25 @@ const SETUP_STEPS = [
     component: SelectEquipmentPlayer2Step,
   },
   {
-    title: '2. Select Tac Ops',
+    title: '2. Select Equipment',
     description: 'Reveal Equipment',
     size: '5xl',
     component: RevealEquipmentStep,
   },
   {
-    title: '3. Set Up Equipment',
-    description: 'Select Tac Ops',
+    title: '2. Select Tac Ops',
+    description: 'Player 1 Selects Tac Op',
     size: '5xl',
-    component: SelectTacOpStep,
+    component: SelectTacOpPlayer1Step,
   },
   {
-    title: '3. Set Up Operatives',
+    title: '2. Select Tac Ops',
+    description: 'Player 2 Selects Tac Op',
+    size: '5xl',
+    component: SelectTacOpPlayer2Step,
+  },
+  {
+    title: '3. Set Up Equipment',
     description: 'Set Up Equipment',
     size: '5xl',
     component: SetupEquipmentStep,
@@ -719,24 +804,36 @@ const SETUP_STEPS = [
 interface Props {
   initialTeams: Team[]
   critOps: CritOp[]
+  tacOps: TacOp[]
   universalEquipment: UniversalEquipment[]
 }
 
 export const SetupDialog = (props: Props) => {
-  const {initialTeams, critOps, universalEquipment} = props
+  const {initialTeams, critOps, tacOps, universalEquipment} = props
   const [step, setStep] = React.useState(0)
   const currentStep = SETUP_STEPS[step]
 
   const {isSetupOpen, setIsSetupOpen, setIsSetupDone} = useGameTrackerStore()
   const {setTeams} = useTeamStore()
   const {setCritOps} = useCritOpStore()
+  const {setTacOps} = useTacOpStore()
   const {setUniversalEquipment} = useEquipmentStore()
 
   useEffect(() => {
     setTeams(initialTeams)
     setCritOps(critOps)
+    setTacOps(tacOps)
     setUniversalEquipment(universalEquipment)
-  }, [initialTeams, setTeams, critOps, setCritOps, universalEquipment, setUniversalEquipment])
+  }, [
+    initialTeams,
+    setTeams,
+    critOps,
+    setCritOps,
+    tacOps,
+    setTacOps,
+    universalEquipment,
+    setUniversalEquipment,
+  ])
 
   return (
     <>

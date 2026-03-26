@@ -1,9 +1,11 @@
 import {create} from 'zustand'
-import {CritOp, Team, Equipment} from '../../../sanity.types'
+import {CritOp, Team, Equipment, TacOp} from '../../../sanity.types'
 
 interface PlayerState {
   team: Team | null
   setTeam: (team: Team | null) => void
+  tacOp: TacOp | null
+  setTacOp: (tacOp: TacOp | null) => void
   score: number
   setScore: (score: number) => void
   cp: number
@@ -47,12 +49,15 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
         player1: {
           ...state.player1,
           team: team,
+          tacOp: null,
           selectedOperativeCount:
             state.player1.team?._id === team?._id
               ? state.player1.selectedOperativeCount
               : (team?.operativeCount ?? 0),
         },
       })),
+    tacOp: null,
+    setTacOp: (tacOp) => set((state) => ({player1: {...state.player1, tacOp}})),
     score: 0,
     setScore: (score) => set((state) => ({player1: {...state.player1, score}})),
     cp: 2,
@@ -70,12 +75,15 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
         player2: {
           ...state.player2,
           team: team,
+          tacOp: null,
           selectedOperativeCount:
             state.player2.team?._id === team?._id
               ? state.player2.selectedOperativeCount
               : (team?.operativeCount ?? 0),
         },
       })),
+    tacOp: null,
+    setTacOp: (tacOp) => set((state) => ({player2: {...state.player2, tacOp}})),
     score: 0,
     setScore: (score) => set((state) => ({player2: {...state.player2, score}})),
     cp: 2,
