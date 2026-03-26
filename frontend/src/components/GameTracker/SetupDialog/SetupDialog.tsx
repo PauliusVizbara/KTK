@@ -375,6 +375,7 @@ const SelectCritOpStep = ({onNext, onBack}: StepProps) => {
 
 const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
   const gameTrackerStore = useGameTrackerStore()
+  const {setInitiativePlayer} = useGameTrackerStore()
 
   const [setupInitiative, setSetupInitiative] = React.useState<'player1' | 'player2' | null>(null)
 
@@ -420,7 +421,16 @@ const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
       </DialogBody>
       <DialogActions>
         <Button onClick={onBack}>Previous</Button>
-        <Button onClick={onNext}>Next</Button>
+        <Button
+          disabled={!setupInitiative}
+          onClick={() => {
+            if (!setupInitiative) return
+            setInitiativePlayer(setupInitiative)
+            onNext()
+          }}
+        >
+          Next
+        </Button>
       </DialogActions>
     </>
   )

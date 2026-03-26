@@ -18,6 +18,7 @@ interface TurnInitiativeDialogProps {
   turningPoint: number
   player1Name: string
   player2Name: string
+  tieWinnerName: string
   onResolve: (initiativePlayer: InitiativePlayer) => void
 }
 
@@ -26,6 +27,7 @@ export const TurnInitiativeDialog = ({
   turningPoint,
   player1Name,
   player2Name,
+  tieWinnerName,
   onResolve,
 }: TurnInitiativeDialogProps) => {
   const [selectedInitiative, setSelectedInitiative] = React.useState<InitiativePlayer | null>(null)
@@ -48,6 +50,9 @@ export const TurnInitiativeDialog = ({
         <Heading className="mt-6" level={6}>
           Roll-off: the winner decides who has initiative.
         </Heading>
+        <i className="mt-2 text-sm text-zinc-600">
+          If the roll-off is a tie, {tieWinnerName} wins the tie
+        </i>
 
         <div className="mt-4 flex gap-4">
           <Button

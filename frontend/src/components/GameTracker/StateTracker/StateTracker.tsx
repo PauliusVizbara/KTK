@@ -32,6 +32,7 @@ export const StateTracker = () => {
     critOp,
     turningPoint,
     setTurningPoint,
+    initiativePlayer,
     setInitiativePlayer,
     player1,
     player2,
@@ -41,6 +42,18 @@ export const StateTracker = () => {
   const [showCritOp, setShowCritOp] = React.useState(false)
   const [showTurnInitiative, setShowTurnInitiative] = React.useState(false)
   const [hasOpenedInitialInitiative, setHasOpenedInitialInitiative] = React.useState(false)
+
+  const tieWinnerName = React.useMemo(() => {
+    if (initiativePlayer === 'player1') {
+      return player2?.team?.name || 'Player 2'
+    }
+
+    if (initiativePlayer === 'player2') {
+      return player1?.team?.name || 'Player 1'
+    }
+
+    return player1?.team?.name || 'Player 1'
+  }, [initiativePlayer, player1?.team?.name, player2?.team?.name])
 
   React.useEffect(() => {
     if (!isSetupDone) {
@@ -129,6 +142,7 @@ export const StateTracker = () => {
         turningPoint={turningPoint}
         player1Name={player1.team?.name || 'Player 1'}
         player2Name={player2.team?.name || 'Player 2'}
+        tieWinnerName={tieWinnerName}
         onResolve={(initiativePlayer) => {
           setInitiativePlayer(initiativePlayer)
 
