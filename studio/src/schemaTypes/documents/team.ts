@@ -1,5 +1,12 @@
-import {DocumentTextIcon} from '@sanity/icons'
-import {defineField, defineType} from 'sanity'
+import { DocumentTextIcon } from '@sanity/icons'
+import { defineField, defineType } from 'sanity'
+
+const TEAM_ARCHETYPE_OPTIONS = [
+  { title: 'Infiltration', value: 'Infiltration' },
+  { title: 'Recon', value: 'Recon' },
+  { title: 'Seek & Destroy', value: 'Seek & Destroy' },
+  { title: 'Security', value: 'Security' },
+]
 
 /**
  * Post schema.  Define and edit the fields for the 'post' content type.
@@ -25,10 +32,24 @@ export const team = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'archetypes',
+      title: 'Archetypes',
+      type: 'array',
+      of: [
+        {
+          type: 'string',
+          options: {
+            list: TEAM_ARCHETYPE_OPTIONS,
+          },
+        },
+      ],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: 'equipment',
       title: 'Equipment',
       type: 'array',
-      of: [{type: 'equipment'}],
+      of: [{ type: 'equipment' }],
     }),
   ],
 })

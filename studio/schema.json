@@ -1321,6 +1321,34 @@
         },
         "optional": false
       },
+      "archetypes": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "union",
+            "of": [
+              {
+                "type": "string",
+                "value": "Infiltration"
+              },
+              {
+                "type": "string",
+                "value": "Recon"
+              },
+              {
+                "type": "string",
+                "value": "Seek & Destroy"
+              },
+              {
+                "type": "string",
+                "value": "Security"
+              }
+            ]
+          }
+        },
+        "optional": true
+      },
       "equipment": {
         "type": "objectAttribute",
         "value": {

@@ -196,6 +196,7 @@ export type Team = {
   _rev: string
   name: string
   operativeCount: number
+  archetypes?: Array<'Infiltration' | 'Recon' | 'Seek & Destroy' | 'Security'>
   equipment?: Array<
     {
       _key: string
@@ -507,6 +508,7 @@ export type TeamListQueryResult = Array<{
   _rev: string
   name: string
   operativeCount: number
+  archetypes?: Array<'Infiltration' | 'Recon' | 'Security' | 'Seek & Destroy'>
   equipment?: Array<
     {
       _key: string

@@ -14,6 +14,10 @@ const HEADERS = {
 import {uuid} from '@sanity/uuid'
 import {serverClient} from '@/sanity/client'
 
+const TEAM_ARCHETYPES = ['Infiltration', 'Recon', 'Seek & Destroy', 'Security'] as const
+
+type TeamArchetype = (typeof TEAM_ARCHETYPES)[number]
+
 // Initialize OpenAI
 const openai = new OpenAI()
 
@@ -80,6 +84,50 @@ const ExtractionSchema = z.object({
   operativeCount: z.number(),
   factionEquipment: z.array(EquipmentSchema),
 })
+
+function normalizeArchetype(archetype: string): TeamArchetype | null {
+  const normalized = archetype.trim().toLowerCase().replace(/\s+/g, ' ')
+
+  switch (normalized) {
+    case 'infiltration':
+      return 'Infiltration'
+    case 'recon':
+      return 'Recon'
+    case 'seek & destroy':
+    case 'seek and destroy':
+      return 'Seek & Destroy'
+    case 'security':
+      return 'Security'
+    default:
+      return null
+  }
+}
+
+function extractArchetypesFromText(text: string): TeamArchetype[] {
+  const searchArea = (() => {
+    const upperText = text.toUpperCase()
+    const archetypesIndex = upperText.indexOf('ARCHETYPES')
+
+    if (archetypesIndex === -1) {
+      return text
+    }
+
+    return text.slice(archetypesIndex, archetypesIndex + 1500)
+  })()
+
+  const archetypeMatches = [
+    {archetype: 'Infiltration', match: /\bINFILTRATION\b/i.exec(searchArea)},
+    {archetype: 'Recon', match: /\bRECON\b/i.exec(searchArea)},
+    {archetype: 'Seek & Destroy', match: /\bSEEK\s*(?:&|AND)\s*DESTROY\b/i.exec(searchArea)},
+    {archetype: 'Security', match: /\bSECURITY\b/i.exec(searchArea)},
+  ] as const
+
+  return archetypeMatches
+    .filter((entry) => entry.match)
+    .sort((left, right) => left.match!.index - right.match!.index)
+    .map((entry) => normalizeArchetype(entry.archetype))
+    .filter((entry): entry is TeamArchetype => entry !== null)
+}
 
 async function getPdfLinks(url: string) {
   console.log(`1. Fetching dynamic page content using Puppeteer: ${url}`)
@@ -240,6 +288,7 @@ export async function GET() {
 
         const teamName = normalizeTeamName(extractedData.teamName)
         const operativeCount = extractedData.operativeCount
+        const archetypes = extractArchetypesFromText(text)
         console.log(`Team name: ${teamName}, Operatives: ${operativeCount}`)
 
         const equipmentList = extractedData.factionEquipment.map((item: any) => ({
@@ -272,7 +321,11 @@ export async function GET() {
           // Update existing team
           result = await serverClient
             .patch(existingTeam._id)
-            .set({equipment: equipmentList, operativeCount: operativeCount})
+            .set({
+              equipment: equipmentList,
+              operativeCount: operativeCount,
+              archetypes,
+            })
             .commit()
           console.log(`✓ Updated existing team: ${teamName}`)
         } else {
@@ -281,6 +334,7 @@ export async function GET() {
             _type: 'team',
             name: teamName,
             operativeCount: operativeCount,
+            archetypes,
             equipment: equipmentList,
           }
           result = await serverClient.create(doc)
