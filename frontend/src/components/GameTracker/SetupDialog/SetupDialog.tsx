@@ -23,45 +23,6 @@ import {CritOp, Team, TeamListQueryResult, UniversalEquipment} from '../../../..
 import {Dropdown, DropdownButton, DropdownItem, DropdownMenu} from '@/components/dropdown'
 import {PlayerTurnBanner} from './PlayerTurnBanner'
 import {EquipmentAccordion} from './EquipmentAccordion'
-const STEP_TITLES = [
-  '1. Set up the Battle',
-  '1. Set up the Battle',
-  '1. Set up the Battle',
-  '1. Set up the Battle',
-  '2. Select Equipment',
-  '2. Select Equipment',
-  '2. Select Equipment',
-  '2. Select Tac Ops',
-  '3. Set Up Equipment',
-  '3. Set Up Operatives',
-]
-const STEP_DESCRIPTIONS = [
-  'Select the Kill Teams',
-  'Select the Kill Zone',
-  'Select any critical operation rules for the battle.',
-  'Roll-off for initiative',
-  'Select Operatives',
-  'Player 1 Selects Equipment',
-  'Player 2 Selects Equipment',
-  'Reveal Equipment',
-  'Select Tac Ops',
-  'Set Up Equipment',
-  'Set Up Operatives',
-]
-
-const STEP_SIZES = [
-  '5xl',
-  '5xl',
-  '5xl',
-  '3xl',
-  '5xl',
-  '5xl',
-  '5xl',
-  '5xl',
-  '5xl',
-  '5xl',
-  '5xl',
-] as const
 
 interface StepProps {
   onNext: () => void
@@ -686,19 +647,74 @@ const SetupOperativesStep = ({onFinish, onBack}: StepProps) => {
   )
 }
 
-const STEP_COMPONENTS = [
-  SelectTeamsStep,
-  SelectKillzoneStep,
-  SelectCritOpStep,
-  SelectInitiativeStep,
-  SelectOperativesStep,
-  SelectEquipmentPlayer1Step,
-  SelectEquipmentPlayer2Step,
-  RevealEquipmentStep,
-  SelectTacOpStep,
-  SetupEquipmentStep,
-  SetupOperativesStep,
-]
+const SETUP_STEPS = [
+  {
+    title: '1. Set up the Battle',
+    description: 'Select the Kill Teams',
+    size: '5xl',
+    component: SelectTeamsStep,
+  },
+  {
+    title: '1. Set up the Battle',
+    description: 'Select the Kill Zone',
+    size: '5xl',
+    component: SelectKillzoneStep,
+  },
+  {
+    title: '1. Set up the Battle',
+    description: 'Select any critical operation rules for the battle.',
+    size: '5xl',
+    component: SelectCritOpStep,
+  },
+  {
+    title: '1. Set up the Battle',
+    description: 'Roll-off for initiative',
+    size: '3xl',
+    component: SelectInitiativeStep,
+  },
+  {
+    title: '2. Select Equipment',
+    description: 'Select Operatives',
+    size: '5xl',
+    component: SelectOperativesStep,
+  },
+  {
+    title: '2. Select Equipment',
+    description: 'Player 1 Selects Equipment',
+    size: '5xl',
+    component: SelectEquipmentPlayer1Step,
+  },
+  {
+    title: '2. Select Equipment',
+    description: 'Player 2 Selects Equipment',
+    size: '5xl',
+    component: SelectEquipmentPlayer2Step,
+  },
+  {
+    title: '2. Select Tac Ops',
+    description: 'Reveal Equipment',
+    size: '5xl',
+    component: RevealEquipmentStep,
+  },
+  {
+    title: '3. Set Up Equipment',
+    description: 'Select Tac Ops',
+    size: '5xl',
+    component: SelectTacOpStep,
+  },
+  {
+    title: '3. Set Up Operatives',
+    description: 'Set Up Equipment',
+    size: '5xl',
+    component: SetupEquipmentStep,
+  },
+  {
+    title: '3. Set Up Operatives',
+    description: 'Set Up Operatives',
+    size: '5xl',
+    component: SetupOperativesStep,
+  },
+] as const
 
 interface Props {
   initialTeams: Team[]
@@ -709,6 +725,7 @@ interface Props {
 export const SetupDialog = (props: Props) => {
   const {initialTeams, critOps, universalEquipment} = props
   const [step, setStep] = React.useState(0)
+  const currentStep = SETUP_STEPS[step]
 
   const {isSetupOpen, setIsSetupOpen, setIsSetupDone} = useGameTrackerStore()
   const {setTeams} = useTeamStore()
@@ -723,10 +740,10 @@ export const SetupDialog = (props: Props) => {
 
   return (
     <>
-      <Dialog size={STEP_SIZES[step]} open={isSetupOpen} onClose={() => setIsSetupOpen(false)}>
-        <DialogTitle className="text-4xl uppercase bold">{STEP_TITLES[step]}</DialogTitle>
-        <DialogDescription>{STEP_DESCRIPTIONS[step]}</DialogDescription>
-        {React.createElement(STEP_COMPONENTS[step], {
+      <Dialog size={currentStep.size} open={isSetupOpen} onClose={() => setIsSetupOpen(false)}>
+        <DialogTitle className="text-4xl uppercase bold">{currentStep.title}</DialogTitle>
+        <DialogDescription>{currentStep.description}</DialogDescription>
+        {React.createElement(currentStep.component, {
           onNext: () => setStep(step + 1),
           onBack: () => setStep(step - 1),
           onFinish: () => {
@@ -734,7 +751,7 @@ export const SetupDialog = (props: Props) => {
             setIsSetupOpen(false)
           },
           isFirstStep: step === 0,
-          isLastStep: step === STEP_COMPONENTS.length - 1,
+          isLastStep: step === SETUP_STEPS.length - 1,
         })}
       </Dialog>
     </>
