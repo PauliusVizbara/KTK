@@ -46,7 +46,7 @@ export const TurnInitiativeDialog = ({
 
       <DialogBody>
         <Heading className="mt-6" level={6}>
-          Roll-off winner chooses who has initiative:
+          Roll-off: the winner decides who has initiative.
         </Heading>
 
         <div className="mt-4 flex gap-4">
