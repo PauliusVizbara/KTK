@@ -1,7 +1,7 @@
 import { DocumentTextIcon } from '@sanity/icons'
 import { defineField, defineType } from 'sanity'
 
-const TEAM_ARCHETYPE_OPTIONS = [
+export const TEAM_ARCHETYPE_OPTIONS = [
   { title: 'Infiltration', value: 'Infiltration' },
   { title: 'Recon', value: 'Recon' },
   { title: 'Seek & Destroy', value: 'Seek & Destroy' },
