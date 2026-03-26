@@ -51,7 +51,7 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
   const {teamSelectOptions, getTeamById} = useTeamStore()
   return (
     <>
-      <DialogBody>
+      <DialogBody className="flex-1 overflow-y-auto">
         <Heading className="mt-6" level={6}>
           1. Each player selects a kill team for the battle.
         </Heading>
@@ -124,7 +124,7 @@ const SelectTacOpPlayer1Step = ({onNext, onBack}: StepProps) => {
 
   return (
     <>
-      <DialogBody className="max-h-[65vh] overflow-y-auto pr-1">
+      <DialogBody className="flex-1 overflow-y-auto pr-1">
         <div className="space-y-4">
           <PlayerTurnBanner playerName={player1.team?.name || 'Player 1'} />
           {player1TacOps.length > 0 ? (
@@ -170,7 +170,7 @@ const SelectTacOpPlayer2Step = ({onNext, onBack}: StepProps) => {
 
   return (
     <>
-      <DialogBody className="max-h-[65vh] overflow-y-auto pr-1">
+      <DialogBody className="flex-1 overflow-y-auto pr-1">
         <div className="space-y-4">
           <PlayerTurnBanner playerName={player2.team?.name || 'Player 2'} />
           {player2TacOps.length > 0 ? (
@@ -293,7 +293,7 @@ const SelectKillzoneStep = ({onNext, onBack}: StepProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
   return (
     <>
-      <DialogBody>
+      <DialogBody className="flex-1 overflow-y-auto">
         <Field className="w-1/4">
           <Label>Kill Zone</Label>
           <Select value={killzone} onChange={(e) => setKillzone(e.target.value)} name="killzone">
@@ -347,7 +347,7 @@ const SelectCritOpStep = ({onNext, onBack}: StepProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
   return (
     <>
-      <DialogBody>
+      <DialogBody className="flex-1 overflow-y-auto">
         <div className="mt-4 flex">
           <EmblaCarousel
             emblaRef={emblaRef}
@@ -381,7 +381,7 @@ const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
 
   return (
     <>
-      <DialogBody>
+      <DialogBody className="flex-1 overflow-y-auto">
         <Heading className="mt-6" level={6}>
           Roll-off: the winner decides who has initiative:
         </Heading>
@@ -450,7 +450,7 @@ const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
 
   return (
     <>
-      <DialogBody>
+      <DialogBody className="flex-1 overflow-y-auto">
         <div className="mt-4 space-y-8">
           <p>
             Each player secretly selects their operatives for the battle, adhering to the selection
@@ -605,7 +605,7 @@ const SelectEquipmentPlayer1Step = ({onNext, onBack}: StepProps) => {
 
   return (
     <>
-      <DialogBody>
+      <DialogBody className="flex-1 overflow-y-auto">
         <div className="space-y-4">
           <PlayerTurnBanner playerName={player1.team?.name || 'Player 1'} />
           <Heading level={6}>Select up to 4 equipment items</Heading>
@@ -645,7 +645,7 @@ const SelectEquipmentPlayer2Step = ({onNext, onBack}: StepProps) => {
 
   return (
     <>
-      <DialogBody>
+      <DialogBody className="flex-1 overflow-y-auto">
         <div className="space-y-4">
           <PlayerTurnBanner playerName={player2.team?.name || 'Player 2'} />
           <Heading level={6}>Select up to 4 equipment items</Heading>
@@ -678,7 +678,7 @@ const RevealEquipmentStep = ({onNext, onBack}: StepProps) => {
 
   return (
     <>
-      <DialogBody>
+      <DialogBody className="flex-1 overflow-y-auto">
         <div className="grid grid-cols-2 gap-8">
           <div>
             <Heading level={6} className="mb-4">
@@ -715,7 +715,7 @@ const RevealEquipmentStep = ({onNext, onBack}: StepProps) => {
 const SetupEquipmentStep = ({onNext, onBack}: StepProps) => {
   return (
     <>
-      <DialogBody>
+      <DialogBody className="flex-1 overflow-y-auto">
         <p>
           Each player alternates setting up an item of equipment that’s set up before the battle
           (ladders, etc.), starting with the player with initiative.
@@ -733,7 +733,7 @@ const SetupEquipmentStep = ({onNext, onBack}: StepProps) => {
 const SetupOperativesStep = ({onFinish, onBack}: StepProps) => {
   return (
     <>
-      <DialogBody>
+      <DialogBody className="flex-1 overflow-y-auto">
         <p>
           Each player alternates setting up one third of their kill team (rounding up), starting
           with the player with initiative. When a player sets up an operative, it must be wholly
@@ -861,7 +861,7 @@ export const SetupDialog = (props: Props) => {
     <>
       <Dialog
         size={currentStep.size}
-        className="h-[calc(100dvh-2rem)] sm:h-[85vh] sm:max-h-[85vh] overflow-y-auto"
+        className="h-[calc(100dvh-2rem)] sm:h-[85vh] sm:max-h-[85vh] flex flex-col overflow-hidden"
         open={isSetupOpen}
         onClose={() => setIsSetupOpen(false)}
       >
