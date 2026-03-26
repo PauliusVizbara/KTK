@@ -1,5 +1,5 @@
-import {create} from 'zustand'
-import {CritOp, Team, Equipment, TacOp} from '../../../sanity.types'
+import { create } from 'zustand'
+import { CritOp, Team, Equipment, TacOp } from '../../../sanity.types'
 
 interface PlayerState {
   team: Team | null
@@ -33,15 +33,15 @@ interface GameTrackerState {
 
 export const useGameTrackerStore = create<GameTrackerState>((set) => ({
   isSetupOpen: false,
-  setIsSetupOpen: (isOpen) => set({isSetupOpen: isOpen}),
+  setIsSetupOpen: (isOpen) => set({ isSetupOpen: isOpen }),
   isSetupDone: false,
-  setIsSetupDone: (isDone) => set({isSetupDone: isDone}),
+  setIsSetupDone: (isDone) => set({ isSetupDone: isDone }),
   map: null,
-  setMap: (map) => set({map}),
+  setMap: (map) => set({ map }),
   critOp: null,
-  setCritOp: (critOp) => set({critOp}),
+  setCritOp: (critOp) => set({ critOp }),
   turningPoint: 1,
-  setTurningPoint: (turningPoint) => set({turningPoint}),
+  setTurningPoint: (turningPoint) => set({ turningPoint }),
   player1: {
     team: null,
     setTeam: (team) =>
@@ -57,16 +57,16 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
         },
       })),
     tacOp: null,
-    setTacOp: (tacOp) => set((state) => ({player1: {...state.player1, tacOp}})),
+    setTacOp: (tacOp) => set((state) => ({ player1: { ...state.player1, tacOp } })),
     score: 0,
-    setScore: (score) => set((state) => ({player1: {...state.player1, score}})),
+    setScore: (score) => set((state) => ({ player1: { ...state.player1, score } })),
     cp: 2,
-    setCp: (cp) => set((state) => ({player1: {...state.player1, cp}})),
+    setCp: (cp) => set((state) => ({ player1: { ...state.player1, cp } })),
     equipment: [],
-    setEquipment: (equipment) => set((state) => ({player1: {...state.player1, equipment}})),
+    setEquipment: (equipment) => set((state) => ({ player1: { ...state.player1, equipment } })),
     selectedOperativeCount: 0,
     setSelectedOperativeCount: (count) =>
-      set((state) => ({player1: {...state.player1, selectedOperativeCount: count}})),
+      set((state) => ({ player1: { ...state.player1, selectedOperativeCount: count } })),
   },
   player2: {
     team: null,
@@ -83,15 +83,15 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
         },
       })),
     tacOp: null,
-    setTacOp: (tacOp) => set((state) => ({player2: {...state.player2, tacOp}})),
+    setTacOp: (tacOp) => set((state) => ({ player2: { ...state.player2, tacOp } })),
     score: 0,
-    setScore: (score) => set((state) => ({player2: {...state.player2, score}})),
+    setScore: (score) => set((state) => ({ player2: { ...state.player2, score } })),
     cp: 2,
-    setCp: (cp) => set((state) => ({player2: {...state.player2, cp}})),
+    setCp: (cp) => set((state) => ({ player2: { ...state.player2, cp } })),
     equipment: [],
-    setEquipment: (equipment) => set((state) => ({player2: {...state.player2, equipment}})),
+    setEquipment: (equipment) => set((state) => ({ player2: { ...state.player2, equipment } })),
     selectedOperativeCount: 0,
     setSelectedOperativeCount: (count) =>
-      set((state) => ({player2: {...state.player2, selectedOperativeCount: count}})),
+      set((state) => ({ player2: { ...state.player2, selectedOperativeCount: count } })),
   },
 }))

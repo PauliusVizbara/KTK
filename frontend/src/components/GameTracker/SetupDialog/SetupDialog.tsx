@@ -1,8 +1,8 @@
 'use client'
-import {DialogBody, DialogActions} from '@/components/dialog'
-import {Field, Label} from '@/components/fieldset'
-import {Dialog, DialogTitle, DialogDescription} from '@/components/dialog'
-import React, {useEffect} from 'react'
+import { DialogBody, DialogActions } from '@/components/dialog'
+import { Field, Label } from '@/components/fieldset'
+import { Dialog, DialogTitle, DialogDescription } from '@/components/dialog'
+import React, { useEffect } from 'react'
 import {
   useGameTrackerStore,
   useTeamStore,
@@ -10,25 +10,25 @@ import {
   useEquipmentStore,
   useTacOpStore,
 } from '@/app/store'
-import {Heading} from '@/components/heading'
-import {Button, CritOpCard, TacOpCard} from '@/components'
+import { Heading } from '@/components/heading'
+import { Button, CritOpCard, TacOpCard } from '@/components'
 import Image from 'next/image'
-import {Select} from '@/components/select'
+import { Select } from '@/components/select'
 import EmblaCarousel from '@/components/Common/Carousel/Carousel'
 import useEmblaCarousel from 'embla-carousel-react'
-import {Divider} from '@/components/divider'
+import { Divider } from '@/components/divider'
 import ReactDOM from 'react-dom'
-import {useShallow} from 'zustand/shallow'
+import { useShallow } from 'zustand/shallow'
 import {
   ArrowUturnLeftIcon,
   ArrowUturnRightIcon,
   XMarkIcon,
   ChevronDownIcon,
 } from '@heroicons/react/16/solid'
-import {CritOp, TacOp, Team, UniversalEquipment} from '../../../../sanity.types'
-import {Dropdown, DropdownButton, DropdownItem, DropdownMenu} from '@/components/dropdown'
-import {PlayerTurnBanner} from './PlayerTurnBanner'
-import {EquipmentAccordion} from './EquipmentAccordion'
+import { CritOp, TacOp, Team, UniversalEquipment } from '../../../../sanity.types'
+import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/dropdown'
+import { PlayerTurnBanner } from './PlayerTurnBanner'
+import { EquipmentAccordion } from './EquipmentAccordion'
 
 interface StepProps {
   onNext: () => void
@@ -38,8 +38,8 @@ interface StepProps {
   isLastStep: boolean
 }
 
-const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
-  const {player1, player2} = useGameTrackerStore()
+const SelectTeamsStep = ({ onNext, onBack, isFirstStep }: StepProps) => {
+  const { player1, player2 } = useGameTrackerStore()
   const [player1Selection, setPlayer1Selection] = React.useState<{
     id: string | null
     name: string | null
@@ -48,7 +48,7 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
     id: string | null
     name: string | null
   } | null>(null)
-  const {teamSelectOptions, getTeamById} = useTeamStore()
+  const { teamSelectOptions, getTeamById } = useTeamStore()
   return (
     <>
       <DialogBody>
@@ -67,7 +67,7 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
                 {teamSelectOptions.map((team) => (
                   <DropdownItem
                     key={team.id}
-                    onClick={() => setPlayer1Selection({name: team.name, id: team.id})}
+                    onClick={() => setPlayer1Selection({ name: team.name, id: team.id })}
                   >
                     {team.name}
                   </DropdownItem>
@@ -86,7 +86,7 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
                 {teamSelectOptions.map((team) => (
                   <DropdownItem
                     key={team.id}
-                    onClick={() => setPlayer2Selection({name: team.name, id: team.id})}
+                    onClick={() => setPlayer2Selection({ name: team.name, id: team.id })}
                   >
                     {team.name}
                   </DropdownItem>
@@ -112,10 +112,10 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
   )
 }
 
-const SelectTacOpPlayer1Step = ({onNext, onBack}: StepProps) => {
+const SelectTacOpPlayer1Step = ({ onNext, onBack }: StepProps) => {
   const tacOps = useTacOpStore((s) => s.tacOps)
-  const {player1} = useGameTrackerStore()
-  const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
+  const { player1 } = useGameTrackerStore()
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
 
   const player1TacOps = React.useMemo(
     () => tacOps.filter((tacOp) => player1.team?.archetypes?.includes(tacOp.archetype)),
@@ -158,10 +158,10 @@ const SelectTacOpPlayer1Step = ({onNext, onBack}: StepProps) => {
   )
 }
 
-const SelectTacOpPlayer2Step = ({onNext, onBack}: StepProps) => {
+const SelectTacOpPlayer2Step = ({ onNext, onBack }: StepProps) => {
   const tacOps = useTacOpStore((s) => s.tacOps)
-  const {player2} = useGameTrackerStore()
-  const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
+  const { player2 } = useGameTrackerStore()
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
 
   const player2TacOps = React.useMemo(
     () => tacOps.filter((tacOp) => player2.team?.archetypes?.includes(tacOp.archetype)),
@@ -229,8 +229,8 @@ const maps = {
   ],
 }
 const KILLZONES = [
-  {id: 'volkus', name: 'Volkus'},
-  {id: 'tomb-world', name: 'Tomb World'},
+  { id: 'volkus', name: 'Volkus' },
+  { id: 'tomb-world', name: 'Tomb World' },
 ]
 
 export function MapZoomModal({
@@ -286,11 +286,11 @@ export function MapZoomModal({
   )
 }
 
-const SelectKillzoneStep = ({onNext, onBack}: StepProps) => {
+const SelectKillzoneStep = ({ onNext, onBack }: StepProps) => {
   const [killzone, setKillzone] = React.useState(KILLZONES[0].id)
-  const {setMap} = useGameTrackerStore()
+  const { setMap } = useGameTrackerStore()
   const [zoomedInMap, setZoomedInMap] = React.useState<string | null>(null)
-  const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   return (
     <>
       <DialogBody>
@@ -321,7 +321,7 @@ const SelectKillzoneStep = ({onNext, onBack}: StepProps) => {
               width={600}
               height={600}
               alt={''}
-              style={{objectFit: 'fill'}}
+              style={{ objectFit: 'fill' }}
             />
           ))}
         />
@@ -341,10 +341,10 @@ const SelectKillzoneStep = ({onNext, onBack}: StepProps) => {
   )
 }
 
-const SelectCritOpStep = ({onNext, onBack}: StepProps) => {
+const SelectCritOpStep = ({ onNext, onBack }: StepProps) => {
   const critOps = useCritOpStore((s) => s.critOps)
-  const {setCritOp} = useGameTrackerStore()
-  const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
+  const { setCritOp } = useGameTrackerStore()
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
   return (
     <>
       <DialogBody>
@@ -373,7 +373,7 @@ const SelectCritOpStep = ({onNext, onBack}: StepProps) => {
   )
 }
 
-const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
+const SelectInitiativeStep = ({ onBack, onNext }: StepProps) => {
   const gameTrackerStore = useGameTrackerStore()
 
   const [setupInitiative, setSetupInitiative] = React.useState<'player1' | 'player2' | null>(null)
@@ -426,8 +426,8 @@ const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
   )
 }
 
-const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
-  const {player1, player2} = useGameTrackerStore()
+const SelectOperativesStep = ({ onNext, onBack }: StepProps) => {
+  const { player1, player2 } = useGameTrackerStore()
 
   return (
     <>
@@ -525,8 +525,8 @@ const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
 }
 
 const useEquipmentData = () => {
-  const {player1, player2} = useGameTrackerStore()
-  const {universalEquipment} = useEquipmentStore()
+  const { player1, player2 } = useGameTrackerStore()
+  const { universalEquipment } = useEquipmentStore()
 
   const p1TeamEquipment = React.useMemo(() => {
     return (
@@ -557,11 +557,11 @@ const useEquipmentData = () => {
   const p1AllEquipment = [...p1TeamEquipment, ...universalEquipmentList]
   const p2AllEquipment = [...p2TeamEquipment, ...universalEquipmentList]
 
-  return {p1AllEquipment, p2AllEquipment, player1, player2}
+  return { p1AllEquipment, p2AllEquipment, player1, player2 }
 }
 
-const SelectEquipmentPlayer1Step = ({onNext, onBack}: StepProps) => {
-  const {p1AllEquipment, player1} = useEquipmentData()
+const SelectEquipmentPlayer1Step = ({ onNext, onBack }: StepProps) => {
+  const { p1AllEquipment, player1 } = useEquipmentData()
 
   const p1Selection = React.useMemo(
     () => player1.equipment.map((e: any) => e.id),
@@ -600,8 +600,8 @@ const SelectEquipmentPlayer1Step = ({onNext, onBack}: StepProps) => {
   )
 }
 
-const SelectEquipmentPlayer2Step = ({onNext, onBack}: StepProps) => {
-  const {p2AllEquipment, player2} = useEquipmentData()
+const SelectEquipmentPlayer2Step = ({ onNext, onBack }: StepProps) => {
+  const { p2AllEquipment, player2 } = useEquipmentData()
 
   const p2Selection = React.useMemo(
     () => player2.equipment.map((e: any) => e.id),
@@ -640,8 +640,8 @@ const SelectEquipmentPlayer2Step = ({onNext, onBack}: StepProps) => {
   )
 }
 
-const RevealEquipmentStep = ({onNext, onBack}: StepProps) => {
-  const {p1AllEquipment, p2AllEquipment, player1, player2} = useEquipmentData()
+const RevealEquipmentStep = ({ onNext, onBack }: StepProps) => {
+  const { p1AllEquipment, p2AllEquipment, player1, player2 } = useEquipmentData()
 
   const p1Selection = React.useMemo(
     () => player1.equipment.map((e: any) => e.id),
@@ -663,7 +663,7 @@ const RevealEquipmentStep = ({onNext, onBack}: StepProps) => {
             <EquipmentAccordion
               equipment={p1AllEquipment.filter((e) => p1Selection.includes(e.id))}
               selectedIds={[]}
-              onToggle={() => {}}
+              onToggle={() => { }}
               readOnly
             />
           </div>
@@ -674,7 +674,7 @@ const RevealEquipmentStep = ({onNext, onBack}: StepProps) => {
             <EquipmentAccordion
               equipment={p2AllEquipment.filter((e) => p2Selection.includes(e.id))}
               selectedIds={[]}
-              onToggle={() => {}}
+              onToggle={() => { }}
               readOnly
             />
           </div>
@@ -688,7 +688,7 @@ const RevealEquipmentStep = ({onNext, onBack}: StepProps) => {
   )
 }
 
-const SetupEquipmentStep = ({onNext, onBack}: StepProps) => {
+const SetupEquipmentStep = ({ onNext, onBack }: StepProps) => {
   return (
     <>
       <DialogBody>
@@ -707,7 +707,7 @@ const SetupEquipmentStep = ({onNext, onBack}: StepProps) => {
   )
 }
 
-const SetupOperativesStep = ({onFinish, onBack}: StepProps) => {
+const SetupOperativesStep = ({ onFinish, onBack }: StepProps) => {
   return (
     <>
       <DialogBody>
@@ -809,15 +809,15 @@ interface Props {
 }
 
 export const SetupDialog = (props: Props) => {
-  const {initialTeams, critOps, tacOps, universalEquipment} = props
+  const { initialTeams, critOps, tacOps, universalEquipment } = props
   const [step, setStep] = React.useState(0)
   const currentStep = SETUP_STEPS[step]
 
-  const {isSetupOpen, setIsSetupOpen, setIsSetupDone} = useGameTrackerStore()
-  const {setTeams} = useTeamStore()
-  const {setCritOps} = useCritOpStore()
-  const {setTacOps} = useTacOpStore()
-  const {setUniversalEquipment} = useEquipmentStore()
+  const { isSetupOpen, setIsSetupOpen, setIsSetupDone } = useGameTrackerStore()
+  const { setTeams } = useTeamStore()
+  const { setCritOps } = useCritOpStore()
+  const { setTacOps } = useTacOpStore()
+  const { setUniversalEquipment } = useEquipmentStore()
 
   useEffect(() => {
     setTeams(initialTeams)
