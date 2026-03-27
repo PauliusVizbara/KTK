@@ -34,12 +34,11 @@ const renderScoreSkulls = (
   primaryOp: PrimaryOp,
   primaryBonus: number,
   revealStep: number,
+  primaryRevealStep: number,
 ) => {
   const hasPrimaryBonus = primaryOp === row && primaryBonus > 0
   const revealedPoints = Math.min(points, revealStep)
-  const revealedBonus = hasPrimaryBonus
-    ? Math.min(primaryBonus, Math.max(0, revealStep - points))
-    : 0
+  const revealedBonus = hasPrimaryBonus ? Math.min(primaryBonus, primaryRevealStep) : 0
 
   return (
     <div className="flex items-center justify-start gap-2">
@@ -70,6 +69,11 @@ type RevealKey =
 
 type RevealState = Record<RevealKey, number>
 
+type PrimaryRevealState = {
+  player1: number
+  player2: number
+}
+
 type TotalRevealState = {
   player1: number
   player2: number
@@ -82,6 +86,11 @@ const EMPTY_REVEAL_STATE: RevealState = {
   player2Tac: 0,
   player1Kill: 0,
   player2Kill: 0,
+}
+
+const EMPTY_PRIMARY_REVEAL_STATE: PrimaryRevealState = {
+  player1: 0,
+  player2: 0,
 }
 
 const EMPTY_TOTAL_REVEAL_STATE: TotalRevealState = {
@@ -166,46 +175,58 @@ const GameResultDialog = ({
   const player2Total = player2Crit + player2Tac + player2Kill + player2PrimaryBonus
 
   const [revealState, setRevealState] = React.useState<RevealState>(EMPTY_REVEAL_STATE)
+  const [primaryReveal, setPrimaryReveal] = React.useState<PrimaryRevealState>(
+    EMPTY_PRIMARY_REVEAL_STATE,
+  )
   const [totalReveal, setTotalReveal] = React.useState<TotalRevealState>(EMPTY_TOTAL_REVEAL_STATE)
 
   React.useEffect(() => {
     if (!open) {
       setRevealState(EMPTY_REVEAL_STATE)
+      setPrimaryReveal(EMPTY_PRIMARY_REVEAL_STATE)
       setTotalReveal(EMPTY_TOTAL_REVEAL_STATE)
       return
     }
 
     setRevealState(EMPTY_REVEAL_STATE)
+    setPrimaryReveal(EMPTY_PRIMARY_REVEAL_STATE)
     setTotalReveal(EMPTY_TOTAL_REVEAL_STATE)
 
     const revealTargets: Array<{key: RevealKey; total: number}> = [
       {
         key: 'player1Crit',
-        total: player1Crit + (player1Primary === 'critical' ? player1PrimaryBonus : 0),
+        total: player1Crit,
       },
       {
         key: 'player2Crit',
-        total: player2Crit + (player2Primary === 'critical' ? player2PrimaryBonus : 0),
+        total: player2Crit,
       },
       {
         key: 'player1Tac',
-        total: player1Tac + (player1Primary === 'tactical' ? player1PrimaryBonus : 0),
+        total: player1Tac,
       },
       {
         key: 'player2Tac',
-        total: player2Tac + (player2Primary === 'tactical' ? player2PrimaryBonus : 0),
+        total: player2Tac,
       },
       {
         key: 'player1Kill',
-        total: player1Kill + (player1Primary === 'kill' ? player1PrimaryBonus : 0),
+        total: player1Kill,
       },
       {
         key: 'player2Kill',
-        total: player2Kill + (player2Primary === 'kill' ? player2PrimaryBonus : 0),
+        total: player2Kill,
       },
     ]
 
-    const totalAnimatedSkulls = revealTargets.reduce((sum, target) => sum + target.total, 0)
+    const primaryRevealTargets: Array<{player: keyof PrimaryRevealState; total: number}> = [
+      {player: 'player1', total: player1PrimaryBonus},
+      {player: 'player2', total: player2PrimaryBonus},
+    ]
+
+    const totalAnimatedSkulls =
+      revealTargets.reduce((sum, target) => sum + target.total, 0) +
+      primaryRevealTargets.reduce((sum, target) => sum + target.total, 0)
     if (totalAnimatedSkulls <= 0) {
       return
     }
@@ -222,6 +243,18 @@ const GameResultDialog = ({
         elapsed += skullStepDelay
         const timeoutId = window.setTimeout(() => {
           setRevealState((current) => ({...current, [key]: step}))
+        }, elapsed)
+        timeoutIds.push(timeoutId)
+      }
+
+      elapsed += opDelay
+    })
+
+    primaryRevealTargets.forEach(({player, total}) => {
+      for (let step = 1; step <= total; step += 1) {
+        elapsed += skullStepDelay
+        const timeoutId = window.setTimeout(() => {
+          setPrimaryReveal((current) => ({...current, [player]: step}))
         }, elapsed)
         timeoutIds.push(timeoutId)
       }
@@ -287,6 +320,7 @@ const GameResultDialog = ({
                     player1Primary,
                     player1PrimaryBonus,
                     revealState.player1Crit,
+                    primaryReveal.player1,
                   )}
                 </td>
                 <td className="px-2 py-2 text-left font-semibold">
@@ -296,6 +330,7 @@ const GameResultDialog = ({
                     player2Primary,
                     player2PrimaryBonus,
                     revealState.player2Crit,
+                    primaryReveal.player2,
                   )}
                 </td>
               </tr>
@@ -308,6 +343,7 @@ const GameResultDialog = ({
                     player1Primary,
                     player1PrimaryBonus,
                     revealState.player1Tac,
+                    primaryReveal.player1,
                   )}
                 </td>
                 <td className="px-2 py-2 text-left font-semibold">
@@ -317,6 +353,7 @@ const GameResultDialog = ({
                     player2Primary,
                     player2PrimaryBonus,
                     revealState.player2Tac,
+                    primaryReveal.player2,
                   )}
                 </td>
               </tr>
@@ -329,6 +366,7 @@ const GameResultDialog = ({
                     player1Primary,
                     player1PrimaryBonus,
                     revealState.player1Kill,
+                    primaryReveal.player1,
                   )}
                 </td>
                 <td className="px-2 py-2 text-left font-semibold">
@@ -338,6 +376,7 @@ const GameResultDialog = ({
                     player2Primary,
                     player2PrimaryBonus,
                     revealState.player2Kill,
+                    primaryReveal.player2,
                   )}
                 </td>
               </tr>
