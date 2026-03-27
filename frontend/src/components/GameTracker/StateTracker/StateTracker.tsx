@@ -112,7 +112,7 @@ const AnimatedSkulls = ({count, active}: {count: number; active: number}) => (
             alt="Skull"
             width={14}
             height={14}
-            className={isVisible ? 'opacity-100' : 'opacity-20 grayscale'}
+            className={isVisible ? 'opacity-100' : 'opacity-40 grayscale'}
             style={
               isVisible
                 ? {

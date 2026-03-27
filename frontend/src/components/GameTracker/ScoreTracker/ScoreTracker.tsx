@@ -136,7 +136,7 @@ const ScoreTable = ({
               alt="Skull"
               width={18}
               height={18}
-              className={isActive ? 'opacity-100' : 'opacity-25 grayscale'}
+              className={isActive ? 'opacity-100' : 'opacity-50 grayscale'}
               style={
                 isActive
                   ? {
@@ -177,7 +177,7 @@ const ScoreTable = ({
                 alt="Skull"
                 width={20}
                 height={20}
-                className={isActive ? 'opacity-100' : 'opacity-35 grayscale'}
+                className={isActive ? 'opacity-100' : 'opacity-50 grayscale'}
                 style={
                   isActive
                     ? {
