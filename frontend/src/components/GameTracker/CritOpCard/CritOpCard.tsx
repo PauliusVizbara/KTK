@@ -1,12 +1,18 @@
 import React from 'react'
 import {CritOp} from '../../../../sanity.types'
+import clsx from 'clsx'
 
 import {PortableText} from '@portabletext/react'
 
-export const CritOpCard = ({critOp}: {critOp: CritOp}) => {
+export const CritOpCard = ({critOp, className}: {critOp: CritOp; className?: string}) => {
   const {name, additionalRulesText, missionActions, victoryPoints} = critOp
   return (
-    <div className="mx-auto max-h-[34vh] max-w-[14rem] overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-md sm:max-h-[38vh] sm:max-w-[15rem] md:max-h-[42vh] md:max-w-[17rem] lg:max-h-[46vh] lg:max-w-[18rem] xl:max-h-[60vh] xl:max-w-sm">
+    <div
+      className={clsx(
+        'mx-auto max-h-[34vh] max-w-[14rem] overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-md sm:max-h-[38vh] sm:max-w-[15rem] md:max-h-[42vh] md:max-w-[17rem] lg:max-h-[46vh] lg:max-w-[18rem] xl:max-h-[60vh] xl:max-w-sm',
+        className,
+      )}
+    >
       <h2 className="mb-2 rounded-t-xl bg-gray-900 py-2 text-center text-sm font-bold text-white sm:mb-3 sm:py-3 sm:text-base md:text-lg">
         CRIT OP
       </h2>

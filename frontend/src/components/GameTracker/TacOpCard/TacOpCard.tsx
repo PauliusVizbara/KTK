@@ -1,12 +1,18 @@
 import React from 'react'
 import {TacOp} from '../../../../sanity.types'
+import clsx from 'clsx'
 import {PortableText} from '@portabletext/react'
 
-export const TacOpCard = ({tacOp}: {tacOp: TacOp}) => {
+export const TacOpCard = ({tacOp, className}: {tacOp: TacOp; className?: string}) => {
   const {name, archetype, reveal, additionalRules, missionAction, victoryPoints} = tacOp
 
   return (
-    <div className="mx-auto max-h-[34vh] max-w-[14rem] overflow-y-auto rounded-xl border border-[#f05a1a] bg-zinc-100 shadow-lg sm:max-h-[38vh] sm:max-w-[15rem] md:max-h-[42vh] md:max-w-[17rem] lg:max-h-[46vh] lg:max-w-[18rem] xl:max-h-[60vh] xl:max-w-sm">
+    <div
+      className={clsx(
+        'mx-auto max-h-[34vh] max-w-[14rem] overflow-y-auto rounded-xl border border-[#f05a1a] bg-zinc-100 shadow-lg sm:max-h-[38vh] sm:max-w-[15rem] md:max-h-[42vh] md:max-w-[17rem] lg:max-h-[46vh] lg:max-w-[18rem] xl:max-h-[60vh] xl:max-w-sm',
+        className,
+      )}
+    >
       <div className="rounded-t-xl bg-[#f05a1a] py-1.5 text-center sm:py-2">
         <h2 className="text-sm font-black uppercase tracking-wide text-white sm:text-base md:text-lg">
           {archetype}

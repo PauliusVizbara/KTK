@@ -2,7 +2,6 @@
 import React from 'react'
 import {useGameTrackerStore} from '@/app/store'
 import Image from 'next/image'
-import {Button} from '@/components'
 
 type PlayerScores = {
   crit: number[][]
@@ -83,7 +82,7 @@ const ScoreTable = ({
 }: {
   title: string
   data: PlayerScores
-  onDataChange: (next: PlayerScores) => void
+  onDataChange: React.Dispatch<React.SetStateAction<PlayerScores>>
   enemyStartingOperatives: number
   killOpGradePoints: number
   killOpHasComparisonPoint: boolean
@@ -117,9 +116,18 @@ const ScoreTable = ({
   const enemyKillsTotal = data.enemyKillsTotal
   const killsToNextGrade = getKillsToNextGrade(enemyStartingOperatives, enemyKillsTotal)
 
+  const setEnemyKillsTotal = (nextTotal: number) => {
+    onDataChange((prev) => ({
+      ...prev,
+      enemyKillsTotal: clamp(nextTotal, 0, enemyStartingOperatives),
+    }))
+  }
+
   const adjustEnemyKillsTotal = (delta: number) => {
-    const nextTotal = clamp(enemyKillsTotal + delta, 0, enemyStartingOperatives)
-    onDataChange({...data, enemyKillsTotal: nextTotal})
+    onDataChange((prev) => ({
+      ...prev,
+      enemyKillsTotal: clamp(prev.enemyKillsTotal + delta, 0, enemyStartingOperatives),
+    }))
   }
 
   const renderKillOpSkulls = () => (
@@ -129,7 +137,7 @@ const ScoreTable = ({
         return (
           <span
             key={`kill-op-${index}`}
-            className="inline-flex h-8 w-8 items-center justify-center"
+            className={`inline-flex h-8 w-8 items-center justify-center ${index === 5 ? 'ml-2' : ''}`}
           >
             <Image
               src="/images/skull.svg"
@@ -239,15 +247,31 @@ const ScoreTable = ({
                       <div className="flex items-center gap-2">
                         <span className="font-semibold">Operatives killed</span>
                         <div className="flex items-center gap-1">
-                          <Button outline onClick={() => adjustEnemyKillsTotal(-1)}>
+                          <button
+                            type="button"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded border border-zinc-300 bg-white text-base font-semibold text-zinc-700 hover:bg-zinc-50"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              adjustEnemyKillsTotal(-1)
+                            }}
+                          >
                             -
-                          </Button>
-                          <span className="w-8 text-center text-lg font-bold">
+                          </button>
+                          <span className="w-8 text-center text-lg font-bold text-zinc-900">
                             {enemyKillsTotal}
                           </span>
-                          <Button outline onClick={() => adjustEnemyKillsTotal(1)}>
+                          <button
+                            type="button"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded border border-zinc-300 bg-white text-base font-semibold text-zinc-700 hover:bg-zinc-50"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              adjustEnemyKillsTotal(1)
+                            }}
+                          >
                             +
-                          </Button>
+                          </button>
                         </div>
                       </div>
                       <span className="text-center text-xs italic text-zinc-600">
@@ -322,7 +346,7 @@ export const ScoreTracker = () => {
 
   return (
     <div className="w-full rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <ScoreTable
           title={player1.team?.name ?? 'Player 1'}
           data={player1Scores}
