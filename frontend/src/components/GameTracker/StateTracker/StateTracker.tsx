@@ -1,6 +1,6 @@
 'use client'
 import {useGameTrackerStore} from '@/app/store'
-import {Button, CritOpCard, ScoreTracker, TurnInitiativeDialog} from '@/components'
+import {Button, CritOpCard, PrimaryOpDialog, ScoreTracker, TurnInitiativeDialog} from '@/components'
 import React from 'react'
 import {MapZoomModal} from '../SetupDialog/SetupDialog'
 import ReactDOM from 'react-dom'
@@ -41,6 +41,7 @@ export const StateTracker = () => {
   const [showMap, setShowMap] = React.useState(false)
   const [showCritOp, setShowCritOp] = React.useState(false)
   const [showTurnInitiative, setShowTurnInitiative] = React.useState(false)
+  const [showPrimaryOp, setShowPrimaryOp] = React.useState(false)
   const [hasOpenedInitialInitiative, setHasOpenedInitialInitiative] = React.useState(false)
 
   const tieWinnerName = React.useMemo(() => {
@@ -89,6 +90,7 @@ export const StateTracker = () => {
     if (!isSetupDone) {
       setHasOpenedInitialInitiative(false)
       setShowTurnInitiative(false)
+      setShowPrimaryOp(false)
       return
     }
 
@@ -221,6 +223,10 @@ export const StateTracker = () => {
           if (turningPoint === 1) {
             player1.setCp(player1.cp + 1)
             player2.setCp(player2.cp + 1)
+
+            if (!player1.primaryOp || !player2.primaryOp) {
+              setShowPrimaryOp(true)
+            }
           } else if (initiativePlayer === 'player1') {
             player1.setCp(player1.cp + 1)
             player2.setCp(player2.cp + 2)
@@ -230,6 +236,18 @@ export const StateTracker = () => {
           }
 
           setShowTurnInitiative(false)
+        }}
+      />
+
+      <PrimaryOpDialog
+        open={showPrimaryOp}
+        initiativePlayer={initiativePlayer ?? 'player1'}
+        player1Name={player1.team?.name || 'Player 1'}
+        player2Name={player2.team?.name || 'Player 2'}
+        onResolve={({player1PrimaryOp, player2PrimaryOp}) => {
+          player1.setPrimaryOp(player1PrimaryOp)
+          player2.setPrimaryOp(player2PrimaryOp)
+          setShowPrimaryOp(false)
         }}
       />
     </div>

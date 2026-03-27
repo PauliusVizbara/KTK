@@ -20,6 +20,7 @@ import {SetupDialog} from '@/components/GameTracker/SetupDialog/SetupDialog'
 import {CritOpCard} from './GameTracker/CritOpCard/CritOpCard'
 import {TacOpCard} from './GameTracker/TacOpCard/TacOpCard'
 import {TurnInitiativeDialog} from './GameTracker/TurnInitiativeDialog/TurnInitiativeDialog'
+import {PrimaryOpDialog} from './GameTracker/PrimaryOpDialog/PrimaryOpDialog'
 export {
   Button,
   Link,
@@ -42,4 +43,5 @@ export {
   CritOpCard,
   TacOpCard,
   TurnInitiativeDialog,
+  PrimaryOpDialog,
 }

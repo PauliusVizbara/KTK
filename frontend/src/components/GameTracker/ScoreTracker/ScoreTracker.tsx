@@ -6,7 +6,6 @@ import Image from 'next/image'
 type PlayerScores = {
   crit: number[][]
   tac: number[][]
-  enemyKillsTotal: number
 }
 
 const SCORING_TP_INDICES = [1, 2, 3] as const
@@ -77,6 +76,8 @@ const ScoreTable = ({
   data,
   onDataChange,
   enemyStartingOperatives,
+  enemyKillsTotal,
+  onSetEnemyKillsTotal,
   killOpGradePoints,
   killOpHasComparisonPoint,
 }: {
@@ -84,6 +85,8 @@ const ScoreTable = ({
   data: PlayerScores
   onDataChange: React.Dispatch<React.SetStateAction<PlayerScores>>
   enemyStartingOperatives: number
+  enemyKillsTotal: number
+  onSetEnemyKillsTotal: (nextTotal: number) => void
   killOpGradePoints: number
   killOpHasComparisonPoint: boolean
 }) => {
@@ -113,21 +116,10 @@ const ScoreTable = ({
     onDataChange({...data, [key]: nextTrack})
   }
 
-  const enemyKillsTotal = data.enemyKillsTotal
   const killsToNextGrade = getKillsToNextGrade(enemyStartingOperatives, enemyKillsTotal)
 
-  const setEnemyKillsTotal = (nextTotal: number) => {
-    onDataChange((prev) => ({
-      ...prev,
-      enemyKillsTotal: clamp(nextTotal, 0, enemyStartingOperatives),
-    }))
-  }
-
   const adjustEnemyKillsTotal = (delta: number) => {
-    onDataChange((prev) => ({
-      ...prev,
-      enemyKillsTotal: clamp(prev.enemyKillsTotal + delta, 0, enemyStartingOperatives),
-    }))
+    onSetEnemyKillsTotal(clamp(enemyKillsTotal + delta, 0, enemyStartingOperatives))
   }
 
   const renderKillOpSkulls = () => (
@@ -295,25 +287,23 @@ export const ScoreTracker = () => {
   const [player1Scores, setPlayer1Scores] = React.useState<PlayerScores>({
     crit: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
     tac: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
-    enemyKillsTotal: 0,
   })
 
   const [player2Scores, setPlayer2Scores] = React.useState<PlayerScores>({
     crit: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
     tac: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
-    enemyKillsTotal: 0,
   })
 
   const player1EnemyStartingOperatives = clamp(player2.selectedOperativeCount || 10, 5, 14)
   const player2EnemyStartingOperatives = clamp(player1.selectedOperativeCount || 10, 5, 14)
 
   const player1KillGrade = React.useMemo(
-    () => getKillGrade(player1EnemyStartingOperatives, player1Scores.enemyKillsTotal),
-    [player1EnemyStartingOperatives, player1Scores.enemyKillsTotal],
+    () => getKillGrade(player1EnemyStartingOperatives, player1.enemyKilledOperatives),
+    [player1EnemyStartingOperatives, player1.enemyKilledOperatives],
   )
   const player2KillGrade = React.useMemo(
-    () => getKillGrade(player2EnemyStartingOperatives, player2Scores.enemyKillsTotal),
-    [player2EnemyStartingOperatives, player2Scores.enemyKillsTotal],
+    () => getKillGrade(player2EnemyStartingOperatives, player2.enemyKilledOperatives),
+    [player2EnemyStartingOperatives, player2.enemyKilledOperatives],
   )
 
   const player1KillOp = React.useMemo(
@@ -352,6 +342,8 @@ export const ScoreTracker = () => {
           data={player1Scores}
           onDataChange={setPlayer1Scores}
           enemyStartingOperatives={player1EnemyStartingOperatives}
+          enemyKillsTotal={player1.enemyKilledOperatives}
+          onSetEnemyKillsTotal={player1.setEnemyKilledOperatives}
           killOpGradePoints={player1KillOp.gradePoints}
           killOpHasComparisonPoint={player1KillOp.hasComparisonPoint}
         />
@@ -360,6 +352,8 @@ export const ScoreTracker = () => {
           data={player2Scores}
           onDataChange={setPlayer2Scores}
           enemyStartingOperatives={player2EnemyStartingOperatives}
+          enemyKillsTotal={player2.enemyKilledOperatives}
+          onSetEnemyKillsTotal={player2.setEnemyKilledOperatives}
           killOpGradePoints={player2KillOp.gradePoints}
           killOpHasComparisonPoint={player2KillOp.hasComparisonPoint}
         />

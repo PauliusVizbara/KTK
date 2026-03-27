@@ -1,11 +1,15 @@
 import {create} from 'zustand'
 import {CritOp, Team, Equipment, TacOp} from '../../../sanity.types'
 
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+
 interface PlayerState {
   team: Team | null
   setTeam: (team: Team | null) => void
   tacOp: TacOp | null
   setTacOp: (tacOp: TacOp | null) => void
+  primaryOp: 'critical' | 'tactical' | 'kill' | null
+  setPrimaryOp: (primaryOp: 'critical' | 'tactical' | 'kill' | null) => void
   hasInitiativeRerollCard: boolean
   setHasInitiativeRerollCard: (value: boolean) => void
   initiativeModifierCards: number[]
@@ -19,6 +23,9 @@ interface PlayerState {
   setEquipment: (equipment: Equipment[]) => void
   selectedOperativeCount: number
   setSelectedOperativeCount: (count: number) => void
+  enemyKilledOperatives: number
+  setEnemyKilledOperatives: (count: number) => void
+  adjustEnemyKilledOperatives: (delta: number, enemyStartingOperatives: number) => void
 }
 
 interface GameTrackerState {
@@ -59,8 +66,10 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
           ...state.player1,
           team: team,
           tacOp: null,
+          primaryOp: null,
           hasInitiativeRerollCard: false,
           initiativeModifierCards: [],
+          enemyKilledOperatives: 0,
           selectedOperativeCount:
             state.player1.team?._id === team?._id
               ? state.player1.selectedOperativeCount
@@ -69,6 +78,8 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
       })),
     tacOp: null,
     setTacOp: (tacOp) => set((state) => ({player1: {...state.player1, tacOp}})),
+    primaryOp: null,
+    setPrimaryOp: (primaryOp) => set((state) => ({player1: {...state.player1, primaryOp}})),
     hasInitiativeRerollCard: false,
     setHasInitiativeRerollCard: (value) =>
       set((state) => ({player1: {...state.player1, hasInitiativeRerollCard: value}})),
@@ -98,6 +109,20 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
     selectedOperativeCount: 0,
     setSelectedOperativeCount: (count) =>
       set((state) => ({player1: {...state.player1, selectedOperativeCount: count}})),
+    enemyKilledOperatives: 0,
+    setEnemyKilledOperatives: (count) =>
+      set((state) => ({player1: {...state.player1, enemyKilledOperatives: Math.max(0, count)}})),
+    adjustEnemyKilledOperatives: (delta, enemyStartingOperatives) =>
+      set((state) => ({
+        player1: {
+          ...state.player1,
+          enemyKilledOperatives: clamp(
+            state.player1.enemyKilledOperatives + delta,
+            0,
+            enemyStartingOperatives,
+          ),
+        },
+      })),
   },
   player2: {
     team: null,
@@ -107,8 +132,10 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
           ...state.player2,
           team: team,
           tacOp: null,
+          primaryOp: null,
           hasInitiativeRerollCard: false,
           initiativeModifierCards: [],
+          enemyKilledOperatives: 0,
           selectedOperativeCount:
             state.player2.team?._id === team?._id
               ? state.player2.selectedOperativeCount
@@ -117,6 +144,8 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
       })),
     tacOp: null,
     setTacOp: (tacOp) => set((state) => ({player2: {...state.player2, tacOp}})),
+    primaryOp: null,
+    setPrimaryOp: (primaryOp) => set((state) => ({player2: {...state.player2, primaryOp}})),
     hasInitiativeRerollCard: false,
     setHasInitiativeRerollCard: (value) =>
       set((state) => ({player2: {...state.player2, hasInitiativeRerollCard: value}})),
@@ -146,5 +175,19 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
     selectedOperativeCount: 0,
     setSelectedOperativeCount: (count) =>
       set((state) => ({player2: {...state.player2, selectedOperativeCount: count}})),
+    enemyKilledOperatives: 0,
+    setEnemyKilledOperatives: (count) =>
+      set((state) => ({player2: {...state.player2, enemyKilledOperatives: Math.max(0, count)}})),
+    adjustEnemyKilledOperatives: (delta, enemyStartingOperatives) =>
+      set((state) => ({
+        player2: {
+          ...state.player2,
+          enemyKilledOperatives: clamp(
+            state.player2.enemyKilledOperatives + delta,
+            0,
+            enemyStartingOperatives,
+          ),
+        },
+      })),
   },
 }))
