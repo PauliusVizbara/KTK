@@ -64,7 +64,10 @@ function SkullLine({count}: {count: number}) {
   return (
     <div className="flex items-center gap-1">
       {Array.from({length: Math.min(6, count)}).map((_, index) => (
-        <span key={`skull-${count}-${index}`} className="inline-flex h-6 w-6 items-center justify-center">
+        <span
+          key={`skull-${count}-${index}`}
+          className="inline-flex h-6 w-6 items-center justify-center"
+        >
           <Image
             src="/images/skull.svg"
             alt="Skull"
@@ -137,8 +140,16 @@ export default async function StatsPage() {
             const p2Primary = game.scores?.player2?.primaryBonus ?? 0
             const p2Total = game.scores?.player2?.total ?? 0
             const isTie = p1Total === p2Total
-            const p1TextColor = isTie ? 'text-zinc-700' : p1Total > p2Total ? 'text-green-600' : 'text-red-600'
-            const p2TextColor = isTie ? 'text-zinc-700' : p2Total > p1Total ? 'text-green-600' : 'text-red-600'
+            const p1TextColor = isTie
+              ? 'text-zinc-700'
+              : p1Total > p2Total
+                ? 'text-green-600'
+                : 'text-red-600'
+            const p2TextColor = isTie
+              ? 'text-zinc-700'
+              : p2Total > p1Total
+                ? 'text-green-600'
+                : 'text-red-600'
 
             return (
               <li key={game._id}>
@@ -151,26 +162,30 @@ export default async function StatsPage() {
                       />
                       <div className="flex min-w-0 flex-1 flex-col justify-between gap-5 sm:flex-row sm:items-center">
                         <div className="grid min-w-0 flex-1 grid-cols-[1fr_auto_1fr] items-center gap-x-6 gap-y-1 text-center sm:max-w-xl">
-                        <div className="min-w-0">
-                          <div
-                            className={`truncate text-lg font-bold uppercase tracking-wide sm:text-xl ${p1TextColor}`}
-                          >
-                            {team1}
+                          <div className="min-w-0">
+                            <div
+                              className={`truncate text-lg font-bold uppercase tracking-wide sm:text-xl ${p1TextColor}`}
+                            >
+                              {team1}
+                            </div>
+                            <div className={`mt-1 text-base font-bold sm:text-lg ${p1TextColor}`}>
+                              {p1Total}
+                            </div>
                           </div>
-                          <div className={`mt-1 text-base font-bold sm:text-lg ${p1TextColor}`}>{p1Total}</div>
-                        </div>
-                        <div className="flex items-center justify-center text-sm font-semibold uppercase tracking-wider text-zinc-600">
-                          Versus
-                        </div>
-                        <div className="min-w-0">
-                          <div
-                            className={`truncate text-lg font-bold uppercase tracking-wide sm:text-xl ${p2TextColor}`}
-                          >
-                            {team2}
+                          <div className="flex items-center justify-center text-sm font-semibold uppercase tracking-wider text-zinc-600">
+                            Versus
                           </div>
-                          <div className={`mt-1 text-base font-bold sm:text-lg ${p2TextColor}`}>{p2Total}</div>
+                          <div className="min-w-0">
+                            <div
+                              className={`truncate text-lg font-bold uppercase tracking-wide sm:text-xl ${p2TextColor}`}
+                            >
+                              {team2}
+                            </div>
+                            <div className={`mt-1 text-base font-bold sm:text-lg ${p2TextColor}`}>
+                              {p2Total}
+                            </div>
+                          </div>
                         </div>
-                      </div>
 
                         <div className="flex items-center gap-3 self-end sm:self-auto">
                           <div className="text-right">

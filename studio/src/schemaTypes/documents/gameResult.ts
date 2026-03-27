@@ -24,8 +24,18 @@ export const gameResult = defineType({
       title: 'Teams Played',
       type: 'object',
       fields: [
-        defineField({name: 'player1', title: 'Player 1 Team', type: 'object', fields: [defineField({name: 'name', title: 'Name', type: 'string'})]}),
-        defineField({name: 'player2', title: 'Player 2 Team', type: 'object', fields: [defineField({name: 'name', title: 'Name', type: 'string'})]}),
+        defineField({
+          name: 'player1',
+          title: 'Player 1 Team',
+          type: 'object',
+          fields: [defineField({name: 'name', title: 'Name', type: 'string'})],
+        }),
+        defineField({
+          name: 'player2',
+          title: 'Player 2 Team',
+          type: 'object',
+          fields: [defineField({name: 'name', title: 'Name', type: 'string'})],
+        }),
       ],
     }),
     defineField({
