@@ -112,7 +112,7 @@ export const EquipmentAccordion = ({
   }
 
   return (
-    <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+    <div className="space-y-2 pr-2">
       {equipment.map((item) => {
         const isSelected = selectedIds.includes(item.id)
         const isExpanded = expandedId === item.id

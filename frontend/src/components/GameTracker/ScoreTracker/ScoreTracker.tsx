@@ -7,10 +7,11 @@ import {Button} from '@/components'
 type PlayerScores = {
   crit: number[][]
   tac: number[][]
-  enemyKillsByTp: number[]
+  enemyKillsTotal: number
 }
 
-const TP_LABELS = ['TP1', 'TP2', 'TP3', 'TP4'] as const
+const SCORING_TP_INDICES = [1, 2, 3] as const
+const TP_LABELS = ['TP2', 'TP3', 'TP4'] as const
 const CRIT_TAC_CAPS = [0, 2, 2, 2]
 const MAX_CRIT_TAC_TOTAL = 6
 
@@ -53,35 +54,15 @@ const getKillGrade = (enemyStartingOperatives: number, enemyKilled: number) => {
   return grade
 }
 
-const getKillGradeByTp = (enemyStartingOperatives: number, enemyKillsByTp: number[]) => {
-  let cumulativeKills = 0
-  return enemyKillsByTp.map((kills) => {
-    cumulativeKills += kills
-    return getKillGrade(enemyStartingOperatives, cumulativeKills)
-  })
-}
+const getKillOpPoints = (
+  playerKillGrade: number,
+  opponentKillGrade: number,
+): {gradePoints: number; hasComparisonPoint: boolean; total: number} => {
+  const gradePoints = clamp(playerKillGrade, 0, 5)
+  const hasComparisonPoint = playerKillGrade > opponentKillGrade
+  const total = gradePoints + (hasComparisonPoint ? 1 : 0)
 
-const getKillOpPointsByTp = (
-  playerKillGrades: number[],
-  opponentKillGrades: number[],
-): {pointsByTp: number[]; total: number} => {
-  const pointsByTp = [0, 0, 0, 0]
-
-  for (let tp = 0; tp < 4; tp += 1) {
-    const previousGrade = tp === 0 ? 0 : playerKillGrades[tp - 1]
-    const gradeGain = Math.max(0, playerKillGrades[tp] - previousGrade)
-    pointsByTp[tp] += gradeGain
-  }
-
-  if (playerKillGrades[3] > opponentKillGrades[3]) {
-    pointsByTp[3] += 1
-  }
-
-  const total = Math.min(
-    6,
-    pointsByTp.reduce((sum, points) => sum + points, 0),
-  )
-  return {pointsByTp, total}
+  return {gradePoints, hasComparisonPoint, total}
 }
 
 const getKillsToNextGrade = (enemyStartingOperatives: number, enemyKilled: number) => {
@@ -97,13 +78,15 @@ const ScoreTable = ({
   data,
   onDataChange,
   enemyStartingOperatives,
-  killOpTotal,
+  killOpGradePoints,
+  killOpHasComparisonPoint,
 }: {
   title: string
   data: PlayerScores
   onDataChange: (next: PlayerScores) => void
   enemyStartingOperatives: number
-  killOpTotal: number
+  killOpGradePoints: number
+  killOpHasComparisonPoint: boolean
 }) => {
   const toggleCritTacSkull = (key: 'crit' | 'tac', tpIndex: number, skullIndex: number) => {
     const capForTurn = CRIT_TAC_CAPS[tpIndex]
@@ -131,18 +114,18 @@ const ScoreTable = ({
     onDataChange({...data, [key]: nextTrack})
   }
 
-  const enemyKillsTotal = sum(data.enemyKillsByTp)
+  const enemyKillsTotal = data.enemyKillsTotal
   const killsToNextGrade = getKillsToNextGrade(enemyStartingOperatives, enemyKillsTotal)
 
   const adjustEnemyKillsTotal = (delta: number) => {
     const nextTotal = clamp(enemyKillsTotal + delta, 0, enemyStartingOperatives)
-    onDataChange({...data, enemyKillsByTp: [0, 0, 0, nextTotal]})
+    onDataChange({...data, enemyKillsTotal: nextTotal})
   }
 
   const renderKillOpSkulls = () => (
     <div className="flex items-center gap-1">
       {Array.from({length: 6}).map((_, index) => {
-        const isActive = index < killOpTotal
+        const isActive = index < 5 ? index < killOpGradePoints : killOpHasComparisonPoint
         return (
           <span
             key={`kill-op-${index}`}
@@ -230,25 +213,25 @@ const ScoreTable = ({
           <tbody>
             <tr className="border-b border-zinc-100">
               <td className="px-2 py-2 font-medium text-zinc-700">Critical Op</td>
-              {data.crit.map((tpSkulls, tpIndex) => (
+              {SCORING_TP_INDICES.map((tpIndex) => (
                 <td key={`crit-${tpIndex}`} className="px-2 py-2 text-center">
-                  {renderSkullSelector('crit', tpIndex, tpSkulls)}
+                  {renderSkullSelector('crit', tpIndex, data.crit[tpIndex])}
                 </td>
               ))}
             </tr>
 
             <tr className="border-b border-zinc-100">
               <td className="px-2 py-2 font-medium text-zinc-700">Tactical Op</td>
-              {data.tac.map((tpSkulls, tpIndex) => (
+              {SCORING_TP_INDICES.map((tpIndex) => (
                 <td key={`tac-${tpIndex}`} className="px-2 py-2 text-center">
-                  {renderSkullSelector('tac', tpIndex, tpSkulls)}
+                  {renderSkullSelector('tac', tpIndex, data.tac[tpIndex])}
                 </td>
               ))}
             </tr>
 
             <tr className="border-b border-zinc-100">
               <td className="px-2 py-2 font-medium text-zinc-700">Kill Op</td>
-              <td colSpan={4} className="px-2 py-2">
+              <td colSpan={3} className="px-2 py-2">
                 <div className="flex flex-col items-center text-sm text-zinc-700">
                   <div className="flex flex-wrap items-center justify-center gap-8">
                     {renderKillOpSkulls()}
@@ -288,34 +271,34 @@ export const ScoreTracker = () => {
   const [player1Scores, setPlayer1Scores] = React.useState<PlayerScores>({
     crit: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
     tac: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
-    enemyKillsByTp: [0, 0, 0, 0],
+    enemyKillsTotal: 0,
   })
 
   const [player2Scores, setPlayer2Scores] = React.useState<PlayerScores>({
     crit: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
     tac: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
-    enemyKillsByTp: [0, 0, 0, 0],
+    enemyKillsTotal: 0,
   })
 
   const player1EnemyStartingOperatives = clamp(player2.selectedOperativeCount || 10, 5, 14)
   const player2EnemyStartingOperatives = clamp(player1.selectedOperativeCount || 10, 5, 14)
 
-  const player1KillGrades = React.useMemo(
-    () => getKillGradeByTp(player1EnemyStartingOperatives, player1Scores.enemyKillsByTp),
-    [player1EnemyStartingOperatives, player1Scores.enemyKillsByTp],
+  const player1KillGrade = React.useMemo(
+    () => getKillGrade(player1EnemyStartingOperatives, player1Scores.enemyKillsTotal),
+    [player1EnemyStartingOperatives, player1Scores.enemyKillsTotal],
   )
-  const player2KillGrades = React.useMemo(
-    () => getKillGradeByTp(player2EnemyStartingOperatives, player2Scores.enemyKillsByTp),
-    [player2EnemyStartingOperatives, player2Scores.enemyKillsByTp],
+  const player2KillGrade = React.useMemo(
+    () => getKillGrade(player2EnemyStartingOperatives, player2Scores.enemyKillsTotal),
+    [player2EnemyStartingOperatives, player2Scores.enemyKillsTotal],
   )
 
   const player1KillOp = React.useMemo(
-    () => getKillOpPointsByTp(player1KillGrades, player2KillGrades),
-    [player1KillGrades, player2KillGrades],
+    () => getKillOpPoints(player1KillGrade, player2KillGrade),
+    [player1KillGrade, player2KillGrade],
   )
   const player2KillOp = React.useMemo(
-    () => getKillOpPointsByTp(player2KillGrades, player1KillGrades),
-    [player1KillGrades, player2KillGrades],
+    () => getKillOpPoints(player2KillGrade, player1KillGrade),
+    [player1KillGrade, player2KillGrade],
   )
 
   const player1Total =
@@ -345,14 +328,16 @@ export const ScoreTracker = () => {
           data={player1Scores}
           onDataChange={setPlayer1Scores}
           enemyStartingOperatives={player1EnemyStartingOperatives}
-          killOpTotal={player1KillOp.total}
+          killOpGradePoints={player1KillOp.gradePoints}
+          killOpHasComparisonPoint={player1KillOp.hasComparisonPoint}
         />
         <ScoreTable
           title={player2.team?.name ?? 'Player 2'}
           data={player2Scores}
           onDataChange={setPlayer2Scores}
           enemyStartingOperatives={player2EnemyStartingOperatives}
-          killOpTotal={player2KillOp.total}
+          killOpGradePoints={player2KillOp.gradePoints}
+          killOpHasComparisonPoint={player2KillOp.hasComparisonPoint}
         />
       </div>
     </div>

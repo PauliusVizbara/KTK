@@ -9,6 +9,7 @@ type PropType = {
   slides: React.ReactElement[]
   emblaRef: any
   emblaApi: any
+  showControls?: boolean
 }
 
 function getRandomInt(max: number) {
@@ -16,7 +17,7 @@ function getRandomInt(max: number) {
 }
 
 const EmblaCarousel: React.FC<PropType> = (props) => {
-  const {slides, emblaRef, emblaApi} = props
+  const {slides, emblaRef, emblaApi, showControls = true} = props
 
   const {prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick} =
     usePrevNextButtons(emblaApi)
@@ -35,18 +36,20 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
         </div>
       </section>
 
-      <div className="w-full flex justify-between mt-8 items-center">
-        <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
-        <Button
-          className="w-32 h-fit"
-          onClick={() => {
-            emblaApi?.scrollTo(getRandomInt(slides.length))
-          }}
-        >
-          Random
-        </Button>
-        <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
-      </div>
+      {showControls && (
+        <div className="w-full flex justify-between mt-8 items-center">
+          <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
+          <Button
+            className="w-32 h-fit"
+            onClick={() => {
+              emblaApi?.scrollTo(getRandomInt(slides.length))
+            }}
+          >
+            Random
+          </Button>
+          <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
+        </div>
+      )}
     </div>
   )
 }

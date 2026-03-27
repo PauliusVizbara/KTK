@@ -16,6 +16,7 @@ import Image from 'next/image'
 import {Select} from '@/components/select'
 import EmblaCarousel from '@/components/Common/Carousel/Carousel'
 import useEmblaCarousel from 'embla-carousel-react'
+import {usePrevNextButtons} from '@/components/Common/Carousel/EmblaCarouselArrowButtons'
 import {Divider} from '@/components/divider'
 import ReactDOM from 'react-dom'
 import {useShallow} from 'zustand/shallow'
@@ -38,6 +39,35 @@ interface StepProps {
   isLastStep: boolean
 }
 
+const getRandomInt = (max: number) => Math.floor(Math.random() * max)
+
+const CarouselStepControls = ({emblaApi, slidesCount}: {emblaApi: any; slidesCount: number}) => {
+  const {prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick} =
+    usePrevNextButtons(emblaApi)
+
+  return (
+    <div className="flex items-center gap-2">
+      <Button outline onClick={onPrevButtonClick} disabled={prevBtnDisabled}>
+        ←
+      </Button>
+      <Button
+        outline
+        className="min-w-24"
+        onClick={() => {
+          if (slidesCount === 0) return
+          emblaApi?.scrollTo(getRandomInt(slidesCount))
+        }}
+        disabled={slidesCount === 0}
+      >
+        Random
+      </Button>
+      <Button outline onClick={onNextButtonClick} disabled={nextBtnDisabled}>
+        →
+      </Button>
+    </div>
+  )
+}
+
 const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
   const {player1, player2} = useGameTrackerStore()
   const [player1Selection, setPlayer1Selection] = React.useState<{
@@ -53,46 +83,57 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
     <>
       <DialogBody className="flex-1 overflow-y-auto">
         <Heading className="mt-6" level={6}>
-          1. Each player selects a kill team for the battle.
+          Each player selects a kill team for the battle.
         </Heading>
-        <div className="flex gap-4">
-          <Field className="flex-1">
-            <Label>Player 1 Team</Label>
-            <Dropdown>
-              <DropdownButton outline className="w-full justify-between">
-                {player1Selection?.name || 'Select Team'}
-                <ChevronDownIcon />
-              </DropdownButton>
-              <DropdownMenu className="max-h-60 overflow-auto">
-                {teamSelectOptions.map((team) => (
-                  <DropdownItem
-                    key={team.id}
-                    onClick={() => setPlayer1Selection({name: team.name, id: team.id})}
-                  >
-                    {team.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+        <div className="mt-6 flex w-full items-start justify-around gap-4">
+          <Field className="w-72">
+            <Label className="block text-center text-base font-semibold">Player 1</Label>
+            <div className="mt-2 flex justify-center">
+              <Dropdown>
+                <DropdownButton
+                  outline
+                  className="w-72 max-w-full justify-between border-2 border-zinc-400 bg-white font-medium shadow-sm"
+                >
+                  {player1Selection?.name || 'Select Team'}
+                  <ChevronDownIcon />
+                </DropdownButton>
+                <DropdownMenu className="max-h-60 overflow-auto">
+                  {teamSelectOptions.map((team) => (
+                    <DropdownItem
+                      key={team.id}
+                      onClick={() => setPlayer1Selection({name: team.name, id: team.id})}
+                    >
+                      {team.name}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+            </div>
           </Field>
-          <Field className="flex-1">
-            <Label>Player 2 Team</Label>
-            <Dropdown>
-              <DropdownButton outline className="w-full justify-between">
-                {player2Selection?.name || 'Select Team'}
-                <ChevronDownIcon />
-              </DropdownButton>
-              <DropdownMenu className="max-h-60 overflow-auto">
-                {teamSelectOptions.map((team) => (
-                  <DropdownItem
-                    key={team.id}
-                    onClick={() => setPlayer2Selection({name: team.name, id: team.id})}
-                  >
-                    {team.name}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+
+          <Field className="w-72">
+            <Label className="block text-center text-base font-semibold">Player 2</Label>
+            <div className="mt-2 flex justify-center">
+              <Dropdown>
+                <DropdownButton
+                  outline
+                  className="w-72 max-w-full justify-between border-2 border-zinc-400 bg-white font-medium shadow-sm"
+                >
+                  {player2Selection?.name || 'Select Team'}
+                  <ChevronDownIcon />
+                </DropdownButton>
+                <DropdownMenu className="max-h-60 overflow-auto">
+                  {teamSelectOptions.map((team) => (
+                    <DropdownItem
+                      key={team.id}
+                      onClick={() => setPlayer2Selection({name: team.name, id: team.id})}
+                    >
+                      {team.name}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </Dropdown>
+            </div>
           </Field>
         </div>
       </DialogBody>
@@ -131,6 +172,7 @@ const SelectTacOpPlayer1Step = ({onNext, onBack}: StepProps) => {
             <EmblaCarousel
               emblaRef={emblaRef}
               emblaApi={emblaApi}
+              showControls={false}
               slides={player1TacOps.map((tacOp) => (
                 <TacOpCard key={tacOp._id} tacOp={tacOp} />
               ))}
@@ -140,19 +182,22 @@ const SelectTacOpPlayer1Step = ({onNext, onBack}: StepProps) => {
           )}
         </div>
       </DialogBody>
-      <DialogActions>
-        <Button onClick={onBack}>Previous</Button>
-        <Button
-          disabled={player1TacOps.length === 0}
-          onClick={() => {
-            const selectedTacOp = player1TacOps[emblaApi?.selectedScrollSnap() ?? 0]
-            if (!selectedTacOp) return
-            player1.setTacOp(selectedTacOp)
-            onNext()
-          }}
-        >
-          Next
-        </Button>
+      <DialogActions className="w-full sm:justify-between">
+        <CarouselStepControls emblaApi={emblaApi} slidesCount={player1TacOps.length} />
+        <div className="flex items-center gap-2">
+          <Button onClick={onBack}>Previous</Button>
+          <Button
+            disabled={player1TacOps.length === 0}
+            onClick={() => {
+              const selectedTacOp = player1TacOps[emblaApi?.selectedScrollSnap() ?? 0]
+              if (!selectedTacOp) return
+              player1.setTacOp(selectedTacOp)
+              onNext()
+            }}
+          >
+            Next
+          </Button>
+        </div>
       </DialogActions>
     </>
   )
@@ -177,6 +222,7 @@ const SelectTacOpPlayer2Step = ({onNext, onBack}: StepProps) => {
             <EmblaCarousel
               emblaRef={emblaRef}
               emblaApi={emblaApi}
+              showControls={false}
               slides={player2TacOps.map((tacOp) => (
                 <TacOpCard key={tacOp._id} tacOp={tacOp} />
               ))}
@@ -186,19 +232,22 @@ const SelectTacOpPlayer2Step = ({onNext, onBack}: StepProps) => {
           )}
         </div>
       </DialogBody>
-      <DialogActions>
-        <Button onClick={onBack}>Previous</Button>
-        <Button
-          disabled={player2TacOps.length === 0}
-          onClick={() => {
-            const selectedTacOp = player2TacOps[emblaApi?.selectedScrollSnap() ?? 0]
-            if (!selectedTacOp) return
-            player2.setTacOp(selectedTacOp)
-            onNext()
-          }}
-        >
-          Next
-        </Button>
+      <DialogActions className="w-full sm:justify-between">
+        <CarouselStepControls emblaApi={emblaApi} slidesCount={player2TacOps.length} />
+        <div className="flex items-center gap-2">
+          <Button onClick={onBack}>Previous</Button>
+          <Button
+            disabled={player2TacOps.length === 0}
+            onClick={() => {
+              const selectedTacOp = player2TacOps[emblaApi?.selectedScrollSnap() ?? 0]
+              if (!selectedTacOp) return
+              player2.setTacOp(selectedTacOp)
+              onNext()
+            }}
+          >
+            Next
+          </Button>
+        </div>
       </DialogActions>
     </>
   )
@@ -294,7 +343,7 @@ const SelectKillzoneStep = ({onNext, onBack}: StepProps) => {
   return (
     <>
       <DialogBody className="flex-1 overflow-y-auto">
-        <Field className="w-1/4">
+        <Field className="w-full sm:w-64">
           <Label>Kill Zone</Label>
           <Select value={killzone} onChange={(e) => setKillzone(e.target.value)} name="killzone">
             {KILLZONES.map((killzone) => (
@@ -309,33 +358,42 @@ const SelectKillzoneStep = ({onNext, onBack}: StepProps) => {
           <MapZoomModal selectedMap={zoomedInMap} clearSelection={() => setZoomedInMap(null)} />,
           document.body,
         )}
-        <EmblaCarousel
-          emblaRef={emblaRef}
-          emblaApi={emblaApi}
-          slides={maps[killzone as keyof typeof maps].map((map) => (
-            <Image
-              key={map}
-              src={map}
-              onClick={() => setZoomedInMap(map)}
-              className="w-full h-auto rounded-lg"
-              width={600}
-              height={600}
-              alt={''}
-              style={{objectFit: 'fill'}}
-            />
-          ))}
-        />
+        <div className="mx-auto w-full max-w-[280px] sm:max-w-[340px] md:max-w-[360px] lg:max-w-[640px]">
+          <EmblaCarousel
+            emblaRef={emblaRef}
+            emblaApi={emblaApi}
+            showControls={false}
+            slides={maps[killzone as keyof typeof maps].map((map) => (
+              <Image
+                key={map}
+                src={map}
+                onClick={() => setZoomedInMap(map)}
+                className="mx-auto h-auto w-full rounded-lg"
+                width={600}
+                height={600}
+                alt={''}
+                style={{objectFit: 'fill'}}
+              />
+            ))}
+          />
+        </div>
       </DialogBody>
-      <DialogActions>
-        <Button onClick={onBack}>Previous</Button>
-        <Button
-          onClick={() => {
-            setMap(maps[killzone as keyof typeof maps][emblaApi?.selectedScrollSnap() ?? 1])
-            onNext()
-          }}
-        >
-          Next
-        </Button>
+      <DialogActions className="w-full sm:justify-between">
+        <CarouselStepControls
+          emblaApi={emblaApi}
+          slidesCount={maps[killzone as keyof typeof maps].length}
+        />
+        <div className="flex items-center gap-2">
+          <Button onClick={onBack}>Previous</Button>
+          <Button
+            onClick={() => {
+              setMap(maps[killzone as keyof typeof maps][emblaApi?.selectedScrollSnap() ?? 1])
+              onNext()
+            }}
+          >
+            Next
+          </Button>
+        </div>
       </DialogActions>
     </>
   )
@@ -352,22 +410,26 @@ const SelectCritOpStep = ({onNext, onBack}: StepProps) => {
           <EmblaCarousel
             emblaRef={emblaRef}
             emblaApi={emblaApi}
+            showControls={false}
             slides={critOps.map((critOp) => (
               <CritOpCard key={critOp._id} critOp={critOp} />
             ))}
           />
         </div>
       </DialogBody>
-      <DialogActions>
-        <Button onClick={onBack}>Previous</Button>
-        <Button
-          onClick={() => {
-            setCritOp(critOps[emblaApi?.selectedScrollSnap() ?? 1])
-            onNext()
-          }}
-        >
-          Next
-        </Button>
+      <DialogActions className="w-full sm:justify-between">
+        <CarouselStepControls emblaApi={emblaApi} slidesCount={critOps.length} />
+        <div className="flex items-center gap-2">
+          <Button onClick={onBack}>Previous</Button>
+          <Button
+            onClick={() => {
+              setCritOp(critOps[emblaApi?.selectedScrollSnap() ?? 1])
+              onNext()
+            }}
+          >
+            Next
+          </Button>
+        </div>
       </DialogActions>
     </>
   )
@@ -385,18 +447,18 @@ const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
         <Heading className="mt-6" level={6}>
           Roll-off: the winner decides who has initiative:
         </Heading>
-        <div className="mt-4 flex">
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
           <Button
             color={setupInitiative === 'player1' ? 'primary' : 'secondary'}
             onClick={() => setSetupInitiative('player1')}
-            className="flex-1 m-4"
+            className="w-full flex-1 sm:m-2"
           >
             {gameTrackerStore.player1.team?.name}
           </Button>
           <Button
             color={setupInitiative === 'player2' ? 'primary' : 'secondary'}
             onClick={() => setSetupInitiative('player2')}
-            className="flex-1 m-4"
+            className="w-full flex-1 sm:m-2"
           >
             {gameTrackerStore.player2.team?.name}
           </Button>
@@ -463,15 +525,15 @@ const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
             that are ignored for the Kill Op.
           </p>
 
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
             {/* Player 1 Counter */}
-            <div className="p-4 border rounded-lg bg-zinc-50 dark:bg-zinc-900">
+            <div className="rounded-lg border bg-zinc-50 p-3 dark:bg-zinc-900 sm:p-4">
               <Heading level={6} className="mb-4">
                 {player1.team?.name || 'Player 1'}
               </Heading>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-sm text-zinc-500">Operatives</span>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                   <Button
                     outline
                     onClick={() =>
@@ -483,7 +545,7 @@ const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
                   >
                     -
                   </Button>
-                  <span className="text-2xl font-bold w-8 text-center">
+                  <span className="w-8 text-center text-xl font-bold sm:text-2xl">
                     {player1.selectedOperativeCount}
                   </span>
                   <Button
@@ -502,13 +564,13 @@ const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
             </div>
 
             {/* Player 2 Counter */}
-            <div className="p-4 border rounded-lg bg-zinc-50 dark:bg-zinc-900">
+            <div className="rounded-lg border bg-zinc-50 p-3 dark:bg-zinc-900 sm:p-4">
               <Heading level={6} className="mb-4">
                 {player2.team?.name || 'Player 2'}
               </Heading>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-sm text-zinc-500">Operatives</span>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                   <Button
                     outline
                     onClick={() =>
@@ -520,7 +582,7 @@ const SelectOperativesStep = ({onNext, onBack}: StepProps) => {
                   >
                     -
                   </Button>
-                  <span className="text-2xl font-bold w-8 text-center">
+                  <span className="w-8 text-center text-xl font-bold sm:text-2xl">
                     {player2.selectedOperativeCount}
                   </span>
                   <Button
@@ -679,7 +741,7 @@ const RevealEquipmentStep = ({onNext, onBack}: StepProps) => {
   return (
     <>
       <DialogBody className="flex-1 overflow-y-auto">
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div>
             <Heading level={6} className="mb-4">
               {player1.team?.name} Selections
@@ -861,11 +923,13 @@ export const SetupDialog = (props: Props) => {
     <>
       <Dialog
         size={currentStep.size}
-        className="h-[calc(100dvh-2rem)] sm:h-[85vh] sm:max-h-[85vh] flex flex-col overflow-hidden"
+        className="flex h-[calc(100dvh-1rem)] max-h-[calc(100dvh-1rem)] min-h-0 flex-col overflow-hidden sm:h-[calc(100dvh-8rem)] sm:max-h-[calc(100dvh-8rem)] lg:h-[85vh] lg:max-h-[85vh]"
         open={isSetupOpen}
         onClose={() => setIsSetupOpen(false)}
       >
-        <DialogTitle className="text-4xl uppercase bold">{currentStep.title}</DialogTitle>
+        <DialogTitle className="text-lg font-bold uppercase sm:text-xl lg:text-2xl">
+          {currentStep.title}
+        </DialogTitle>
         <DialogDescription>{currentStep.description}</DialogDescription>
         {React.createElement(currentStep.component, {
           onNext: () => setStep(step + 1),
