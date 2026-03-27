@@ -2,9 +2,365 @@
 import {useGameTrackerStore} from '@/app/store'
 import {Button, CritOpCard, PrimaryOpDialog, ScoreTracker, TurnInitiativeDialog} from '@/components'
 import React from 'react'
+import Image from 'next/image'
 import {MapZoomModal} from '../SetupDialog/SetupDialog'
 import ReactDOM from 'react-dom'
 import {XMarkIcon} from '@heroicons/react/16/solid'
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/dialog'
+
+type PrimaryOp = 'critical' | 'tactical' | 'kill' | null
+
+const getPrimaryOpSourcePoints = (
+  primaryOp: PrimaryOp,
+  critOpPoints: number,
+  tacOpPoints: number,
+  killOpPoints: number,
+) => {
+  if (primaryOp === 'critical') return critOpPoints
+  if (primaryOp === 'tactical') return tacOpPoints
+  if (primaryOp === 'kill') return killOpPoints
+  return 0
+}
+
+const renderScoreSkulls = (
+  points: number,
+  row: Exclude<PrimaryOp, null>,
+  primaryOp: PrimaryOp,
+  primaryBonus: number,
+  revealStep: number,
+) => {
+  const hasPrimaryBonus = primaryOp === row && primaryBonus > 0
+  const revealedPoints = Math.min(points, revealStep)
+  const revealedBonus = hasPrimaryBonus
+    ? Math.min(primaryBonus, Math.max(0, revealStep - points))
+    : 0
+
+  return (
+    <div className="flex items-center justify-start gap-2">
+      <AnimatedSkulls count={6} active={Math.min(6, revealedPoints)} />
+      {hasPrimaryBonus ? (
+        <div
+          className={
+            revealedBonus > 0
+              ? 'flex items-center gap-2 opacity-100'
+              : 'flex items-center gap-2 opacity-0'
+          }
+        >
+          <span className="text-zinc-500">+</span>
+          <AnimatedSkulls count={Math.min(6, primaryBonus)} active={Math.min(6, revealedBonus)} />
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+type RevealKey =
+  | 'player1Crit'
+  | 'player2Crit'
+  | 'player1Tac'
+  | 'player2Tac'
+  | 'player1Kill'
+  | 'player2Kill'
+
+type RevealState = Record<RevealKey, number>
+
+type TotalRevealState = {
+  player1: number
+  player2: number
+}
+
+const EMPTY_REVEAL_STATE: RevealState = {
+  player1Crit: 0,
+  player2Crit: 0,
+  player1Tac: 0,
+  player2Tac: 0,
+  player1Kill: 0,
+  player2Kill: 0,
+}
+
+const EMPTY_TOTAL_REVEAL_STATE: TotalRevealState = {
+  player1: 0,
+  player2: 0,
+}
+
+const AnimatedSkulls = ({count, active}: {count: number; active: number}) => (
+  <div className="flex items-center gap-1">
+    {Array.from({length: count}).map((_, index) => {
+      const isVisible = index < active
+      return (
+        <span
+          key={`result-skull-${index}`}
+          className="inline-flex h-6 w-6 items-center justify-center"
+        >
+          <Image
+            src="/images/skull.svg"
+            alt="Skull"
+            width={14}
+            height={14}
+            className={isVisible ? 'opacity-100' : 'opacity-20 grayscale'}
+            style={
+              isVisible
+                ? {
+                    filter:
+                      'brightness(0) saturate(100%) invert(49%) sepia(94%) saturate(3145%) hue-rotate(2deg) brightness(98%) contrast(94%)',
+                  }
+                : undefined
+            }
+          />
+        </span>
+      )
+    })}
+  </div>
+)
+
+const GameResultDialog = ({
+  open,
+  onClose,
+  player1Name,
+  player2Name,
+  player1Crit,
+  player1Tac,
+  player1Kill,
+  player1Primary,
+  player2Crit,
+  player2Tac,
+  player2Kill,
+  player2Primary,
+}: {
+  open: boolean
+  onClose: () => void
+  player1Name: string
+  player2Name: string
+  player1Crit: number
+  player1Tac: number
+  player1Kill: number
+  player1Primary: PrimaryOp
+  player2Crit: number
+  player2Tac: number
+  player2Kill: number
+  player2Primary: PrimaryOp
+}) => {
+  const player1PrimarySource = getPrimaryOpSourcePoints(
+    player1Primary,
+    player1Crit,
+    player1Tac,
+    player1Kill,
+  )
+  const player2PrimarySource = getPrimaryOpSourcePoints(
+    player2Primary,
+    player2Crit,
+    player2Tac,
+    player2Kill,
+  )
+
+  const player1PrimaryBonus = Math.ceil(player1PrimarySource / 2)
+  const player2PrimaryBonus = Math.ceil(player2PrimarySource / 2)
+
+  const player1Total = player1Crit + player1Tac + player1Kill + player1PrimaryBonus
+  const player2Total = player2Crit + player2Tac + player2Kill + player2PrimaryBonus
+
+  const [revealState, setRevealState] = React.useState<RevealState>(EMPTY_REVEAL_STATE)
+  const [totalReveal, setTotalReveal] = React.useState<TotalRevealState>(EMPTY_TOTAL_REVEAL_STATE)
+
+  React.useEffect(() => {
+    if (!open) {
+      setRevealState(EMPTY_REVEAL_STATE)
+      setTotalReveal(EMPTY_TOTAL_REVEAL_STATE)
+      return
+    }
+
+    setRevealState(EMPTY_REVEAL_STATE)
+    setTotalReveal(EMPTY_TOTAL_REVEAL_STATE)
+
+    const revealTargets: Array<{key: RevealKey; total: number}> = [
+      {
+        key: 'player1Crit',
+        total: player1Crit + (player1Primary === 'critical' ? player1PrimaryBonus : 0),
+      },
+      {
+        key: 'player2Crit',
+        total: player2Crit + (player2Primary === 'critical' ? player2PrimaryBonus : 0),
+      },
+      {
+        key: 'player1Tac',
+        total: player1Tac + (player1Primary === 'tactical' ? player1PrimaryBonus : 0),
+      },
+      {
+        key: 'player2Tac',
+        total: player2Tac + (player2Primary === 'tactical' ? player2PrimaryBonus : 0),
+      },
+      {
+        key: 'player1Kill',
+        total: player1Kill + (player1Primary === 'kill' ? player1PrimaryBonus : 0),
+      },
+      {
+        key: 'player2Kill',
+        total: player2Kill + (player2Primary === 'kill' ? player2PrimaryBonus : 0),
+      },
+    ]
+
+    const totalAnimatedSkulls = revealTargets.reduce((sum, target) => sum + target.total, 0)
+    if (totalAnimatedSkulls <= 0) {
+      return
+    }
+
+    const skullStepDelay = 137
+    const opDelay = 35
+    const totalStepDelay = 74
+    const beforeTotalDelay = 200
+    let elapsed = 0
+    const timeoutIds: number[] = []
+
+    revealTargets.forEach(({key, total}) => {
+      for (let step = 1; step <= total; step += 1) {
+        elapsed += skullStepDelay
+        const timeoutId = window.setTimeout(() => {
+          setRevealState((current) => ({...current, [key]: step}))
+        }, elapsed)
+        timeoutIds.push(timeoutId)
+      }
+
+      elapsed += opDelay
+    })
+
+    elapsed += beforeTotalDelay
+
+    const maxTotal = Math.max(player1Total, player2Total)
+    for (let step = 1; step <= maxTotal; step += 1) {
+      elapsed += totalStepDelay
+      const timeoutId = window.setTimeout(() => {
+        setTotalReveal({
+          player1: Math.min(step, player1Total),
+          player2: Math.min(step, player2Total),
+        })
+      }, elapsed)
+      timeoutIds.push(timeoutId)
+    }
+
+    return () => {
+      timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId))
+    }
+  }, [
+    open,
+    player1Crit,
+    player1Tac,
+    player1Kill,
+    player1Primary,
+    player2Crit,
+    player2Tac,
+    player2Kill,
+    player2Primary,
+    player1PrimaryBonus,
+    player2PrimaryBonus,
+    player1Total,
+    player2Total,
+  ])
+
+  return (
+    <Dialog size="3xl" open={open} onClose={onClose}>
+      <DialogTitle className="text-2xl font-bold uppercase">Game Result</DialogTitle>
+      <DialogDescription>Turning Point 4 complete. Final score summary.</DialogDescription>
+
+      <DialogBody>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-zinc-200 text-zinc-700">
+                <th className="px-2 py-2 text-left">Track</th>
+                <th className="px-2 py-2 text-center">{player1Name}</th>
+                <th className="px-2 py-2 text-center">{player2Name}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b border-zinc-100">
+                <td className="px-2 py-2">Critical Op</td>
+                <td className="px-2 py-2 text-left font-semibold">
+                  {renderScoreSkulls(
+                    player1Crit,
+                    'critical',
+                    player1Primary,
+                    player1PrimaryBonus,
+                    revealState.player1Crit,
+                  )}
+                </td>
+                <td className="px-2 py-2 text-left font-semibold">
+                  {renderScoreSkulls(
+                    player2Crit,
+                    'critical',
+                    player2Primary,
+                    player2PrimaryBonus,
+                    revealState.player2Crit,
+                  )}
+                </td>
+              </tr>
+              <tr className="border-b border-zinc-100">
+                <td className="px-2 py-2">Tactical Op</td>
+                <td className="px-2 py-2 text-left font-semibold">
+                  {renderScoreSkulls(
+                    player1Tac,
+                    'tactical',
+                    player1Primary,
+                    player1PrimaryBonus,
+                    revealState.player1Tac,
+                  )}
+                </td>
+                <td className="px-2 py-2 text-left font-semibold">
+                  {renderScoreSkulls(
+                    player2Tac,
+                    'tactical',
+                    player2Primary,
+                    player2PrimaryBonus,
+                    revealState.player2Tac,
+                  )}
+                </td>
+              </tr>
+              <tr className="border-b border-zinc-100">
+                <td className="px-2 py-2">Kill Op</td>
+                <td className="px-2 py-2 text-left font-semibold">
+                  {renderScoreSkulls(
+                    player1Kill,
+                    'kill',
+                    player1Primary,
+                    player1PrimaryBonus,
+                    revealState.player1Kill,
+                  )}
+                </td>
+                <td className="px-2 py-2 text-left font-semibold">
+                  {renderScoreSkulls(
+                    player2Kill,
+                    'kill',
+                    player2Primary,
+                    player2PrimaryBonus,
+                    revealState.player2Kill,
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-2 py-2 font-bold uppercase">Final Total</td>
+                <td className="px-2 py-2 text-center">
+                  <span className="text-lg font-bold text-zinc-900">{totalReveal.player1}</span>
+                </td>
+                <td className="px-2 py-2 text-center">
+                  <span className="text-lg font-bold text-zinc-900">{totalReveal.player2}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </DialogBody>
+
+      <DialogActions>
+        <Button onClick={onClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
 
 const CritOpModal = ({onClose}: {onClose: () => void}) => {
   const {critOp} = useGameTrackerStore()
@@ -42,6 +398,7 @@ export const StateTracker = () => {
   const [showCritOp, setShowCritOp] = React.useState(false)
   const [showTurnInitiative, setShowTurnInitiative] = React.useState(false)
   const [showPrimaryOp, setShowPrimaryOp] = React.useState(false)
+  const [showGameResult, setShowGameResult] = React.useState(false)
   const [hasOpenedInitialInitiative, setHasOpenedInitialInitiative] = React.useState(false)
 
   const tieWinnerName = React.useMemo(() => {
@@ -131,6 +488,11 @@ export const StateTracker = () => {
           </div>
           <Button
             onClick={() => {
+              if (turningPoint >= 4) {
+                setShowGameResult(true)
+                return
+              }
+
               setTurningPoint(turningPoint + 1)
               setShowTurnInitiative(true)
             }}
@@ -249,6 +611,21 @@ export const StateTracker = () => {
           player2.setPrimaryOp(player2PrimaryOp)
           setShowPrimaryOp(false)
         }}
+      />
+
+      <GameResultDialog
+        open={showGameResult}
+        onClose={() => setShowGameResult(false)}
+        player1Name={player1.team?.name || 'Player 1'}
+        player2Name={player2.team?.name || 'Player 2'}
+        player1Crit={player1.critOpPoints}
+        player1Tac={player1.tacOpPoints}
+        player1Kill={player1.killOpPoints}
+        player1Primary={player1.primaryOp}
+        player2Crit={player2.critOpPoints}
+        player2Tac={player2.tacOpPoints}
+        player2Kill={player2.killOpPoints}
+        player2Primary={player2.primaryOp}
       />
     </div>
   )

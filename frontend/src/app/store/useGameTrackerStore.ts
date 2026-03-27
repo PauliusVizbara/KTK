@@ -17,6 +17,12 @@ interface PlayerState {
   removeInitiativeModifierCardAt: (index: number) => void
   score: number
   setScore: (score: number) => void
+  critOpPoints: number
+  setCritOpPoints: (points: number) => void
+  tacOpPoints: number
+  setTacOpPoints: (points: number) => void
+  killOpPoints: number
+  setKillOpPoints: (points: number) => void
   cp: number
   setCp: (cp: number) => void
   equipment: Equipment[]
@@ -69,6 +75,10 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
           primaryOp: null,
           hasInitiativeRerollCard: false,
           initiativeModifierCards: [],
+          score: 0,
+          critOpPoints: 0,
+          tacOpPoints: 0,
+          killOpPoints: 0,
           enemyKilledOperatives: 0,
           selectedOperativeCount:
             state.player1.team?._id === team?._id
@@ -102,6 +112,15 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
       })),
     score: 0,
     setScore: (score) => set((state) => ({player1: {...state.player1, score}})),
+    critOpPoints: 0,
+    setCritOpPoints: (points) =>
+      set((state) => ({player1: {...state.player1, critOpPoints: points}})),
+    tacOpPoints: 0,
+    setTacOpPoints: (points) =>
+      set((state) => ({player1: {...state.player1, tacOpPoints: points}})),
+    killOpPoints: 0,
+    setKillOpPoints: (points) =>
+      set((state) => ({player1: {...state.player1, killOpPoints: points}})),
     cp: 2,
     setCp: (cp) => set((state) => ({player1: {...state.player1, cp}})),
     equipment: [],
@@ -135,6 +154,10 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
           primaryOp: null,
           hasInitiativeRerollCard: false,
           initiativeModifierCards: [],
+          score: 0,
+          critOpPoints: 0,
+          tacOpPoints: 0,
+          killOpPoints: 0,
           enemyKilledOperatives: 0,
           selectedOperativeCount:
             state.player2.team?._id === team?._id
@@ -168,6 +191,15 @@ export const useGameTrackerStore = create<GameTrackerState>((set) => ({
       })),
     score: 0,
     setScore: (score) => set((state) => ({player2: {...state.player2, score}})),
+    critOpPoints: 0,
+    setCritOpPoints: (points) =>
+      set((state) => ({player2: {...state.player2, critOpPoints: points}})),
+    tacOpPoints: 0,
+    setTacOpPoints: (points) =>
+      set((state) => ({player2: {...state.player2, tacOpPoints: points}})),
+    killOpPoints: 0,
+    setKillOpPoints: (points) =>
+      set((state) => ({player2: {...state.player2, killOpPoints: points}})),
     cp: 2,
     setCp: (cp) => set((state) => ({player2: {...state.player2, cp}})),
     equipment: [],

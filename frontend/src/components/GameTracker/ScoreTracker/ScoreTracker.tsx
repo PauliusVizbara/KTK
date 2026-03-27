@@ -315,10 +315,13 @@ export const ScoreTracker = () => {
     [player1KillGrade, player2KillGrade],
   )
 
-  const player1Total =
-    getTrackTotal(player1Scores.crit) + getTrackTotal(player1Scores.tac) + player1KillOp.total
-  const player2Total =
-    getTrackTotal(player2Scores.crit) + getTrackTotal(player2Scores.tac) + player2KillOp.total
+  const player1CritTotal = getTrackTotal(player1Scores.crit)
+  const player1TacTotal = getTrackTotal(player1Scores.tac)
+  const player2CritTotal = getTrackTotal(player2Scores.crit)
+  const player2TacTotal = getTrackTotal(player2Scores.tac)
+
+  const player1Total = player1CritTotal + player1TacTotal + player1KillOp.total
+  const player2Total = player2CritTotal + player2TacTotal + player2KillOp.total
 
   React.useEffect(() => {
     if (player1.score !== player1Total) {
@@ -328,7 +331,56 @@ export const ScoreTracker = () => {
     if (player2.score !== player2Total) {
       player2.setScore(player2Total)
     }
-  }, [player1.score, player2.score, player1.setScore, player2.setScore, player1Total, player2Total])
+
+    if (player1.critOpPoints !== player1CritTotal) {
+      player1.setCritOpPoints(player1CritTotal)
+    }
+
+    if (player1.tacOpPoints !== player1TacTotal) {
+      player1.setTacOpPoints(player1TacTotal)
+    }
+
+    if (player1.killOpPoints !== player1KillOp.total) {
+      player1.setKillOpPoints(player1KillOp.total)
+    }
+
+    if (player2.critOpPoints !== player2CritTotal) {
+      player2.setCritOpPoints(player2CritTotal)
+    }
+
+    if (player2.tacOpPoints !== player2TacTotal) {
+      player2.setTacOpPoints(player2TacTotal)
+    }
+
+    if (player2.killOpPoints !== player2KillOp.total) {
+      player2.setKillOpPoints(player2KillOp.total)
+    }
+  }, [
+    player1.score,
+    player2.score,
+    player1.setScore,
+    player2.setScore,
+    player1Total,
+    player2Total,
+    player1CritTotal,
+    player1TacTotal,
+    player1KillOp.total,
+    player2CritTotal,
+    player2TacTotal,
+    player2KillOp.total,
+    player1.critOpPoints,
+    player1.tacOpPoints,
+    player1.killOpPoints,
+    player1.setCritOpPoints,
+    player1.setTacOpPoints,
+    player1.setKillOpPoints,
+    player2.critOpPoints,
+    player2.tacOpPoints,
+    player2.killOpPoints,
+    player2.setCritOpPoints,
+    player2.setTacOpPoints,
+    player2.setKillOpPoints,
+  ])
 
   if (!isSetupDone) {
     return null
