@@ -28,13 +28,6 @@ const KILL_GRADE_THRESHOLDS: Record<number, [number, number, number, number, num
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
-const EMPTY_SKULL_SELECTIONS = [
-  [0, 0],
-  [0, 0],
-  [0, 0],
-  [0, 0],
-] as number[][]
-
 const getTrackPointsByTp = (track: number[][]) =>
   track.map((tpSkulls, tpIndex) => clamp(sum(tpSkulls), 0, CRIT_TAC_CAPS[tpIndex]))
 
@@ -83,7 +76,7 @@ const ScoreTable = ({
 }: {
   title: string
   data: PlayerScores
-  onDataChange: React.Dispatch<React.SetStateAction<PlayerScores>>
+  onDataChange: (next: PlayerScores) => void
   enemyStartingOperatives: number
   enemyKillsTotal: number
   onSetEnemyKillsTotal: (nextTotal: number) => void
@@ -284,15 +277,15 @@ const ScoreTable = ({
 export const ScoreTracker = () => {
   const {isSetupDone, player1, player2} = useGameTrackerStore()
 
-  const [player1Scores, setPlayer1Scores] = React.useState<PlayerScores>({
-    crit: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
-    tac: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
-  })
+  const player1Scores: PlayerScores = {
+    crit: player1.critTrack,
+    tac: player1.tacTrack,
+  }
 
-  const [player2Scores, setPlayer2Scores] = React.useState<PlayerScores>({
-    crit: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
-    tac: EMPTY_SKULL_SELECTIONS.map((tp) => [...tp]),
-  })
+  const player2Scores: PlayerScores = {
+    crit: player2.critTrack,
+    tac: player2.tacTrack,
+  }
 
   const player1EnemyStartingOperatives = clamp(player2.selectedOperativeCount || 10, 5, 14)
   const player2EnemyStartingOperatives = clamp(player1.selectedOperativeCount || 10, 5, 14)
@@ -392,7 +385,10 @@ export const ScoreTracker = () => {
         <ScoreTable
           title={player1.team?.name ?? 'Player 1'}
           data={player1Scores}
-          onDataChange={setPlayer1Scores}
+          onDataChange={(next) => {
+            player1.setCritTrack(next.crit)
+            player1.setTacTrack(next.tac)
+          }}
           enemyStartingOperatives={player1EnemyStartingOperatives}
           enemyKillsTotal={player1.enemyKilledOperatives}
           onSetEnemyKillsTotal={player1.setEnemyKilledOperatives}
@@ -402,7 +398,10 @@ export const ScoreTracker = () => {
         <ScoreTable
           title={player2.team?.name ?? 'Player 2'}
           data={player2Scores}
-          onDataChange={setPlayer2Scores}
+          onDataChange={(next) => {
+            player2.setCritTrack(next.crit)
+            player2.setTacTrack(next.tac)
+          }}
           enemyStartingOperatives={player2EnemyStartingOperatives}
           enemyKillsTotal={player2.enemyKilledOperatives}
           onSetEnemyKillsTotal={player2.setEnemyKilledOperatives}

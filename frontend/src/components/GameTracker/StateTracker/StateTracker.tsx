@@ -133,6 +133,7 @@ const AnimatedSkulls = ({count, active}: {count: number; active: number}) => (
 const GameResultDialog = ({
   open,
   onClose,
+  onEndGame,
   gameSessionId,
   isUploaded,
   onUploaded,
@@ -152,6 +153,7 @@ const GameResultDialog = ({
 }: {
   open: boolean
   onClose: () => void
+  onEndGame: () => void
   gameSessionId: string
   isUploaded: boolean
   onUploaded: () => void
@@ -494,6 +496,9 @@ const GameResultDialog = ({
             Upload
           </Button>
         ) : null}
+        <Button outline onClick={onEndGame}>
+          End game
+        </Button>
         <Button onClick={onClose}>Close</Button>
       </DialogActions>
     </Dialog>
@@ -522,6 +527,7 @@ export const StateTracker = () => {
   const {
     isSetupDone,
     setIsSetupOpen,
+    resetGame,
     map,
     critOp,
     turningPoint,
@@ -740,6 +746,10 @@ export const StateTracker = () => {
       <GameResultDialog
         open={showGameResult}
         onClose={() => setShowGameResult(false)}
+        onEndGame={() => {
+          setShowGameResult(false)
+          resetGame()
+        }}
         gameSessionId={gameSessionId}
         isUploaded={isGameResultUploaded}
         onUploaded={markGameResultUploaded}

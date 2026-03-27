@@ -60,24 +60,32 @@ function formatDate(value?: string) {
 const ACTIVE_SKULL_FILTER =
   'brightness(0) saturate(100%) invert(49%) sepia(94%) saturate(3145%) hue-rotate(2deg) brightness(98%) contrast(94%)'
 
-function SkullLine({count}: {count: number}) {
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+
+function SkullLine({active, total}: {active: number; total: number}) {
+  const activeCount = clamp(active, 0, total)
+
   return (
     <div className="flex items-center gap-1">
-      {Array.from({length: Math.min(6, count)}).map((_, index) => (
-        <span
-          key={`skull-${count}-${index}`}
-          className="inline-flex h-6 w-6 items-center justify-center"
-        >
-          <Image
-            src="/images/skull.svg"
-            alt="Skull"
-            width={14}
-            height={14}
-            className="opacity-100"
-            style={{filter: ACTIVE_SKULL_FILTER}}
-          />
-        </span>
-      ))}
+      {Array.from({length: total}).map((_, index) => {
+        const isActive = index < activeCount
+
+        return (
+          <span
+            key={`skull-${total}-${activeCount}-${index}`}
+            className="inline-flex h-6 w-6 items-center justify-center"
+          >
+            <Image
+              src="/images/skull.svg"
+              alt="Skull"
+              width={14}
+              height={14}
+              className={isActive ? 'opacity-100' : 'opacity-40 grayscale'}
+              style={isActive ? {filter: ACTIVE_SKULL_FILTER} : undefined}
+            />
+          </span>
+        )
+      })}
     </div>
   )
 }
@@ -93,15 +101,15 @@ function StaticScoreSkulls({
   primaryOp: PrimaryOp
   primaryBonus: number
 }) {
-  const hasPrimaryBonus = primaryOp === row && primaryBonus > 0
+  const hasPrimaryBonus = primaryOp === row
 
   return (
     <div className="flex items-center justify-start gap-2">
-      <SkullLine count={points} />
+      <SkullLine active={points} total={6} />
       {hasPrimaryBonus ? (
         <div className="flex items-center gap-2">
           <span className="text-zinc-500">+</span>
-          <SkullLine count={primaryBonus} />
+          <SkullLine active={primaryBonus} total={3} />
         </div>
       ) : null}
     </div>
@@ -243,29 +251,29 @@ export default async function StatsPage() {
                           <tr className="border-b border-zinc-100">
                             <td className="px-3 py-2">Tactical Op</td>
                             <td className="px-3 py-2 text-left font-semibold">
-                              <div className="space-y-1">
+                              <div className="flex items-center gap-2">
                                 <StaticScoreSkulls
                                   points={p1Tac}
                                   row="tactical"
                                   primaryOp={game.selections?.player1PrimaryOp ?? null}
                                   primaryBonus={p1Primary}
                                 />
-                                <div className="text-xs font-medium text-zinc-600">
-                                  Tac Op: {game.selections?.player1TacOp || 'Not selected'}
-                                </div>
+                                <span className="text-xs font-medium text-zinc-600 whitespace-nowrap">
+                                  {game.selections?.player1TacOp || 'Not selected'}
+                                </span>
                               </div>
                             </td>
                             <td className="px-3 py-2 text-left font-semibold">
-                              <div className="space-y-1">
+                              <div className="flex items-center gap-2">
                                 <StaticScoreSkulls
                                   points={p2Tac}
                                   row="tactical"
                                   primaryOp={game.selections?.player2PrimaryOp ?? null}
                                   primaryBonus={p2Primary}
                                 />
-                                <div className="text-xs font-medium text-zinc-600">
-                                  Tac Op: {game.selections?.player2TacOp || 'Not selected'}
-                                </div>
+                                <span className="text-xs font-medium text-zinc-600 whitespace-nowrap">
+                                  {game.selections?.player2TacOp || 'Not selected'}
+                                </span>
                               </div>
                             </td>
                           </tr>
