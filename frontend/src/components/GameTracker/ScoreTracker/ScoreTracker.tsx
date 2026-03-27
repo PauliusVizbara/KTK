@@ -195,7 +195,7 @@ const ScoreTable = ({
   }
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-4">
+    <div className="rounded-lg bg-white p-4">
       <div className="mb-3 text-sm font-bold uppercase tracking-wide text-zinc-700">{title}</div>
 
       <div className="overflow-x-auto">
@@ -387,8 +387,8 @@ export const ScoreTracker = () => {
   }
 
   return (
-    <div className="w-full rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div className="w-full rounded-lg bg-white shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-2">
         <ScoreTable
           title={player1.team?.name ?? 'Player 1'}
           data={player1Scores}

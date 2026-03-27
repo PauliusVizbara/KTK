@@ -508,7 +508,7 @@ export const StateTracker = () => {
     <div className="w-full rounded-lg border border-zinc-200 bg-zinc-50 p-6 shadow-sm">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="flex flex-col items-center gap-4 text-center">
-          <div className="text-2xl font-semibold uppercase tracking-wide text-zinc-800">
+          <div className="text-[1.05rem] font-semibold uppercase tracking-wide text-zinc-800">
             Mission
           </div>
           <div className="flex flex-wrap justify-center gap-3">
@@ -522,7 +522,7 @@ export const StateTracker = () => {
         </div>
 
         <div className="flex flex-col items-center gap-4">
-          <div className="text-2xl font-semibold uppercase tracking-wide text-zinc-800">
+          <div className="text-[1.05rem] font-semibold uppercase tracking-wide text-zinc-800">
             Turning Point {turningPoint}
           </div>
           <Button

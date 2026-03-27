@@ -49,12 +49,8 @@ const PlayerResource = ({
   onPreviewEquipment: () => void
 }) => {
   return (
-    <section className="w-full overflow-hidden rounded-lg border-2 border-zinc-300 bg-zinc-50 shadow-sm">
-      <div className="flex items-center gap-4 border-b border-zinc-300 bg-white px-4 py-2">
-        <div className="text-base font-bold text-zinc-800">{name || 'Player'}</div>
-        <div className="h-px flex-1 bg-zinc-300" />
-      </div>
-
+    <section className="w-full overflow-hidden rounded-lg border border-zinc-200">
+      <div className="text-base font-bold text-zinc-800 p-4">{name || 'Player'}</div>
       <div className="grid grid-cols-1 gap-2 p-3 text-center md:grid-cols-4 md:items-start md:gap-2 lg:gap-3">
         <div>
           <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
@@ -149,7 +145,7 @@ export const ResourceTracker = () => {
 
   return (
     <>
-      <div className="flex w-full flex-col items-center rounded-lg border border-zinc-200 bg-white p-3 shadow">
+      <div className="flex w-full flex-col items-center rounded-lg">
         <div className="grid w-full grid-cols-2 gap-2">
           <PlayerResource
             name={player1.team?.name ?? null}
