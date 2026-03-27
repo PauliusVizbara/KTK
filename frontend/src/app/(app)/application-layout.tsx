@@ -18,7 +18,7 @@ import {usePathname} from 'next/navigation'
 
 const navItems = [
   {label: 'Game Tracker', url: '/'},
-  {label: 'Stats', url: '/stats'},
+  // {label: 'Stats', url: '/stats'},
 ]
 
 function TeamDropdownMenu() {

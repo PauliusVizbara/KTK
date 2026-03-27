@@ -233,7 +233,7 @@ const ScoreTable = ({
               <td className="px-2 py-2 font-medium text-zinc-700">Kill Op</td>
               <td colSpan={3} className="px-2 py-2">
                 <div className="flex flex-col items-center text-sm text-zinc-700">
-                  <div className="flex flex-wrap items-center justify-center gap-8">
+                  <div className="flex flex-wrap items-center justify-center gap-3">
                     {renderKillOpSkulls()}
                     <div className="flex flex-col items-center gap-1">
                       <div className="flex items-center gap-2">

@@ -85,14 +85,14 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
  <Heading className="mt-6" level={6}>
  Each player selects a kill team for the battle.
  </Heading>
- <div className="mt-6 flex w-full items-start justify-around gap-4">
- <Field className="w-72">
- <Label className="block text-center text-base font-semibold">Player 1</Label>
- <div className="mt-2 flex justify-center">
+ <div className="mt-6 flex w-full flex-col items-start gap-6 sm:flex-row sm:flex-wrap sm:items-start sm:justify-start sm:gap-8">
+ <Field className="w-full max-w-72">
+ <Label className="block text-left text-base font-semibold">Player 1</Label>
+ <div className="mt-2">
  <Dropdown>
  <DropdownButton
  outline
- className="w-72 max-w-full justify-between border-2 border-zinc-400 bg-white font-medium shadow-sm"
+ className="w-full max-w-full justify-between border-2 border-zinc-400 bg-white font-medium shadow-sm"
  >
  {player1Selection?.name || 'Select Team'}
  <ChevronDownIcon />
@@ -111,13 +111,13 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
  </div>
  </Field>
 
- <Field className="w-72">
- <Label className="block text-center text-base font-semibold">Player 2</Label>
- <div className="mt-2 flex justify-center">
+ <Field className="w-full max-w-72">
+ <Label className="block text-left text-base font-semibold">Player 2</Label>
+ <div className="mt-2">
  <Dropdown>
  <DropdownButton
  outline
- className="w-72 max-w-full justify-between border-2 border-zinc-400 bg-white font-medium shadow-sm"
+ className="w-full max-w-full justify-between border-2 border-zinc-400 bg-white font-medium shadow-sm"
  >
  {player2Selection?.name || 'Select Team'}
  <ChevronDownIcon />
@@ -156,7 +156,7 @@ const SelectTeamsStep = ({onNext, onBack, isFirstStep}: StepProps) => {
 const SelectTacOpPlayer1Step = ({onNext, onBack}: StepProps) => {
  const tacOps = useTacOpStore((s) => s.tacOps)
  const {player1} = useGameTrackerStore()
- const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
+ const [emblaRef, emblaApi] = useEmblaCarousel({loop: true, align: 'center'})
 
  const player1TacOps = React.useMemo(
  () => tacOps.filter((tacOp) => player1.team?.archetypes?.includes(tacOp.archetype)),
@@ -169,22 +169,32 @@ const SelectTacOpPlayer1Step = ({onNext, onBack}: StepProps) => {
  <div className="space-y-4">
  <PlayerTurnBanner playerName={player1.team?.name || 'Player 1'} />
  {player1TacOps.length > 0 ? (
+ <>
+ <div className="flex w-full justify-center">
+ <CarouselStepControls emblaApi={emblaApi} slidesCount={player1TacOps.length} />
+ </div>
  <EmblaCarousel
  emblaRef={emblaRef}
  emblaApi={emblaApi}
  showControls={false}
+ viewportClassName="px-2 sm:px-3 md:px-3 lg:px-0"
+ slideClassName="basis-[90%] sm:basis-[84%] md:basis-[74%] lg:basis-[62%]"
  slides={player1TacOps.map((tacOp) => (
- <TacOpCard key={tacOp._id} tacOp={tacOp} />
+ <TacOpCard
+ key={tacOp._id}
+ tacOp={tacOp}
+ className="max-w-[16rem] sm:max-w-[17rem] md:max-w-[18rem] lg:max-w-[19rem]"
+ />
  ))}
  />
+ </>
  ) : (
  <p>No Tac Ops available for this team archetype.</p>
  )}
  </div>
  </DialogBody>
- <DialogActions className="w-full sm:justify-between">
- <CarouselStepControls emblaApi={emblaApi} slidesCount={player1TacOps.length} />
- <div className="flex items-center gap-2">
+ <DialogActions className="w-full justify-end">
+ <div className="flex items-center justify-end gap-2">
  <Button onClick={onBack}>Previous</Button>
  <Button
  disabled={player1TacOps.length === 0}
@@ -206,7 +216,7 @@ const SelectTacOpPlayer1Step = ({onNext, onBack}: StepProps) => {
 const SelectTacOpPlayer2Step = ({onNext, onBack}: StepProps) => {
  const tacOps = useTacOpStore((s) => s.tacOps)
  const {player2} = useGameTrackerStore()
- const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
+ const [emblaRef, emblaApi] = useEmblaCarousel({loop: true, align: 'center'})
 
  const player2TacOps = React.useMemo(
  () => tacOps.filter((tacOp) => player2.team?.archetypes?.includes(tacOp.archetype)),
@@ -219,22 +229,32 @@ const SelectTacOpPlayer2Step = ({onNext, onBack}: StepProps) => {
  <div className="space-y-4">
  <PlayerTurnBanner playerName={player2.team?.name || 'Player 2'} />
  {player2TacOps.length > 0 ? (
+ <>
+ <div className="flex w-full justify-center">
+ <CarouselStepControls emblaApi={emblaApi} slidesCount={player2TacOps.length} />
+ </div>
  <EmblaCarousel
  emblaRef={emblaRef}
  emblaApi={emblaApi}
  showControls={false}
+ viewportClassName="px-2 sm:px-3 md:px-3 lg:px-0"
+ slideClassName="basis-[90%] sm:basis-[84%] md:basis-[74%] lg:basis-[62%]"
  slides={player2TacOps.map((tacOp) => (
- <TacOpCard key={tacOp._id} tacOp={tacOp} />
+ <TacOpCard
+ key={tacOp._id}
+ tacOp={tacOp}
+ className="max-w-[16rem] sm:max-w-[17rem] md:max-w-[18rem] lg:max-w-[19rem]"
+ />
  ))}
  />
+ </>
  ) : (
  <p>No Tac Ops available for this team archetype.</p>
  )}
  </div>
  </DialogBody>
- <DialogActions className="w-full sm:justify-between">
- <CarouselStepControls emblaApi={emblaApi} slidesCount={player2TacOps.length} />
- <div className="flex items-center gap-2">
+ <DialogActions className="w-full justify-end">
+ <div className="flex items-center justify-end gap-2">
  <Button onClick={onBack}>Previous</Button>
  <Button
  disabled={player2TacOps.length === 0}
@@ -358,6 +378,12 @@ const SelectKillzoneStep = ({onNext, onBack}: StepProps) => {
  <MapZoomModal selectedMap={zoomedInMap} clearSelection={() => setZoomedInMap(null)} />,
  document.body,
  )}
+ <div className="mb-4 flex w-full justify-center">
+ <CarouselStepControls
+ emblaApi={emblaApi}
+ slidesCount={maps[killzone as keyof typeof maps].length}
+ />
+ </div>
  <div className="mx-auto w-full max-w-[280px] sm:max-w-[340px] md:max-w-[360px] lg:max-w-[640px]">
  <EmblaCarousel
  emblaRef={emblaRef}
@@ -378,12 +404,8 @@ const SelectKillzoneStep = ({onNext, onBack}: StepProps) => {
  />
  </div>
  </DialogBody>
- <DialogActions className="w-full sm:justify-between">
- <CarouselStepControls
- emblaApi={emblaApi}
- slidesCount={maps[killzone as keyof typeof maps].length}
- />
- <div className="flex items-center gap-2">
+ <DialogActions className="w-full justify-end">
+ <div className="flex items-center justify-end gap-2">
  <Button onClick={onBack}>Previous</Button>
  <Button
  onClick={() => {
@@ -402,24 +424,32 @@ const SelectKillzoneStep = ({onNext, onBack}: StepProps) => {
 const SelectCritOpStep = ({onNext, onBack}: StepProps) => {
  const critOps = useCritOpStore((s) => s.critOps)
  const {setCritOp} = useGameTrackerStore()
- const [emblaRef, emblaApi] = useEmblaCarousel({loop: true})
+ const [emblaRef, emblaApi] = useEmblaCarousel({loop: true, align: 'center'})
  return (
  <>
  <DialogBody className="flex-1 overflow-y-auto">
- <div className="mt-4 flex">
+ <div className="mb-4 flex w-full justify-center">
+ <CarouselStepControls emblaApi={emblaApi} slidesCount={critOps.length} />
+ </div>
+ <div className="flex">
  <EmblaCarousel
  emblaRef={emblaRef}
  emblaApi={emblaApi}
  showControls={false}
+					 viewportClassName="px-2 sm:px-3 md:px-3 lg:px-0"
+					 slideClassName="basis-[90%] sm:basis-[84%] md:basis-[74%] lg:basis-[62%]"
  slides={critOps.map((critOp) => (
- <CritOpCard key={critOp._id} critOp={critOp} />
+ <CritOpCard
+ key={critOp._id}
+ critOp={critOp}
+								 className="max-w-[16rem] sm:max-w-[17rem] md:max-w-[18rem] lg:max-w-[19rem]"
+ />
  ))}
  />
  </div>
  </DialogBody>
- <DialogActions className="w-full sm:justify-between">
- <CarouselStepControls emblaApi={emblaApi} slidesCount={critOps.length} />
- <div className="flex items-center gap-2">
+ <DialogActions className="w-full justify-end">
+ <div className="flex items-center justify-end gap-2">
  <Button onClick={onBack}>Previous</Button>
  <Button
  onClick={() => {

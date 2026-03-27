@@ -11,7 +11,7 @@ export default async function Home() {
   const tacOps = await client.fetch(tacOpQuery)
   const universalEquipment = await client.fetch(universalEquipmentQuery)
   return (
-    <>
+    <div className="flex flex-col gap-6">
       <SetupDialog
         initialTeams={teamSelectOptions}
         critOps={critOps}
@@ -21,6 +21,6 @@ export default async function Home() {
       <StateTracker />
       <ScoreTracker />
       <ResourceTracker />
-    </>
+    </div>
   )
 }

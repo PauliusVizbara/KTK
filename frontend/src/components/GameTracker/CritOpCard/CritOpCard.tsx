@@ -9,7 +9,7 @@ export const CritOpCard = ({critOp, className}: {critOp: CritOp; className?: str
   return (
     <div
       className={clsx(
-        'mx-auto max-h-[34vh] max-w-[14rem] overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-md sm:max-h-[38vh] sm:max-w-[15rem] md:max-h-[42vh] md:max-w-[17rem] lg:max-h-[46vh] lg:max-w-[18rem] xl:max-h-[60vh] xl:max-w-sm',
+        'mx-auto max-h-[46vh] max-w-[14rem] overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-md sm:max-h-[50vh] sm:max-w-[15rem] md:max-h-[56vh] md:max-w-[17rem] lg:max-h-[60vh] lg:max-w-[18rem] xl:max-h-[68vh] xl:max-w-sm',
         className,
       )}
     >

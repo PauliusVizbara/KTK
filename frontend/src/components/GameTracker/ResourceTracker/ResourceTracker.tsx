@@ -51,7 +51,7 @@ const PlayerResource = ({
   return (
     <section className="w-full overflow-hidden rounded-lg border border-zinc-200">
       <div className="text-base font-bold text-zinc-800 p-4">{name || 'Player'}</div>
-      <div className="grid grid-cols-1 gap-2 p-3 text-center md:grid-cols-4 md:items-start md:gap-2 lg:gap-3">
+      <div className="grid grid-cols-3 gap-2 p-3 text-center md:items-start md:gap-4 lg:gap-6">
         <div>
           <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
             Command Points
@@ -86,19 +86,6 @@ const PlayerResource = ({
         </div>
 
         <div className="text-xs text-zinc-700">
-          <div className="font-semibold uppercase text-zinc-500">Equipment</div>
-          {equipmentItems.length > 0 ? (
-            <div className="mt-1.5">
-              <Button outline onClick={onPreviewEquipment}>
-                View Equipment
-              </Button>
-            </div>
-          ) : (
-            <div className="mt-2 text-sm text-zinc-500">None selected</div>
-          )}
-        </div>
-
-        <div className="text-xs text-zinc-700">
           <div className="font-semibold uppercase text-zinc-500">Primary Op</div>
           {primaryOp ? (
             <div className="mt-2">
@@ -118,18 +105,18 @@ export const ResourceTracker = () => {
   const [player1TacOpRevealed, setPlayer1TacOpRevealed] = React.useState(false)
   const [player2TacOpRevealed, setPlayer2TacOpRevealed] = React.useState(false)
   const [previewTacOp, setPreviewTacOp] = React.useState<TacOpLite>(null)
-  const [previewEquipment, setPreviewEquipment] = React.useState<EquipmentPreview | null>(null)
+  // const [previewEquipment, setPreviewEquipment] = React.useState<EquipmentPreview | null>(null)
   const [previewPrimaryOp, setPreviewPrimaryOp] = React.useState<PrimaryOpPreview | null>(null)
 
-  const player1EquipmentItems = player1.equipment.map((item) => ({
-    name: item.name ?? 'Unnamed equipment',
-    description: item.description ?? 'No description available.',
-  }))
+  // const player1EquipmentItems = player1.equipment.map((item) => ({
+  //   name: item.name ?? 'Unnamed equipment',
+  //   description: item.description ?? 'No description available.',
+  // }))
 
-  const player2EquipmentItems = player2.equipment.map((item) => ({
-    name: item.name ?? 'Unnamed equipment',
-    description: item.description ?? 'No description available.',
-  }))
+  // const player2EquipmentItems = player2.equipment.map((item) => ({
+  //   name: item.name ?? 'Unnamed equipment',
+  //   description: item.description ?? 'No description available.',
+  // }))
 
   React.useEffect(() => {
     setPlayer1TacOpRevealed(false)
@@ -162,13 +149,15 @@ export const ResourceTracker = () => {
                 primaryOp: player1.primaryOp,
               })
             }
-            equipmentItems={player1EquipmentItems}
-            onPreviewEquipment={() =>
-              setPreviewEquipment({
-                title: `${player1.team?.name ?? 'Player 1'} Equipment`,
-                items: player1EquipmentItems,
-              })
-            }
+            equipmentItems={[]}
+            onPreviewEquipment={() => {}}
+            // equipmentItems={player1EquipmentItems}
+            // onPreviewEquipment={() =>
+            //   setPreviewEquipment({
+            //     title: `${player1.team?.name ?? 'Player 1'} Equipment`,
+            //     items: player1EquipmentItems,
+            //   })
+            // }
           />
           <PlayerResource
             name={player2.team?.name ?? null}
@@ -185,13 +174,15 @@ export const ResourceTracker = () => {
                 primaryOp: player2.primaryOp,
               })
             }
-            equipmentItems={player2EquipmentItems}
-            onPreviewEquipment={() =>
-              setPreviewEquipment({
-                title: `${player2.team?.name ?? 'Player 2'} Equipment`,
-                items: player2EquipmentItems,
-              })
-            }
+            equipmentItems={[]}
+            onPreviewEquipment={() => {}}
+            // equipmentItems={player2EquipmentItems}
+            // onPreviewEquipment={() =>
+            //   setPreviewEquipment({
+            //     title: `${player2.team?.name ?? 'Player 2'} Equipment`,
+            //     items: player2EquipmentItems,
+            //   })
+            // }
           />
         </div>
       </div>
@@ -205,29 +196,7 @@ export const ResourceTracker = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog size="md" open={Boolean(previewEquipment)} onClose={() => setPreviewEquipment(null)}>
-        <DialogTitle className="text-2xl">{previewEquipment?.title ?? 'Equipment'}</DialogTitle>
-        <DialogDescription>Equipment details</DialogDescription>
-        <DialogBody>
-          {previewEquipment && previewEquipment.items.length > 0 ? (
-            <div className="max-h-[60vh] space-y-2 overflow-y-auto pr-1">
-              {previewEquipment.items.map((item) => (
-                <div key={item.name} className="rounded border border-zinc-200 px-3 py-2">
-                  <div className="text-sm font-semibold text-zinc-800">{item.name}</div>
-                  <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-700">
-                    {item.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-zinc-800">No equipment selected.</p>
-          )}
-        </DialogBody>
-        <DialogActions>
-          <Button onClick={() => setPreviewEquipment(null)}>Close</Button>
-        </DialogActions>
-      </Dialog>
+      {/* Equipment dialog commented out */}
 
       <Dialog size="sm" open={Boolean(previewPrimaryOp)} onClose={() => setPreviewPrimaryOp(null)}>
         <DialogTitle className="text-2xl">{previewPrimaryOp?.title ?? 'Primary Op'}</DialogTitle>

@@ -498,20 +498,21 @@ export const StateTracker = () => {
 
   if (!isSetupDone) {
     return (
-      <div className="flex justify-center items-center">
-        <Button onClick={() => setIsSetupOpen(true)}>New Game Setup</Button>
+      <div className="flex min-h-[70dvh] w-full items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 p-6 shadow-sm">
+        <Button onClick={() => setIsSetupOpen(true)}>New Game</Button>
       </div>
     )
   }
 
   return (
-    <div className="w-full rounded-lg border border-zinc-200 bg-zinc-50 p-6 shadow-sm">
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="text-[1.05rem] font-semibold uppercase tracking-wide text-zinc-800">
+    <div className="w-full rounded-lg">
+      <div className="flex items-center justify-between gap-4 lg:grid lg:grid-cols-3 lg:gap-8">
+        {/* Mission */}
+        <div className="flex items-center gap-2 lg:flex-col lg:gap-4 lg:text-center">
+          <div className="hidden text-[1.05rem] font-semibold uppercase tracking-wide text-zinc-800 lg:block">
             Mission
           </div>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-2">
             <Button onClick={() => setShowMap(true)} disabled={!map}>
               Map
             </Button>
@@ -521,9 +522,10 @@ export const StateTracker = () => {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-4">
-          <div className="text-[1.05rem] font-semibold uppercase tracking-wide text-zinc-800">
-            Turning Point {turningPoint}
+        {/* Turning Point */}
+        <div className="flex items-center gap-2 lg:flex-col lg:items-center lg:gap-4">
+          <div className="text-sm font-semibold uppercase tracking-wide text-zinc-800 lg:text-[1.05rem]">
+            TP{turningPoint}
           </div>
           <Button
             onClick={() => {
@@ -540,30 +542,11 @@ export const StateTracker = () => {
           </Button>
         </div>
 
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="grid grid-cols-3 items-center gap-x-4 gap-y-2 text-center justify-items-center">
-            <div className="text-sm font-bold uppercase text-zinc-700">
-              {player1?.team?.name || 'Team 1'}
-            </div>
-            <div />
-            <div className="text-sm font-bold uppercase text-zinc-700">
-              {player2?.team?.name || 'Team 2'}
-            </div>
-
-            <div
-              className="w-14 px-2 py-1 text-center text-3xl font-bold text-zinc-900"
-              title="Total score"
-            >
-              {player1.score}
-            </div>
-            <span className="text-5xl leading-none font-semibold text-zinc-500">-</span>
-            <div
-              className="w-14 px-2 py-1 text-center text-3xl font-bold text-zinc-900"
-              title="Total score"
-            >
-              {player2.score}
-            </div>
-          </div>
+        {/* Score */}
+        <div className="flex items-center justify-end gap-4 lg:justify-center">
+          <span className="text-3xl font-bold text-zinc-900 lg:text-4xl">{player1.score}</span>
+          <span className="text-2xl font-semibold text-zinc-500 lg:text-3xl">-</span>
+          <span className="text-3xl font-bold text-zinc-900 lg:text-4xl">{player2.score}</span>
         </div>
       </div>
 
