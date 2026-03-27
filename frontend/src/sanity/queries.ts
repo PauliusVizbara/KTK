@@ -123,3 +123,14 @@ export const universalEquipmentQuery = defineQuery(`
     "id": _id,
   }
 `)
+
+export const gameResultsQuery = defineQuery(`
+  *[_type == "gameResult"] | order(submittedAt desc) {
+    _id,
+    submittedAt,
+    submittedBy,
+    teams,
+    scores,
+    selections,
+  }
+`)

@@ -39,6 +39,10 @@ interface GameTrackerState {
   setIsSetupOpen: (isOpen: boolean) => void
   isSetupDone: boolean
   setIsSetupDone: (isDone: boolean) => void
+  gameSessionId: string
+  isGameResultUploaded: boolean
+  markGameResultUploaded: () => void
+  resetGameResultUploadState: () => void
   map: string | null
   setMap: (map: string | null) => void
   critOp: CritOp | null
@@ -51,11 +55,27 @@ interface GameTrackerState {
   player2: PlayerState
 }
 
+const createGameSessionId = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+}
+
 export const useGameTrackerStore = create<GameTrackerState>((set) => ({
   isSetupOpen: false,
   setIsSetupOpen: (isOpen) => set({isSetupOpen: isOpen}),
   isSetupDone: false,
   setIsSetupDone: (isDone) => set({isSetupDone: isDone}),
+  gameSessionId: createGameSessionId(),
+  isGameResultUploaded: false,
+  markGameResultUploaded: () => set({isGameResultUploaded: true}),
+  resetGameResultUploadState: () =>
+    set({
+      gameSessionId: createGameSessionId(),
+      isGameResultUploaded: false,
+    }),
   map: null,
   setMap: (map) => set({map}),
   critOp: null,

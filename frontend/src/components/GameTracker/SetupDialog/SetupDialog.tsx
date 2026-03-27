@@ -927,7 +927,8 @@ export const SetupDialog = (props: Props) => {
   const [step, setStep] = React.useState(0)
   const currentStep = SETUP_STEPS[step]
 
-  const {isSetupOpen, setIsSetupOpen, setIsSetupDone} = useGameTrackerStore()
+  const {isSetupOpen, setIsSetupOpen, setIsSetupDone, resetGameResultUploadState} =
+    useGameTrackerStore()
   const {setTeams} = useTeamStore()
   const {setCritOps} = useCritOpStore()
   const {setTacOps} = useTacOpStore()
@@ -965,6 +966,7 @@ export const SetupDialog = (props: Props) => {
           onNext: () => setStep(step + 1),
           onBack: () => setStep(step - 1),
           onFinish: () => {
+            resetGameResultUploadState()
             setIsSetupDone(true)
             setIsSetupOpen(false)
           },

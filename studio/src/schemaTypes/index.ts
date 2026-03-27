@@ -6,6 +6,7 @@ import { critOp } from './documents/critOp'
 import { equipment } from './objects/equipment'
 import { universalEquipment } from './documents/universalEquipment'
 import { tacOp } from './documents/tacOp'
+import { gameResult } from './documents/gameResult'
 
 // Export an array of all the schema types.  This is used in the Sanity Studio configuration. https://www.sanity.io/docs/schema-types
 
@@ -15,6 +16,7 @@ export const schemaTypes = [
   critOp,
   tacOp,
   universalEquipment,
+  gameResult,
   // Objects
   operative,
   weapon,

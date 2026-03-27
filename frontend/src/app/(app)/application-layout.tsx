@@ -20,7 +20,7 @@ import {signIn, signOut, useSession} from 'next-auth/react'
 
 const navItems = [
   {label: 'Game Tracker', url: '/'},
-  // {label: 'Stats', url: '/stats'},
+  {label: 'Stats', url: '/stats'},
 ]
 
 function TeamDropdownMenu() {

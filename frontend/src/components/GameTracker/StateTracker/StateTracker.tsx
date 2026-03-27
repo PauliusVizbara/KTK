@@ -6,6 +6,8 @@ import Image from 'next/image'
 import {MapZoomModal} from '../SetupDialog/SetupDialog'
 import ReactDOM from 'react-dom'
 import {XMarkIcon} from '@heroicons/react/16/solid'
+import {useSession} from 'next-auth/react'
+import {toast} from 'sonner'
 import {
   Dialog,
   DialogActions,
@@ -131,6 +133,12 @@ const AnimatedSkulls = ({count, active}: {count: number; active: number}) => (
 const GameResultDialog = ({
   open,
   onClose,
+  gameSessionId,
+  isUploaded,
+  onUploaded,
+  critOpName,
+  player1TacOpName,
+  player2TacOpName,
   player1Name,
   player2Name,
   player1Crit,
@@ -144,6 +152,12 @@ const GameResultDialog = ({
 }: {
   open: boolean
   onClose: () => void
+  gameSessionId: string
+  isUploaded: boolean
+  onUploaded: () => void
+  critOpName: string | null
+  player1TacOpName: string | null
+  player2TacOpName: string | null
   player1Name: string
   player2Name: string
   player1Crit: number
@@ -173,6 +187,75 @@ const GameResultDialog = ({
 
   const player1Total = player1Crit + player1Tac + player1Kill + player1PrimaryBonus
   const player2Total = player2Crit + player2Tac + player2Kill + player2PrimaryBonus
+  const {status: authStatus} = useSession()
+  const [isUploading, setIsUploading] = React.useState(false)
+  const [uploadMessage, setUploadMessage] = React.useState<string | null>(null)
+
+  const canUpload = authStatus === 'authenticated' && !isUploaded
+
+  const handleUploadResult = async () => {
+    if (!canUpload || isUploading) {
+      return
+    }
+
+    setIsUploading(true)
+    setUploadMessage(null)
+
+    try {
+      const response = await fetch('/api/game-results', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          gameSessionId,
+          teams: {
+            player1: {name: player1Name},
+            player2: {name: player2Name},
+          },
+          scores: {
+            player1: {
+              critOp: player1Crit,
+              tacOp: player1Tac,
+              killOp: player1Kill,
+              primaryBonus: player1PrimaryBonus,
+              total: player1Total,
+            },
+            player2: {
+              critOp: player2Crit,
+              tacOp: player2Tac,
+              killOp: player2Kill,
+              primaryBonus: player2PrimaryBonus,
+              total: player2Total,
+            },
+          },
+          selections: {
+            critOp: critOpName,
+            player1TacOp: player1TacOpName,
+            player2TacOp: player2TacOpName,
+            player1PrimaryOp: player1Primary,
+            player2PrimaryOp: player2Primary,
+          },
+        }),
+      })
+
+      if (response.status === 409) {
+        onUploaded()
+        setUploadMessage('This game has already been uploaded.')
+        return
+      }
+
+      if (!response.ok) {
+        throw new Error('Upload failed')
+      }
+
+      onUploaded()
+      setUploadMessage(null)
+      toast.success('Game result uploaded.')
+    } catch {
+      setUploadMessage('Unable to upload result. Please try again.')
+    } finally {
+      setIsUploading(false)
+    }
+  }
 
   const [revealState, setRevealState] = React.useState<RevealState>(EMPTY_REVEAL_STATE)
   const [primaryReveal, setPrimaryReveal] = React.useState<PrimaryRevealState>(
@@ -185,12 +268,14 @@ const GameResultDialog = ({
       setRevealState(EMPTY_REVEAL_STATE)
       setPrimaryReveal(EMPTY_PRIMARY_REVEAL_STATE)
       setTotalReveal(EMPTY_TOTAL_REVEAL_STATE)
+      setUploadMessage(null)
       return
     }
 
     setRevealState(EMPTY_REVEAL_STATE)
     setPrimaryReveal(EMPTY_PRIMARY_REVEAL_STATE)
     setTotalReveal(EMPTY_TOTAL_REVEAL_STATE)
+    setUploadMessage(null)
 
     const revealTargets: Array<{key: RevealKey; total: number}> = [
       {
@@ -395,6 +480,20 @@ const GameResultDialog = ({
       </DialogBody>
 
       <DialogActions>
+        <div className="mr-auto text-sm text-zinc-600">
+          {uploadMessage
+            ? uploadMessage
+            : authStatus !== 'authenticated'
+              ? 'Sign in to upload this game result.'
+              : isUploaded
+                ? 'This game result has already been uploaded.'
+                : null}
+        </div>
+        {authStatus === 'authenticated' ? (
+          <Button onClick={handleUploadResult} disabled={!canUpload || isUploading}>
+            Upload
+          </Button>
+        ) : null}
         <Button onClick={onClose}>Close</Button>
       </DialogActions>
     </Dialog>
@@ -429,6 +528,9 @@ export const StateTracker = () => {
     setTurningPoint,
     initiativePlayer,
     setInitiativePlayer,
+    gameSessionId,
+    isGameResultUploaded,
+    markGameResultUploaded,
     player1,
     player2,
   } = useGameTrackerStore()
@@ -638,6 +740,12 @@ export const StateTracker = () => {
       <GameResultDialog
         open={showGameResult}
         onClose={() => setShowGameResult(false)}
+        gameSessionId={gameSessionId}
+        isUploaded={isGameResultUploaded}
+        onUploaded={markGameResultUploaded}
+        critOpName={critOp?.name ?? null}
+        player1TacOpName={player1.tacOp?.name ?? null}
+        player2TacOpName={player2.tacOp?.name ?? null}
         player1Name={player1.team?.name || 'Player 1'}
         player2Name={player2.team?.name || 'Player 2'}
         player1Crit={player1.critOpPoints}
