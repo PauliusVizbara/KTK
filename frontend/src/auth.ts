@@ -6,12 +6,16 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: process.env.AUTH_DISCORD_ID ?? process.env.DISCORD_CLIENT_ID ?? '',
       clientSecret: process.env.AUTH_DISCORD_SECRET ?? process.env.DISCORD_CLIENT_SECRET ?? '',
+      authorization: {
+        params: {
+          scope: 'identify',
+        },
+      },
       profile(profile) {
         const discordProfile = profile as {
           id: string
           username?: string
           global_name?: string | null
-          email?: string | null
           avatar?: string | null
         }
 
@@ -23,7 +27,6 @@ export const authOptions: NextAuthOptions = {
         return {
           id: discordProfile.id,
           name: discordProfile.global_name ?? discordProfile.username ?? 'Discord User',
-          email: discordProfile.email ?? null,
           image,
         }
       },

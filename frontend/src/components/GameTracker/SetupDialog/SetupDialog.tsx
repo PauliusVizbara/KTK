@@ -927,7 +927,7 @@ export const SetupDialog = (props: Props) => {
   const [step, setStep] = React.useState(0)
   const currentStep = SETUP_STEPS[step]
 
-  const {isSetupOpen, setIsSetupOpen, setIsSetupDone, resetGameResultUploadState} =
+  const {isSetupOpen, isSetupDone, setIsSetupOpen, setIsSetupDone, resetGameResultUploadState} =
     useGameTrackerStore()
   const {setTeams} = useTeamStore()
   const {setCritOps} = useCritOpStore()
@@ -949,6 +949,12 @@ export const SetupDialog = (props: Props) => {
     universalEquipment,
     setUniversalEquipment,
   ])
+
+  useEffect(() => {
+    if (isSetupOpen && !isSetupDone) {
+      setStep(0)
+    }
+  }, [isSetupOpen, isSetupDone])
 
   return (
     <>

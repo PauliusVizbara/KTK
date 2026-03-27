@@ -15,7 +15,6 @@ export const gameResult = defineType({
       fields: [
         defineField({name: 'id', title: 'User ID', type: 'string'}),
         defineField({name: 'name', title: 'Display Name', type: 'string'}),
-        defineField({name: 'email', title: 'Email', type: 'string'}),
         defineField({name: 'image', title: 'Profile Image URL', type: 'url'}),
       ],
     }),

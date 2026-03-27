@@ -482,24 +482,24 @@ const GameResultDialog = ({
       </DialogBody>
 
       <DialogActions>
-        <div className="mr-auto text-sm text-zinc-600">
-          {uploadMessage
-            ? uploadMessage
-            : authStatus !== 'authenticated'
-              ? 'Sign in to upload this game result.'
-              : isUploaded
-                ? 'This game result has already been uploaded.'
-                : null}
+        <div className="mr-auto flex items-center gap-3">
+          <div className="text-sm text-zinc-600">
+            {uploadMessage
+              ? uploadMessage
+              : authStatus !== 'authenticated'
+                ? 'Sign in to upload this game result.'
+                : isUploaded
+                  ? 'This game result has already been uploaded.'
+                  : null}
+          </div>
+          {authStatus === 'authenticated' ? (
+            <Button onClick={handleUploadResult} disabled={!canUpload || isUploading}>
+              Upload
+            </Button>
+          ) : null}
         </div>
-        {authStatus === 'authenticated' ? (
-          <Button onClick={handleUploadResult} disabled={!canUpload || isUploading}>
-            Upload
-          </Button>
-        ) : null}
-        <Button outline onClick={onEndGame}>
-          End game
-        </Button>
-        <Button onClick={onClose}>Close</Button>
+        <Button outline onClick={onClose}>Close</Button>
+        <Button onClick={onEndGame}>End game</Button>
       </DialogActions>
     </Dialog>
   )

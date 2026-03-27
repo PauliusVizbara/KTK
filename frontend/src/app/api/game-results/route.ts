@@ -78,7 +78,6 @@ export async function POST(request: Request) {
   const submittedBy = {
     id: (session.user as {id?: string}).id ?? null,
     name: session.user.name ?? null,
-    email: session.user.email ?? null,
     image: session.user.image ?? null,
   }
 
