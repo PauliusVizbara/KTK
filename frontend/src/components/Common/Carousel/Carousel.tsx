@@ -31,7 +31,10 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
         <div className={clsx('embla__viewport', viewportClassName)} ref={emblaRef}>
           <div className="embla__container">
             {slides.map((el, index) => (
-              <div className={`embla__slide ${slideClassName ?? 'basis-full sm:basis-[70%]'}`} key={index}>
+              <div
+                className={`embla__slide ${slideClassName ?? 'basis-full sm:basis-[70%]'}`}
+                key={index}
+              >
                 {el}
               </div>
             ))}
