@@ -126,24 +126,25 @@ export const EquipmentAccordion = ({
               isSelected ? 'border-orange-500 bg-orange-50/50' : 'border-zinc-200 bg-white',
             )}
           >
-            <div className="flex items-center p-3 cursor-pointer hover:bg-zinc-50">
+            <div
+              className="flex items-center p-3 cursor-pointer hover:bg-zinc-50"
+              onClick={() => handleToggleExpand(item.id)}
+            >
               {!readOnly && (
-                <div className="flex items-center h-5" onClick={(e) => e.stopPropagation()}>
+                <div className="flex h-7 w-7 items-center justify-center" onClick={(e) => e.stopPropagation()}>
                   <Checkbox
                     checked={isSelected}
                     onChange={() => !isDisabled && onToggle(item.id)}
                     disabled={isDisabled}
                     color="orange"
+                    className="scale-125"
                   />
                 </div>
               )}
-              <div
-                className="flex-1 ml-3 font-bold uppercase text-zinc-800 select-none"
-                onClick={() => handleToggleExpand(item.id)}
-              >
+              <div className="flex-1 ml-3 font-bold uppercase text-zinc-800 select-none">
                 {item.name}
               </div>
-              <div onClick={() => handleToggleExpand(item.id)}>
+              <div>
                 {isExpanded ? (
                   <ChevronUpIcon className="w-5 h-5 text-zinc-400" />
                 ) : (
