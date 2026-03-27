@@ -498,7 +498,9 @@ const GameResultDialog = ({
             </Button>
           ) : null}
         </div>
-        <Button outline onClick={onClose}>Close</Button>
+        <Button outline onClick={onClose}>
+          Close
+        </Button>
         <Button onClick={onEndGame}>End game</Button>
       </DialogActions>
     </Dialog>
