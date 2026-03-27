@@ -1,6 +1,6 @@
 'use client'
 import {useGameTrackerStore} from '@/app/store'
-import {Button, CritOpCard, TurnInitiativeDialog} from '@/components'
+import {Button, CritOpCard, ScoreTracker, TurnInitiativeDialog} from '@/components'
 import React from 'react'
 import {MapZoomModal} from '../SetupDialog/SetupDialog'
 import ReactDOM from 'react-dom'
@@ -147,11 +147,17 @@ export const StateTracker = () => {
               {player2?.team?.name || 'Team 2'}
             </div>
 
-            <div className="w-14 px-2 py-1 text-center text-3xl font-bold text-zinc-900">
+            <div
+              className="w-14 px-2 py-1 text-center text-3xl font-bold text-zinc-900"
+              title="Total score"
+            >
               {player1.score}
             </div>
             <span className="text-5xl leading-none font-semibold text-zinc-500">-</span>
-            <div className="w-14 px-2 py-1 text-center text-3xl font-bold text-zinc-900">
+            <div
+              className="w-14 px-2 py-1 text-center text-3xl font-bold text-zinc-900"
+              title="Total score"
+            >
               {player2.score}
             </div>
           </div>

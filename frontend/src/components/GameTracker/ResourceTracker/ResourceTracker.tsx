@@ -97,7 +97,7 @@ const PlayerResource = ({
 }
 
 export const ResourceTracker = () => {
-  const {player1, player2} = useGameTrackerStore()
+  const {isSetupDone, player1, player2} = useGameTrackerStore()
   const [player1TacOpRevealed, setPlayer1TacOpRevealed] = React.useState(false)
   const [player2TacOpRevealed, setPlayer2TacOpRevealed] = React.useState(false)
   const [previewTacOp, setPreviewTacOp] = React.useState<TacOpLite>(null)
@@ -120,6 +120,10 @@ export const ResourceTracker = () => {
   React.useEffect(() => {
     setPlayer2TacOpRevealed(false)
   }, [player2.tacOp?._id])
+
+  if (!isSetupDone) {
+    return null
+  }
 
   return (
     <>
