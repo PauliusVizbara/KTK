@@ -7,6 +7,7 @@ import {VisualEditing} from 'next-sanity'
 import {Toaster} from 'sonner'
 
 import DraftModeToast from '@/components/DraftModeToast'
+import {AuthSessionProvider} from '@/components/auth-session-provider'
 import {handleError} from '@/app/client-utils'
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
       </head>
       <body>
         <section className="min-h-screen">
+          <AuthSessionProvider>
           {/* The <Toaster> component is responsible for rendering toast notifications used in /app/client-utils.ts and /app/components/DraftModeToast.tsx */}
           <Toaster />
           {isDraftMode && (
@@ -39,6 +41,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
           )}
           {/* The <SanityLive> component is responsible for making all sanityFetch calls in your application live, so should always be rendered. */}
           <main className="">{children}</main>
+          </AuthSessionProvider>
         </section>
         <SpeedInsights />
       </body>

@@ -35,9 +35,19 @@ export function Avatar({
  : 'rounded-full *:rounded-full',
  )}
  >
+ {src && (
+ <img
+ src={src}
+ alt={alt}
+ className="size-full object-cover"
+ />
+ )}
  {initials && (
  <svg
- className="size-full fill-current p-[5%] text-[48px] font-medium uppercase select-none"
+ className={clsx(
+ 'size-full fill-current p-[5%] text-[48px] font-medium uppercase select-none',
+ src ? 'hidden' : '',
+ )}
  viewBox="0 0 100 100"
  aria-hidden={alt ? undefined : 'true'}
  >

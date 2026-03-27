@@ -1,6 +1,7 @@
 'use client'
 
 import {Avatar} from '@/components/avatar'
+import {Button} from '@/components'
 import {DropdownDivider, DropdownItem, DropdownLabel, DropdownMenu} from '@/components/dropdown'
 import {Heading} from '@/components/heading'
 import {Navbar, NavbarDivider, NavbarItem, NavbarSection, NavbarSpacer} from '@/components/navbar'
@@ -15,6 +16,7 @@ import {StackedLayout} from '@/components/stacked-layout'
 import {getEvents} from '@/data'
 import {Cog8ToothIcon, PlusIcon} from '@heroicons/react/16/solid'
 import {usePathname} from 'next/navigation'
+import {signIn, signOut, useSession} from 'next-auth/react'
 
 const navItems = [
   {label: 'Game Tracker', url: '/'},
@@ -54,6 +56,10 @@ export function ApplicationLayout({
   children: React.ReactNode
 }) {
   let pathname = usePathname()
+  const {data: session, status} = useSession()
+
+  const profileName = session?.user?.name || 'Discord User'
+  const profileImage = session?.user?.image || null
 
   return (
     <StackedLayout
@@ -69,43 +75,26 @@ export function ApplicationLayout({
             ))}
           </NavbarSection>
           <NavbarSpacer />
-          {/* <NavbarSection>
-            <NavbarItem href="/search" aria-label="Search">
-              <MagnifyingGlassIcon />
-            </NavbarItem>
-            <NavbarItem href="/inbox" aria-label="Inbox">
-              <InboxIcon />
-            </NavbarItem>
-            <Dropdown>
-              <DropdownButton as={NavbarItem}>
-                <Avatar src="/profile-photo.jpg" square />
-              </DropdownButton>
-              <DropdownMenu className="min-w-64" anchor="bottom end">
-                <DropdownItem href="/my-profile">
-                  <UserIcon />
-                  <DropdownLabel>My profile</DropdownLabel>
-                </DropdownItem>
-                <DropdownItem href="/settings">
-                  <Cog8ToothIcon />
-                  <DropdownLabel>Settings</DropdownLabel>
-                </DropdownItem>
-                <DropdownDivider />
-                <DropdownItem href="/privacy-policy">
-                  <ShieldCheckIcon />
-                  <DropdownLabel>Privacy policy</DropdownLabel>
-                </DropdownItem>
-                <DropdownItem href="/share-feedback">
-                  <LightBulbIcon />
-                  <DropdownLabel>Share feedback</DropdownLabel>
-                </DropdownItem>
-                <DropdownDivider />
-                <DropdownItem href="/logout">
-                  <ArrowRightStartOnRectangleIcon />
-                  <DropdownLabel>Sign out</DropdownLabel>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </NavbarSection> */}
+          <NavbarSection>
+            {status === 'authenticated' ? (
+              <div className="flex items-center gap-3">
+                <Avatar
+                  src={profileImage}
+                  initials={profileName.slice(0, 1).toUpperCase()}
+                  alt={profileName}
+                  className="size-8 bg-zinc-200"
+                />
+                <div className="hidden text-right sm:block">
+                  <div className="text-sm font-semibold text-zinc-900">{profileName}</div>
+                </div>
+                <Button outline onClick={() => signOut({callbackUrl: '/'})}>
+                  Sign out
+                </Button>
+              </div>
+            ) : (
+              <Button onClick={() => signIn('discord', {callbackUrl: '/'})}>Login</Button>
+            )}
+          </NavbarSection>
         </Navbar>
       }
       sidebar={

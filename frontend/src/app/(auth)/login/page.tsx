@@ -38,6 +38,9 @@ export default function Login() {
       <Button type="submit" className="w-full">
         Login
       </Button>
+      <Button href="/api/auth/signin/discord?callbackUrl=/" color="secondary" className="w-full">
+        Continue with Discord
+      </Button>
       <Text>
         Don’t have an account?{' '}
         <TextLink href="/register">
