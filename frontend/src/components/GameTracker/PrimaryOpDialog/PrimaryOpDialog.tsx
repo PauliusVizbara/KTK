@@ -2,7 +2,13 @@
 
 import React from 'react'
 import {Button} from '@/components'
-import {Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle} from '@/components/dialog'
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/dialog'
 import {Heading} from '@/components/heading'
 
 type InitiativePlayer = 'player1' | 'player2'
@@ -104,9 +110,7 @@ export const PrimaryOpDialog = ({
           </div>
 
           {phase === 'second-select' && (
-            <div className="text-xs text-zinc-500">
-              {firstPlayerName} selection is locked.
-            </div>
+            <div className="text-xs text-zinc-500">{firstPlayerName} selection is locked.</div>
           )}
         </div>
       </DialogBody>
