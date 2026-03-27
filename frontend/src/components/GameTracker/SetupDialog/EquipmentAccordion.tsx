@@ -131,7 +131,10 @@ export const EquipmentAccordion = ({
               onClick={() => handleToggleExpand(item.id)}
             >
               {!readOnly && (
-                <div className="flex h-7 w-7 items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="flex h-7 w-7 items-center justify-center"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <Checkbox
                     checked={isSelected}
                     onChange={() => !isDisabled && onToggle(item.id)}
