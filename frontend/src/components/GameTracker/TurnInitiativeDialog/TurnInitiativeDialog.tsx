@@ -58,9 +58,7 @@ const InitiativeMiniCard = ({
           : 'border-zinc-300 bg-white text-zinc-700 hover:border-zinc-400 hover:bg-zinc-50'
       }`}
     >
-      <span
-        className={`h-2 w-2 rounded-full ${selected ? 'bg-white' : 'bg-zinc-300'}`}
-      />
+      <span className={`h-2 w-2 rounded-full ${selected ? 'bg-white' : 'bg-zinc-300'}`} />
       {label}
     </button>
   )
@@ -118,142 +116,138 @@ export const TurnInitiativeDialog = ({
 
       <DialogBody>
         <div className="flex flex-col min-h-[360px]">
-        {currentStep === 1 && (
-          <div className="flex flex-col flex-1">
-            <ul className="mt-2 list-disc list-inside text-sm text-zinc-700">
-              <li>Roll-off.</li>
-              <li>Apply initiative cards and faction rules.</li>
-              <li>
-                Select the roll-off winner.{' '}
-                <i className="mt-2 text-sm text-zinc-600">
-                  If the roll-off is a tie, {tieWinnerName} wins the tie
-                </i>
-              </li>
-            </ul>
+          {currentStep === 1 && (
+            <div className="flex flex-col flex-1">
+              <Heading className="mt-5" level={6}>
+                Select roll-off winner
+              </Heading>
 
-            <div className="mt-3 flex gap-4">
-              <Button
-                color={selectedRollWinner === 'player1' ? 'primary' : 'secondary'}
-                onClick={() => setSelectedRollWinner('player1')}
-                className="flex-1"
-              >
-                {player1Name}
-              </Button>
-              <Button
-                color={selectedRollWinner === 'player2' ? 'primary' : 'secondary'}
-                onClick={() => setSelectedRollWinner('player2')}
-                className="flex-1"
-              >
-                {player2Name}
-              </Button>
-            </div>
-
-            <Heading className="mt-5" level={6}>
-              Select used initiative cards in this roll-off
-            </Heading>
-            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <div className="text-xs uppercase text-zinc-500 mb-2">{player1Name}</div>
-                <div className="flex flex-wrap gap-2">
-                  {player1Cards.length === 0 ? (
-                    <div className="text-sm text-zinc-500">No initiative cards.</div>
-                  ) : (
-                    player1Cards.map((card) => (
-                      <InitiativeMiniCard
-                        key={card.id}
-                        card={card}
-                        selected={selectedPlayer1CardIds.includes(card.id)}
-                        onClick={() => {
-                          setSelectedPlayer1CardIds((current) =>
-                            current.includes(card.id)
-                              ? current.filter((id) => id !== card.id)
-                              : [...current, card.id],
-                          )
-                        }}
-                      />
-                    ))
-                  )}
-                </div>
+              <div className="mt-3 flex gap-4">
+                <Button
+                  color={selectedRollWinner === 'player1' ? 'primary' : 'secondary'}
+                  onClick={() => setSelectedRollWinner('player1')}
+                  className="flex-1"
+                >
+                  {player1Name}
+                </Button>
+                <Button
+                  color={selectedRollWinner === 'player2' ? 'primary' : 'secondary'}
+                  onClick={() => setSelectedRollWinner('player2')}
+                  className="flex-1"
+                >
+                  {player2Name}
+                </Button>
               </div>
 
-              <div>
-                <div className="text-xs uppercase text-zinc-500 mb-2">{player2Name}</div>
-                <div className="flex flex-wrap gap-2">
-                  {player2Cards.length === 0 ? (
-                    <div className="text-sm text-zinc-500">No initiative cards.</div>
-                  ) : (
-                    player2Cards.map((card) => (
-                      <InitiativeMiniCard
-                        key={card.id}
-                        card={card}
-                        selected={selectedPlayer2CardIds.includes(card.id)}
-                        onClick={() => {
-                          setSelectedPlayer2CardIds((current) =>
-                            current.includes(card.id)
-                              ? current.filter((id) => id !== card.id)
-                              : [...current, card.id],
-                          )
-                        }}
-                      />
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {selectedRollWinner && (
-              <div className="mt-auto pt-4 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700">
-                {rollLoserName && gainedCardText ? (
-                  <div>
-                    <span className="font-semibold">{rollLoserName}</span> gains a{' '}
-                    <span className="font-semibold">{gainedCardText}</span>.
-                  </div>
-                ) : (
-                  <div>No new initiative card is gained this turn.</div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {currentStep === 2 && (
-          <div className="flex flex-col flex-1">
-            <Heading className="mt-5" level={6}>
-              {(selectedRollWinner === 'player1' ? player1Name : player2Name) +
-                ' chooses who has initiative:'}
-            </Heading>
-
-            <div className="mt-4 flex gap-4">
-              <Button
-                color={selectedInitiative === 'player1' ? 'primary' : 'secondary'}
-                onClick={() => setSelectedInitiative('player1')}
-                className="flex-1"
-              >
-                {player1Name}
-              </Button>
-              <Button
-                color={selectedInitiative === 'player2' ? 'primary' : 'secondary'}
-                onClick={() => setSelectedInitiative('player2')}
-                className="flex-1"
-              >
-                {player2Name}
-              </Button>
-            </div>
-
-            {selectedInitiative && (
-              <div className="mt-auto pt-4 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 space-y-1">
-                <div><span className="font-semibold">{initiativeName}</span> gets initiative</div>
-                <div><span className="font-semibold">{initiativeName}</span> gets 1 CP</div>
+              <Heading className="mt-5" level={6}>
+                Select used initiative cards in this roll-off
+              </Heading>
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <span className="font-semibold">{noInitiativeName}</span> gets{' '}
-                  {turningPoint === 1 ? '1' : '2'} CP
+                  <div className="text-xs uppercase text-zinc-500 mb-2">{player1Name}</div>
+                  <div className="flex flex-wrap gap-2">
+                    {player1Cards.length === 0 ? (
+                      <div className="text-sm text-zinc-500">No initiative cards.</div>
+                    ) : (
+                      player1Cards.map((card) => (
+                        <InitiativeMiniCard
+                          key={card.id}
+                          card={card}
+                          selected={selectedPlayer1CardIds.includes(card.id)}
+                          onClick={() => {
+                            setSelectedPlayer1CardIds((current) =>
+                              current.includes(card.id)
+                                ? current.filter((id) => id !== card.id)
+                                : [...current, card.id],
+                            )
+                          }}
+                        />
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-xs uppercase text-zinc-500 mb-2">{player2Name}</div>
+                  <div className="flex flex-wrap gap-2">
+                    {player2Cards.length === 0 ? (
+                      <div className="text-sm text-zinc-500">No initiative cards.</div>
+                    ) : (
+                      player2Cards.map((card) => (
+                        <InitiativeMiniCard
+                          key={card.id}
+                          card={card}
+                          selected={selectedPlayer2CardIds.includes(card.id)}
+                          onClick={() => {
+                            setSelectedPlayer2CardIds((current) =>
+                              current.includes(card.id)
+                                ? current.filter((id) => id !== card.id)
+                                : [...current, card.id],
+                            )
+                          }}
+                        />
+                      ))
+                    )}
+                  </div>
                 </div>
               </div>
-            )}
-          </div>
-        )}
-        </div>
 
+              {selectedRollWinner && (
+                <div className="mt-auto pt-4 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700">
+                  {rollLoserName && gainedCardText ? (
+                    <div>
+                      <span className="font-semibold">{rollLoserName}</span> gains a{' '}
+                      <span className="font-semibold">{gainedCardText}</span>.
+                    </div>
+                  ) : (
+                    <div>No new initiative card is gained this turn.</div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <div className="flex flex-col flex-1">
+              <Heading className="mt-5" level={6}>
+                {(selectedRollWinner === 'player1' ? player1Name : player2Name) +
+                  ' chooses who has initiative:'}
+              </Heading>
+
+              <div className="mt-4 flex gap-4">
+                <Button
+                  color={selectedInitiative === 'player1' ? 'primary' : 'secondary'}
+                  onClick={() => setSelectedInitiative('player1')}
+                  className="flex-1"
+                >
+                  {player1Name}
+                </Button>
+                <Button
+                  color={selectedInitiative === 'player2' ? 'primary' : 'secondary'}
+                  onClick={() => setSelectedInitiative('player2')}
+                  className="flex-1"
+                >
+                  {player2Name}
+                </Button>
+              </div>
+
+              {selectedInitiative && (
+                <div className="mt-auto pt-4 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 space-y-1">
+                  <div>
+                    <span className="font-semibold">{initiativeName}</span> gets initiative
+                  </div>
+                  <div>
+                    <span className="font-semibold">{initiativeName}</span> gets 1 CP
+                  </div>
+                  <div>
+                    <span className="font-semibold">{noInitiativeName}</span> gets{' '}
+                    {turningPoint === 1 ? '1' : '2'} CP
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </DialogBody>
 
       <DialogActions>

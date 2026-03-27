@@ -107,53 +107,53 @@ export const StateTracker = () => {
   }
 
   return (
-    <div className="flex justify-between items-center w-full p-4 bg-white shadow rounded-lg border border-zinc-200">
-      {/* Left: Map and Crit Op */}
-      <div className="flex gap-4">
-        <Button onClick={() => setShowMap(true)}>Map</Button>
-        <Button onClick={() => setShowCritOp(true)}>Crit Op</Button>
-      </div>
-
-      {/* Middle: Turning Point */}
-      <div className="flex flex-col items-center gap-2">
-        <div className="text-sm font-bold uppercase text-zinc-500">Turning point</div>
-        <div className="text-4xl font-bold">{turningPoint}</div>
-        <Button
-          onClick={() => {
-            setTurningPoint(turningPoint + 1)
-            setShowTurnInitiative(true)
-          }}
-        >
-          End Turn
-        </Button>
-      </div>
-
-      {/* Right: Score */}
-      <div className="flex flex-col items-end gap-1">
-        <div className="text-sm font-bold uppercase text-zinc-500">Score</div>
-        <div className="flex items-center gap-4 text-4xl font-bold">
-          <div className="flex flex-col items-center">
-            <span className="text-xs font-normal text-zinc-400 mb-1">
-              {player1?.team?.name || 'P1'}
-            </span>
-            <input
-              type="number"
-              value={player1.score}
-              onChange={(e) => player1.setScore(parseInt(e.target.value) || 0)}
-              className="w-16 text-center bg-transparent border-b border-zinc-300 focus:outline-none focus:border-primary"
-            />
+    <div className="w-full rounded-lg border border-zinc-200 bg-zinc-50 p-6 shadow-sm">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="text-2xl font-semibold uppercase tracking-wide text-zinc-800">
+            Mission
           </div>
-          <span className="text-zinc-300">-</span>
-          <div className="flex flex-col items-center">
-            <span className="text-xs font-normal text-zinc-400 mb-1">
-              {player2?.team?.name || 'P2'}
-            </span>
-            <input
-              type="number"
-              value={player2.score}
-              onChange={(e) => player2.setScore(parseInt(e.target.value) || 0)}
-              className="w-16 text-center bg-transparent border-b border-zinc-300 focus:outline-none focus:border-primary"
-            />
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button onClick={() => setShowMap(true)} disabled={!map}>
+              Map
+            </Button>
+            <Button onClick={() => setShowCritOp(true)} disabled={!critOp}>
+              Crit Op
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center gap-4">
+          <div className="text-2xl font-semibold uppercase tracking-wide text-zinc-800">
+            Turning Point {turningPoint}
+          </div>
+          <Button
+            onClick={() => {
+              setTurningPoint(turningPoint + 1)
+              setShowTurnInitiative(true)
+            }}
+          >
+            End Turn
+          </Button>
+        </div>
+
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="grid grid-cols-3 items-center gap-x-4 gap-y-2 text-center justify-items-center">
+            <div className="text-sm font-bold uppercase text-zinc-700">
+              {player1?.team?.name || 'Team 1'}
+            </div>
+            <div />
+            <div className="text-sm font-bold uppercase text-zinc-700">
+              {player2?.team?.name || 'Team 2'}
+            </div>
+
+            <div className="w-14 px-2 py-1 text-center text-3xl font-bold text-zinc-900">
+              {player1.score}
+            </div>
+            <span className="text-5xl leading-none font-semibold text-zinc-500">-</span>
+            <div className="w-14 px-2 py-1 text-center text-3xl font-bold text-zinc-900">
+              {player2.score}
+            </div>
           </div>
         </div>
       </div>
