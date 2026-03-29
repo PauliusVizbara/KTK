@@ -91,4 +91,18 @@ export const gameResult = defineType({
       ],
     }),
   ],
+  preview: {
+    select: {
+      submittedBy: 'submittedBy.name',
+      player1Team: 'teams.player1.name',
+      player2Team: 'teams.player2.name',
+    },
+    prepare(selection) {
+      const {submittedBy, player1Team, player2Team} = selection
+      return {
+        title: `${player1Team ?? 'Player 1'} vs ${player2Team ?? 'Player 2'}`,
+        subtitle: submittedBy ? `Submitted by ${submittedBy}` : 'No submission info',
+      }
+    },
+  },
 })
