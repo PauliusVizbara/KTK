@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: 'Stats',
 }
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 type PrimaryOp = 'critical' | 'tactical' | 'kill' | null
 
 type GameResult = {
@@ -116,7 +119,7 @@ function StaticScoreSkulls({
 }
 
 export default async function StatsPage() {
-  const games = (await client.fetch(gameResultsQuery)) as GameResult[]
+  const games = (await client.withConfig({useCdn: false}).fetch(gameResultsQuery)) as GameResult[]
 
   return (
     <div className="space-y-6">
