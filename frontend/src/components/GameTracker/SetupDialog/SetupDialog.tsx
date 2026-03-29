@@ -466,50 +466,162 @@ const SelectCritOpStep = ({onNext, onBack}: StepProps) => {
 }
 
 const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
-  const gameTrackerStore = useGameTrackerStore()
   const {setInitiativePlayer, player1, player2} = useGameTrackerStore()
 
+  const [rollOffWinner, setRollOffWinner] = React.useState<'player1' | 'player2' | null>(null)
   const [setupInitiative, setSetupInitiative] = React.useState<'player1' | 'player2' | null>(null)
+  const [expandedSection, setExpandedSection] = React.useState<'rolloff' | 'initiative' | null>(
+    'rolloff',
+  )
+
+  const player1Name = player1.team?.name || 'Player 1'
+  const player2Name = player2.team?.name || 'Player 2'
+
+  const handlePickRollOffWinner = (winner: 'player1' | 'player2') => {
+    setRollOffWinner(winner)
+    setSetupInitiative(null)
+    setExpandedSection('initiative')
+  }
+
+  const rollOffSummary = rollOffWinner
+    ? `${rollOffWinner === 'player1' ? player1Name : player2Name} won the roll off`
+    : 'Roll off'
+
+  const initiativeSummary = setupInitiative
+    ? `${setupInitiative === 'player1' ? player1Name : player2Name} has initiative`
+    : 'Choose initiative'
 
   return (
     <>
       <DialogBody className="flex-1 overflow-y-auto">
-        <Heading className="mt-6" level={6}>
-          Roll-off: the winner decides who has initiative:
-        </Heading>
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-          <Button
-            color={setupInitiative === 'player1' ? 'primary' : 'secondary'}
-            onClick={() => setSetupInitiative('player1')}
-            className="w-full flex-1 sm:m-2"
-          >
-            {gameTrackerStore.player1.team?.name}
-          </Button>
-          <Button
-            color={setupInitiative === 'player2' ? 'primary' : 'secondary'}
-            onClick={() => setSetupInitiative('player2')}
-            className="w-full flex-1 sm:m-2"
-          >
-            {gameTrackerStore.player2.team?.name}
-          </Button>
+        <div className="mt-2 space-y-4">
+          <section className="rounded-md border-2 border-zinc-300 bg-white">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between px-4 py-3 text-left"
+              onClick={() => setExpandedSection('rolloff')}
+            >
+              <span className="flex items-center gap-2 text-lg font-semibold text-zinc-900">
+                {rollOffWinner ? '✓' : '•'} {rollOffSummary}
+              </span>
+              <ChevronDownIcon
+                className={`h-5 w-5 text-zinc-600 transition-transform ${
+                  expandedSection === 'rolloff' ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+            <div
+              className={`grid transition-all duration-300 ease-out ${
+                expandedSection === 'rolloff'
+                  ? 'grid-rows-[1fr] opacity-100'
+                  : 'grid-rows-[0fr] opacity-0'
+              }`}
+            >
+              <div className="overflow-hidden border-t border-zinc-200 px-4 py-4">
+                <Heading level={6}>Roll off winner</Heading>
+                <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+                  <Button
+                    color={rollOffWinner === 'player1' ? 'primary' : 'secondary'}
+                    onClick={() => handlePickRollOffWinner('player1')}
+                    className="w-full flex-1"
+                  >
+                    {player1Name}
+                  </Button>
+                  <Button
+                    color={rollOffWinner === 'player2' ? 'primary' : 'secondary'}
+                    onClick={() => handlePickRollOffWinner('player2')}
+                    className="w-full flex-1"
+                  >
+                    {player2Name}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-md border-2 border-zinc-300 bg-white">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between px-4 py-3 text-left"
+              onClick={() => {
+                if (!rollOffWinner) return
+                setExpandedSection('initiative')
+              }}
+            >
+              <span className="flex items-center gap-2 text-lg font-semibold text-zinc-900">
+                {setupInitiative ? '✓' : '•'} {initiativeSummary}
+              </span>
+              <ChevronDownIcon
+                className={`h-5 w-5 text-zinc-600 transition-transform ${
+                  expandedSection === 'initiative' ? 'rotate-180' : ''
+                } ${rollOffWinner ? '' : 'opacity-40'}`}
+              />
+            </button>
+            <div
+              className={`grid transition-all duration-300 ease-out ${
+                expandedSection === 'initiative'
+                  ? 'grid-rows-[1fr] opacity-100'
+                  : 'grid-rows-[0fr] opacity-0'
+              }`}
+            >
+              <div className="overflow-hidden border-t border-zinc-200 px-4 py-4">
+                <Heading level={6}>Choose who has initiative</Heading>
+                <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+                  <Button
+                    disabled={!rollOffWinner}
+                    color={setupInitiative === 'player1' ? 'primary' : 'secondary'}
+                    onClick={() => {
+                      setSetupInitiative('player1')
+                      setExpandedSection(null)
+                    }}
+                    className="w-full flex-1"
+                  >
+                    {player1Name}
+                  </Button>
+                  <Button
+                    disabled={!rollOffWinner}
+                    color={setupInitiative === 'player2' ? 'primary' : 'secondary'}
+                    onClick={() => {
+                      setSetupInitiative('player2')
+                      setExpandedSection(null)
+                    }}
+                    className="w-full flex-1"
+                  >
+                    {player2Name}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
 
-        {setupInitiative && (
-          <ul className="list-disc list-inside">
-            <li>
-              {setupInitiative === 'player1'
-                ? gameTrackerStore.player1.team?.name
-                : gameTrackerStore.player2.team?.name}{' '}
-              selects one drop zone.
-            </li>
-            <li>
-              {setupInitiative === 'player1'
-                ? gameTrackerStore.player2.team?.name
-                : gameTrackerStore.player1.team?.name}{' '}
-              has the other drop zone and gains the Re-roll initiative card.
-            </li>
-          </ul>
-        )}
+        <section className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700">
+            {setupInitiative ? (
+              <div>
+                <span className="font-semibold">
+                  {setupInitiative === 'player1' ? player2Name : player1Name}
+                </span>{' '}
+                has the other drop zone and gains the Re-roll initiative card.
+              </div>
+            ) : (
+              <div>Pick a roll-off winner to see card gain summary.</div>
+            )}
+          </div>
+
+          <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700">
+            {setupInitiative ? (
+              <div>
+                <span className="font-semibold">
+                  {setupInitiative === 'player1' ? player1Name : player2Name}
+                </span>{' '}
+                selects one drop zone.
+              </div>
+            ) : (
+              <div>Choose initiative to see drop zone summary.</div>
+            )}
+          </div>
+        </section>
       </DialogBody>
       <DialogActions>
         <Button onClick={onBack}>Previous</Button>
