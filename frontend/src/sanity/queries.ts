@@ -134,3 +134,14 @@ export const gameResultsQuery = defineQuery(`
     selections,
   }
 `)
+
+export const gameResultByIdQuery = defineQuery(`
+  *[_type == "gameResult" && _id == $id][0] {
+    _id,
+    submittedAt,
+    submittedBy,
+    teams,
+    scores,
+    selections,
+  }
+`)

@@ -5,6 +5,7 @@ import {gameResultsQuery} from '@/sanity/queries'
 import {ChevronDownIcon} from '@heroicons/react/16/solid'
 import type {Metadata} from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Stats',
@@ -201,6 +202,12 @@ export default async function StatsPage() {
                           <div className="text-right">
                             <div className="text-sm text-zinc-900">Submitted by:</div>
                             <div className="text-lg font-semibold text-zinc-900">{uploader}</div>
+                            <Link
+                              href={`/stats/${encodeURIComponent(game._id)}`}
+                              className="text-xs font-medium text-blue-700 underline underline-offset-2"
+                            >
+                              View game
+                            </Link>
                           </div>
                           <div className="inline-flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border-2 border-zinc-300 bg-white">
                             {uploaderImage ? (
