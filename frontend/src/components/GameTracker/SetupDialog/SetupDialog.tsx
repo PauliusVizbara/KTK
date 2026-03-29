@@ -489,7 +489,7 @@ const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
 
   const initiativeSummary = setupInitiative
     ? `${setupInitiative === 'player1' ? player1Name : player2Name} has initiative`
-    : 'Choose initiative'
+    : 'Choose who has initiative'
 
   return (
     <>
@@ -565,7 +565,10 @@ const SelectInitiativeStep = ({onBack, onNext}: StepProps) => {
               }`}
             >
               <div className="overflow-hidden border-t border-zinc-200 px-4 py-4">
-                <Heading level={6}>Choose who has initiative</Heading>
+                <Heading level={6}>
+                  {(rollOffWinner === 'player1' ? player1Name : player2Name) +
+                    ' chooses who has initiative:'}
+                </Heading>
                 <div className="mt-3 flex flex-col gap-3 sm:flex-row">
                   <Button
                     disabled={!rollOffWinner}
