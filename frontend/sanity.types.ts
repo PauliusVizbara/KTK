@@ -713,6 +713,12 @@ export type UniversalEquipmentQueryResult = Array<{
   amount?: number
   id: string
 }>
+// Variable: gameResultsQuery
+// Query: *[_type == "gameResult"] | order(submittedAt desc) {    _id,    submittedAt,    submittedBy,    teams,    scores,    selections,  }
+export type GameResultsQueryResult = Array<never>
+// Variable: gameResultByIdQuery
+// Query: *[_type == "gameResult" && _id == $id][0] {    _id,    submittedAt,    submittedBy,    teams,    scores,    selections,  }
+export type GameResultByIdQueryResult = null
 
 // Query TypeMap
 import '@sanity/client'
@@ -730,5 +736,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "critOp"] | order(name asc) {\n    ...,\n    "id": _id,\n  }\n': CritOpQueryResult
     '\n  *[_type == "tacOp"] | order(name asc) {\n    ...,\n    "id": _id,\n  }\n': TacOpQueryResult
     '\n  *[_type == "universalEquipment"] | order(equipment.name asc) {\n    ...,\n    "id": _id,\n  }\n': UniversalEquipmentQueryResult
+    '\n  *[_type == "gameResult"] | order(submittedAt desc) {\n    _id,\n    submittedAt,\n    submittedBy,\n    teams,\n    scores,\n    selections,\n  }\n': GameResultsQueryResult
+    '\n  *[_type == "gameResult" && _id == $id][0] {\n    _id,\n    submittedAt,\n    submittedBy,\n    teams,\n    scores,\n    selections,\n  }\n': GameResultByIdQueryResult
   }
 }

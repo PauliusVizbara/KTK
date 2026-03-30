@@ -548,7 +548,6 @@ export const StateTracker = () => {
   const [showTurnInitiative, setShowTurnInitiative] = React.useState(false)
   const [showPrimaryOp, setShowPrimaryOp] = React.useState(false)
   const [showGameResult, setShowGameResult] = React.useState(false)
-  const [hasOpenedInitialInitiative, setHasOpenedInitialInitiative] = React.useState(false)
 
   const tieWinnerName = React.useMemo(() => {
     if (initiativePlayer === 'player1') {
@@ -594,17 +593,15 @@ export const StateTracker = () => {
 
   React.useEffect(() => {
     if (!isSetupDone) {
-      setHasOpenedInitialInitiative(false)
       setShowTurnInitiative(false)
       setShowPrimaryOp(false)
       return
     }
 
-    if (!hasOpenedInitialInitiative) {
+    if (initiativePlayer === null) {
       setShowTurnInitiative(true)
-      setHasOpenedInitialInitiative(true)
     }
-  }, [isSetupDone, hasOpenedInitialInitiative])
+  }, [isSetupDone, initiativePlayer])
 
   if (!isSetupDone) {
     return (
