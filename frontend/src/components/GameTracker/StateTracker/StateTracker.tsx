@@ -548,6 +548,7 @@ export const StateTracker = () => {
   const [showTurnInitiative, setShowTurnInitiative] = React.useState(false)
   const [showPrimaryOp, setShowPrimaryOp] = React.useState(false)
   const [showGameResult, setShowGameResult] = React.useState(false)
+  const hasMissingPrimaryOps = !player1.primaryOp || !player2.primaryOp
 
   const tieWinnerName = React.useMemo(() => {
     if (initiativePlayer === 'player1') {
@@ -600,8 +601,13 @@ export const StateTracker = () => {
 
     if (initiativePlayer === null) {
       setShowTurnInitiative(true)
+      return
     }
-  }, [isSetupDone, initiativePlayer])
+
+    if (!showTurnInitiative && hasMissingPrimaryOps) {
+      setShowPrimaryOp(true)
+    }
+  }, [hasMissingPrimaryOps, initiativePlayer, isSetupDone, showTurnInitiative])
 
   if (!isSetupDone) {
     return (
